@@ -203,6 +203,8 @@ CREATE TABLE `mobile_user` (
   `password` varchar(50) NOT NULL COMMENT '用户密码，MD5加密',
   `email` varchar(50) DEFAULT NULL,
   `phone` varchar(20) DEFAULT NULL,
+  `nickname` varchar(20) DEFAULT NULL COMMENT '昵称',
+  `avatar` varchar(200) DEFAULT NULL COMMENT '头像',
   `question` varchar(100) DEFAULT NULL COMMENT '找回密码问题',
   `answer` varchar(100) DEFAULT NULL COMMENT '找回密码答案',
   `role` int(4) NOT NULL COMMENT '角色0-管理员,1-普通用户',

@@ -23,6 +23,10 @@ public class User {
 
     private Date updateTime;
 
+    private String nickname;
+
+    private String avatar;
+
     public User(Long id, String username, String password, String email, String phone, String question, String answer, Integer role, Date createTime, Date updateTime) {
         this.id = id;
         this.username = username;
@@ -38,6 +42,22 @@ public class User {
 
     public User() {
         super();
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public Long getId() {

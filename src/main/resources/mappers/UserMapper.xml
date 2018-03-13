@@ -16,7 +16,7 @@
     </constructor>
   </resultMap>
   <sql id="Base_Column_List">
-    id, username, password, email, phone, question, answer, role, create_time, update_time
+    id, username, password, email, phone, nickname, avatar, question, answer, role, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -30,11 +30,12 @@
   </delete>
   <insert id="insert" parameterType="iloveyesterday.mobile.pojo.User">
     insert into mobile_user (id, username, password, 
-      email, phone, question, 
+      email, phone, nickname, avatar, question,
       answer, role, create_time, 
       update_time)
     values (#{id,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
-      #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{question,jdbcType=VARCHAR}, 
+      #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
+      #{nickname,jdbcType=VARCHAR}, #{avatar,jdbcType=VARCHAR}, #{question,jdbcType=VARCHAR},
       #{answer,jdbcType=VARCHAR}, #{role,jdbcType=INTEGER}, now(), 
       now())
   </insert>
@@ -55,6 +56,12 @@
       </if>
       <if test="phone != null">
         phone,
+      </if>
+      <if test="nickname != null">
+        nickname,
+      </if>
+      <if test="avatar != null">
+        avatar,
       </if>
       <if test="question != null">
         question,
@@ -88,6 +95,12 @@
       <if test="phone != null">
         #{phone,jdbcType=VARCHAR},
       </if>
+      <if test="nickname != null">
+        #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="avatar != null">
+        #{avatar,jdbcType=VARCHAR},
+      </if>
       <if test="question != null">
         #{question,jdbcType=VARCHAR},
       </if>
@@ -119,6 +132,12 @@
       </if>
       <if test="phone != null">
         phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="nickname != null">
+        nickname = #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="avatar != null">
+        avatar = #{avatar,jdbcType=VARCHAR},
       </if>
       <if test="question != null">
         question = #{question,jdbcType=VARCHAR},

@@ -150,6 +150,8 @@ public class UserServiceImpl implements IUserService {
         userForUpdate.setId(user.getId());
         userForUpdate.setEmail(user.getEmail());
         userForUpdate.setPhone(user.getPhone());
+        userForUpdate.setNickname(user.getNickname());
+        userForUpdate.setAvatar(user.getAvatar());
         userForUpdate.setQuestion(user.getQuestion());
         userForUpdate.setAnswer(user.getAnswer());
         // 赋值updateTime, 记录更新时间
