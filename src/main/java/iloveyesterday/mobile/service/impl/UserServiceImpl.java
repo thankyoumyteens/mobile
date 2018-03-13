@@ -7,6 +7,7 @@ import iloveyesterday.mobile.dao.UserMapper;
 import iloveyesterday.mobile.pojo.User;
 import iloveyesterday.mobile.service.IUserService;
 import iloveyesterday.mobile.util.MD5Util;
+import iloveyesterday.mobile.util.PropertiesUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,8 @@ public class UserServiceImpl implements IUserService {
         }
         // 密码置空
         user.setPassword(StringUtils.EMPTY);
+        // 设置图片路径
+        user.setAvatar(PropertiesUtil.getProperty("ftp.server.http.prefix") + user.getAvatar());
         return ResponseData.success("登陆成功", user);
     }
 
@@ -166,6 +169,9 @@ public class UserServiceImpl implements IUserService {
         userForUpdate.setUsername(user.getUsername());
         userForUpdate.setRole(user.getRole());
         userForUpdate.setCreateTime(user.getCreateTime());
+        // 设置图片路径
+        userForUpdate.setAvatar(PropertiesUtil.getProperty("ftp.server.http.prefix")
+                + userForUpdate.getAvatar());
         return ResponseData.success("修改成功", userForUpdate);
     }
 
@@ -176,6 +182,8 @@ public class UserServiceImpl implements IUserService {
             return ResponseData.error("用户不存在");
         }
         user.setPassword(StringUtils.EMPTY);
+        // 设置图片路径
+        user.setAvatar(PropertiesUtil.getProperty("ftp.server.http.prefix") + user.getAvatar());
         return ResponseData.success(user);
     }
 

@@ -7,10 +7,16 @@
 
 
 springmvc上传文件
-<form name="form1" action="/manage/product/upload.do" method="post" enctype="multipart/form-data">
+<form name="form1" id="f1" action="user/upload.do" method="post" enctype="multipart/form-data">
     <input type="file" name="upload_file" />
     <input type="submit" value="springmvc上传文件" />
 </form>
+
+<script>
+    document.getElementById('f1').onsubmit = function (ev) {
+        // return false;
+    }
+</script>
 
 
 富文本图片上传文件

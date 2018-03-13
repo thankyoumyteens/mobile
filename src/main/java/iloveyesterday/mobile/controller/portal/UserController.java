@@ -1,17 +1,24 @@
 package iloveyesterday.mobile.controller.portal;
 
+import com.google.common.collect.Maps;
 import iloveyesterday.mobile.common.Const;
 import iloveyesterday.mobile.common.ResponseCode;
 import iloveyesterday.mobile.common.ResponseData;
 import iloveyesterday.mobile.pojo.User;
+import iloveyesterday.mobile.service.IFileService;
 import iloveyesterday.mobile.service.IUserService;
+import iloveyesterday.mobile.util.PropertiesUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/user/")
@@ -19,6 +26,9 @@ public class UserController {
 
     @Resource
     private IUserService userService;
+
+    @Resource
+    private IFileService fileService;
 
     /**
      * 登陆
@@ -78,6 +88,7 @@ public class UserController {
 
     /**
      * 获取用户信息
+     *
      * @param session
      * @return
      */
@@ -93,6 +104,7 @@ public class UserController {
 
     /**
      * 获取找回密码问题
+     *
      * @param username
      * @return
      */
@@ -104,6 +116,7 @@ public class UserController {
 
     /**
      * 验证找回密码问题的答案
+     *
      * @param username
      * @param question
      * @param answer
@@ -117,6 +130,7 @@ public class UserController {
 
     /**
      * 修改密码
+     *
      * @param username
      * @param password
      * @param token
@@ -130,6 +144,7 @@ public class UserController {
 
     /**
      * 登陆状态下修改密码
+     *
      * @param session
      * @param passwordOld
      * @param passwordNew
@@ -147,6 +162,7 @@ public class UserController {
 
     /**
      * 更新用户信息
+     *
      * @param session
      * @param user
      * @return
@@ -187,5 +203,29 @@ public class UserController {
 //        }
 //        return userService.getUserInfo(currentUser.getId());
 //    }
+
+    /**
+     * 上传头像
+     * @param session
+     * @param file
+     * @param request
+     * @return
+     */
+    @RequestMapping("upload.do")
+    @ResponseBody
+    public ResponseData<Map> upload(HttpSession session, @RequestParam(value = "upload_file", required = false) MultipartFile file, HttpServletRequest request) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
+        }
+        String path = request.getSession().getServletContext().getRealPath("upload");
+        String targetFileName = fileService.upload(file, path);
+        String url = PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFileName;
+
+        Map fileMap = Maps.newHashMap();
+        fileMap.put("uri", targetFileName);
+        fileMap.put("url", url);
+        return ResponseData.success(fileMap);
+    }
 
 }
