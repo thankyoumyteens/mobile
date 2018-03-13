@@ -17,12 +17,19 @@ public class FTPUtil {
     private static String ftpUser = PropertiesUtil.getProperty("ftp.user");
     private static String ftpPass = PropertiesUtil.getProperty("ftp.pass");
 
-    public FTPUtil(String ip,int port,String user,String pwd){
+    private String ip;
+    private int port;
+    private String user;
+    private String pwd;
+    private FTPClient ftpClient;
+
+    private FTPUtil(String ip, int port, String user, String pwd){
         this.ip = ip;
         this.port = port;
         this.user = user;
         this.pwd = pwd;
     }
+
     public static boolean uploadFile(List<File> fileList) throws IOException {
         FTPUtil ftpUtil = new FTPUtil(ftpIp,21,ftpUser,ftpPass);
         logger.info("开始连接ftp服务器");
@@ -60,8 +67,6 @@ public class FTPUtil {
         return uploaded;
     }
 
-
-
     private boolean connectServer(String ip,int port,String user,String pwd){
 
         boolean isSuccess = false;
@@ -74,22 +79,6 @@ public class FTPUtil {
         }
         return isSuccess;
     }
-
-
-
-
-
-
-
-
-
-
-
-    private String ip;
-    private int port;
-    private String user;
-    private String pwd;
-    private FTPClient ftpClient;
 
     public String getIp() {
         return ip;

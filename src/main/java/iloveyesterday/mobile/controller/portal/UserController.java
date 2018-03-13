@@ -219,6 +219,7 @@ public class UserController {
             return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
         }
         String path = request.getSession().getServletContext().getRealPath("upload");
+        // todo 验证是否是图片
         String targetFileName = fileService.upload(file, path);
         String url = PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFileName;
 
