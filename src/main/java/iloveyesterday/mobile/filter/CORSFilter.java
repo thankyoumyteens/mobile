@@ -19,9 +19,6 @@ public class CORSFilter implements Filter {
         response.setHeader("Access-Control-Max-Age", "3600");
         response.setHeader("Access-Control-Allow-Headers", "x-requested-with, Content-Type");
         response.setHeader("Access-Control-Allow-Credentials", "true");
-
-//        response.setContentType("text/plain;charset=utf-8");
-//        response.setCharacterEncoding("utf-8");
         chain.doFilter(req, res);
     }
 

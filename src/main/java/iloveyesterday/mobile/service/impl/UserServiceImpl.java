@@ -51,6 +51,8 @@ public class UserServiceImpl implements IUserService {
         String md5Password = MD5Util.MD5EncodeUtf8(user.getPassword());
         user.setPassword(md5Password);
 
+        user.setAvatar("1.jpg");
+
         int resultCount = userMapper.insert(user);
         if (resultCount == 0) {
             return ResponseData.error("注册失败");
