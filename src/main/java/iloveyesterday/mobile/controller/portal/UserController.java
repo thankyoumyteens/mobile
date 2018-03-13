@@ -8,6 +8,7 @@ import iloveyesterday.mobile.pojo.User;
 import iloveyesterday.mobile.service.IFileService;
 import iloveyesterday.mobile.service.IUserService;
 import iloveyesterday.mobile.util.PropertiesUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -219,7 +220,13 @@ public class UserController {
             return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
         }
         String path = request.getSession().getServletContext().getRealPath("upload");
-        // todo 验证是否是图片
+        // 验证是否是图片
+        String fileName = file.getOriginalFilename();
+        String fileExtensionName = fileName.substring(fileName.lastIndexOf(".") + 1);
+        if (!StringUtils.equals(fileExtensionName, "jpg")) {
+            return ResponseData.error("请上传jpg格式图片");
+        }
+        // 上传
         String targetFileName = fileService.upload(file, path);
         String url = PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFileName;
 
