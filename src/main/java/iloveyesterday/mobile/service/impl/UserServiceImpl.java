@@ -156,7 +156,6 @@ public class UserServiceImpl implements IUserService {
         userForUpdate.setEmail(user.getEmail());
         userForUpdate.setPhone(user.getPhone());
         userForUpdate.setNickname(user.getNickname());
-        userForUpdate.setAvatar(user.getAvatar());
         userForUpdate.setQuestion(user.getQuestion());
         userForUpdate.setAnswer(user.getAnswer());
         // 赋值updateTime, 记录更新时间
@@ -166,12 +165,11 @@ public class UserServiceImpl implements IUserService {
         if (resultCount == 0) {
             return ResponseData.error("修改失败");
         }
+        // 添加未修改的数据
         userForUpdate.setUsername(user.getUsername());
         userForUpdate.setRole(user.getRole());
         userForUpdate.setCreateTime(user.getCreateTime());
-        // 设置图片路径
-        userForUpdate.setAvatar(PropertiesUtil.getProperty("ftp.server.http.prefix")
-                + userForUpdate.getAvatar());
+        userForUpdate.setAvatar(user.getAvatar());
         return ResponseData.success("修改成功", userForUpdate);
     }
 

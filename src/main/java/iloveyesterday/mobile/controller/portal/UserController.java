@@ -179,14 +179,30 @@ public class UserController {
         user.setId(currentUser.getId());
         user.setUsername(currentUser.getUsername());
         user.setCreateTime(currentUser.getCreateTime());
+        // 此处不修改头像
+        user.setAvatar(currentUser.getAvatar());
         // 权限不可修改
         user.setRole(currentUser.getRole());
 
         ResponseData<User> responseData = userService.updateUserInfo(user);
         if (responseData.isSuccess()) {
+
             session.setAttribute(Const.CURRENT_USER, responseData.getData());
         }
         return responseData;
+    }
+
+    /**
+     * 更新用户头像
+     *
+     * @param session
+     * @param avatar
+     * @return
+     */
+    @RequestMapping(value = "update_user_avatar.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseData<User> updateUserAvatar(HttpSession session, String avatar) {
+        return null;
     }
 
 //    /**
