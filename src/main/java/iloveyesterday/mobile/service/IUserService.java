@@ -27,4 +27,6 @@ public interface IUserService {
     ResponseData<User> updateUserInfo(User user);
 
     ResponseData<User> getUserInfo(Long userId);
+
+    ResponseData updateUserAvatar(User user);
 }

@@ -185,4 +185,16 @@ public class UserServiceImpl implements IUserService {
         return ResponseData.success(user);
     }
 
+    @Override
+    public ResponseData updateUserAvatar(User user) {
+        // 赋值updateTime, 记录更新时间
+        user.setUpdateTime(new Date());
+
+        int resultCount = userMapper.updateByPrimaryKeySelective(user);
+        if (resultCount == 0) {
+            return ResponseData.error("修改失败");
+        }
+        return ResponseData.successMessage("修改成功");
+    }
+
 }

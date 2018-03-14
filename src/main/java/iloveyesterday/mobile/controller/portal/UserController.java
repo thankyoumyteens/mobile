@@ -199,10 +199,22 @@ public class UserController {
      * @param avatar
      * @return
      */
-    @RequestMapping(value = "update_user_avatar.do", method = RequestMethod.POST)
+    @RequestMapping(value = "update_avatar.do", method = RequestMethod.POST)
     @ResponseBody
     public ResponseData<User> updateUserAvatar(HttpSession session, String avatar) {
-        return null;
+        User currentUser = (User) session.getAttribute(Const.CURRENT_USER);
+        if (currentUser == null) {
+            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
+        }
+        User user = new User();
+        user.setId(currentUser.getId());
+        user.setAvatar(avatar);
+        ResponseData responseData = userService.updateUserAvatar(user);
+        if (responseData.isSuccess()) {
+            currentUser.setAvatar(PropertiesUtil.getProperty("ftp.server.http.prefix") + avatar);
+            session.setAttribute(Const.CURRENT_USER, currentUser);
+        }
+        return responseData;
     }
 
 //    /**
