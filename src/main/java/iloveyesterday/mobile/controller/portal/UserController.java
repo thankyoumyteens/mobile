@@ -186,7 +186,6 @@ public class UserController {
 
         ResponseData<User> responseData = userService.updateUserInfo(user);
         if (responseData.isSuccess()) {
-
             session.setAttribute(Const.CURRENT_USER, responseData.getData());
         }
         return responseData;
