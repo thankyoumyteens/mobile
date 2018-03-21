@@ -34,7 +34,7 @@ public class UserManageController {
         if (responseData.isSuccess()) {
             User user = responseData.getData();
             if (user.getRole() == Const.Role.ADMIN) {
-                session.setAttribute(Const.CURRENT_USER, responseData.getData());
+                session.setAttribute(Const.CURRENT_ADMIN, responseData.getData());
             } else {
                 return ResponseData.error("请管理员登陆");
             }
