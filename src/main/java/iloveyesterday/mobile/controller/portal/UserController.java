@@ -231,7 +231,7 @@ public class UserController {
 //    }
 
     /**
-     * 上传头像
+     * 上传图片
      *
      * @param session
      * @param file
@@ -249,11 +249,13 @@ public class UserController {
         // 验证是否是图片
         String fileName = file.getOriginalFilename();
         String fileExtensionName = fileName.substring(fileName.lastIndexOf(".") + 1);
-        if (!StringUtils.equals(fileExtensionName, "jpg")) {
-            return ResponseData.error("请上传jpg格式图片");
+        if (!StringUtils.equals(fileExtensionName, "jpg") &&
+                !StringUtils.equals(fileExtensionName, "png")) {
+            return ResponseData.error("请上传jpg或png格式图片");
         }
         // 上传
         String targetFileName = fileService.upload(file, path);
+
         String url = PropertiesUtil.getImageHost() + targetFileName;
 
         Map fileMap = Maps.newHashMap();

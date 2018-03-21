@@ -32,7 +32,7 @@ CREATE TABLE `mobile_category` (
   `parent_id` bigint(20) DEFAULT NULL COMMENT '父类别id当id=0时说明是根节点,一级类别',
   `name` varchar(50) DEFAULT NULL COMMENT '类别名称',
   `img` varchar(500) DEFAULT NULL COMMENT '类别图片',
-  `status` tinyint(1) DEFAULT '1' COMMENT '类别状态1-正常,2-已废弃',
+  `status` tinyint(1) DEFAULT '1' COMMENT '类别状态1-正常,0-已废弃',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)

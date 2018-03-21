@@ -172,4 +172,22 @@
       update_time = now()
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <select id="selectAll" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    from mobile_product
+  </select>
+  <select id="selectByCategoryId" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="Base_Column_List" />
+    from mobile_product
+    where category_id=#{categoryId}
+  </select>
+  <select id="selectByCategoryIdAndStatus" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List" />
+    from mobile_product
+    where category_id=#{categoryId}
+    and status=#{status}
+  </select>
 </mapper>

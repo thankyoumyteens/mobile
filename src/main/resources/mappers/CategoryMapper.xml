@@ -110,5 +110,6 @@
     <include refid="Base_Column_List"/>
     from mobile_category
     where parent_id = #{parentId}
+    and status=1
   </select>
 </mapper>

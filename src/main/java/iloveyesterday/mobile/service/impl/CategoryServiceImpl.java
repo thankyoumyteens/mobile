@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -25,13 +26,14 @@ public class CategoryServiceImpl implements ICategoryService {
     @Resource
     private CategoryMapper categoryMapper;
 
-    public ResponseData addCategory(String categoryName, Long parentId) {
+    public ResponseData addCategory(String categoryName, String img, Long parentId) {
         if (parentId == null || StringUtils.isBlank(categoryName)) {
             return ResponseData.error("参数错误");
         }
 
         Category category = new Category();
         category.setName(categoryName);
+        category.setImg(img);
         category.setParentId(parentId);
         category.setStatus(true);//这个分类是可用的
 
@@ -68,7 +70,6 @@ public class CategoryServiceImpl implements ICategoryService {
         return ResponseData.success(categoryList);
     }
 
-
     /**
      * 递归查询本节点的id及孩子节点的id
      */
@@ -83,6 +84,18 @@ public class CategoryServiceImpl implements ICategoryService {
         return ResponseData.success(categoryList);
     }
 
+    @Override
+    public ResponseData delete(Long categoryId) {
+        Category category = new Category();
+        category.setId(categoryId);
+        category.setStatus(false);
+        category.setUpdateTime(new Date());
+        int resultCount = categoryMapper.updateByPrimaryKeySelective(category);
+        if (resultCount > 0) {
+            return ResponseData.success();
+        }
+        return ResponseData.error();
+    }
 
     //递归算法,算出子节点
     private void findChildCategory(Set<Category> categorySet, Long categoryId) {

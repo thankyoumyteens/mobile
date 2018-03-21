@@ -42,4 +42,17 @@ public class UserManageController {
         return responseData;
     }
 
+    /**
+     * 登出
+     *
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "logout.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseData logout(HttpSession session) {
+        session.removeAttribute(Const.CURRENT_ADMIN);
+        return ResponseData.success();
+    }
+
 }

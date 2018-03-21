@@ -7,7 +7,7 @@ import iloveyesterday.mobile.pojo.Category;
 import java.util.List;
 
 public interface ICategoryService {
-    ResponseData addCategory(String categoryName, Long parentId);
+    ResponseData addCategory(String categoryName, String img, Long parentId);
 
     ResponseData updateCategoryName(Long categoryId, String categoryName);
 
@@ -15,4 +15,5 @@ public interface ICategoryService {
 
     ResponseData<List<Category>> selectCategoryAndChildrenById(Long categoryId);
 
+    ResponseData delete(Long categoryId);
 }
