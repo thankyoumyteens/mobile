@@ -28,5 +28,5 @@ public interface IUserService {
 
     ResponseData<User> getUserInfo(Long userId);
 
-    ResponseData updateUserAvatar(User user);
+    ResponseData updateUserAvatar(User user, String avatar);
 }

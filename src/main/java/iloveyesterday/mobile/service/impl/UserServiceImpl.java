@@ -137,8 +137,10 @@ public class UserServiceImpl implements IUserService {
         if (resultCount == 0) {
             return ResponseData.error("原始密码错误");
         }
-        user.setPassword(MD5Util.MD5EncodeUtf8(passwordNew));
-        resultCount = userMapper.updateByPrimaryKeySelective(user);
+        User userForUpdate = new User();
+        userForUpdate.setId(user.getId());
+        userForUpdate.setPassword(MD5Util.MD5EncodeUtf8(passwordNew));
+        resultCount = userMapper.updateByPrimaryKeySelective(userForUpdate);
         if (resultCount == 0) {
             return ResponseData.error("修改失败");
         }
@@ -176,7 +178,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public ResponseData<User> getUserInfo(Long userId) {
         User user = userMapper.selectByPrimaryKey(userId);
-        if(user == null){
+        if (user == null) {
             return ResponseData.error("用户不存在");
         }
         user.setPassword(StringUtils.EMPTY);
@@ -186,11 +188,14 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public ResponseData updateUserAvatar(User user) {
+    public ResponseData updateUserAvatar(User user, String avatar) {
+        User userForUpdate = new User();
         // 赋值updateTime, 记录更新时间
-        user.setUpdateTime(new Date());
+        userForUpdate.setUpdateTime(new Date());
+        userForUpdate.setId(user.getId());
+        userForUpdate.setAvatar(avatar);
 
-        int resultCount = userMapper.updateByPrimaryKeySelective(user);
+        int resultCount = userMapper.updateByPrimaryKeySelective(userForUpdate);
         if (resultCount == 0) {
             return ResponseData.error("修改失败");
         }

@@ -205,10 +205,8 @@ public class UserController {
         if (currentUser == null) {
             return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
         }
-        User user = new User();
-        user.setId(currentUser.getId());
-        user.setAvatar(avatar);
-        ResponseData responseData = userService.updateUserAvatar(user);
+
+        ResponseData responseData = userService.updateUserAvatar(currentUser, avatar);
         if (responseData.isSuccess()) {
             currentUser.setAvatar(PropertiesUtil.getProperty("ftp.server.http.prefix") + avatar);
             session.setAttribute(Const.CURRENT_USER, currentUser);
@@ -234,6 +232,7 @@ public class UserController {
 
     /**
      * 上传头像
+     *
      * @param session
      * @param file
      * @param request
