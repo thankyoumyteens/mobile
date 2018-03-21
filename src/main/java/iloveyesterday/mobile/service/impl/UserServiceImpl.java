@@ -36,7 +36,7 @@ public class UserServiceImpl implements IUserService {
         // 密码置空
         user.setPassword(StringUtils.EMPTY);
         // 设置图片路径
-        user.setAvatar(PropertiesUtil.getProperty("ftp.server.http.prefix") + user.getAvatar());
+        user.setAvatar(PropertiesUtil.getImageHost() + user.getAvatar());
         return ResponseData.success("登陆成功", user);
     }
 
@@ -183,7 +183,7 @@ public class UserServiceImpl implements IUserService {
         }
         user.setPassword(StringUtils.EMPTY);
         // 设置图片路径
-        user.setAvatar(PropertiesUtil.getProperty("ftp.server.http.prefix") + user.getAvatar());
+        user.setAvatar(PropertiesUtil.getImageHost() + user.getAvatar());
         return ResponseData.success(user);
     }
 

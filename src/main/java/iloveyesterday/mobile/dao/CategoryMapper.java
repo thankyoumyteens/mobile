@@ -2,6 +2,8 @@ package iloveyesterday.mobile.dao;
 
 import iloveyesterday.mobile.pojo.Category;
 
+import java.util.List;
+
 public interface CategoryMapper {
     int deleteByPrimaryKey(Long id);
 
@@ -14,4 +16,6 @@ public interface CategoryMapper {
     int updateByPrimaryKeySelective(Category record);
 
     int updateByPrimaryKey(Category record);
+
+    List<Category> selectCategoryChildrenByParentId(Long parentId);
 }

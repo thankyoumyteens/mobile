@@ -208,7 +208,7 @@ public class UserController {
 
         ResponseData responseData = userService.updateUserAvatar(currentUser, avatar);
         if (responseData.isSuccess()) {
-            currentUser.setAvatar(PropertiesUtil.getProperty("ftp.server.http.prefix") + avatar);
+            currentUser.setAvatar(PropertiesUtil.getImageHost() + avatar);
             session.setAttribute(Const.CURRENT_USER, currentUser);
         }
         return responseData;
@@ -254,7 +254,7 @@ public class UserController {
         }
         // 上传
         String targetFileName = fileService.upload(file, path);
-        String url = PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFileName;
+        String url = PropertiesUtil.getImageHost() + targetFileName;
 
         Map fileMap = Maps.newHashMap();
         fileMap.put("uri", targetFileName);

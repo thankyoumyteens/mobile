@@ -6,13 +6,14 @@
       <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="parent_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="img" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="status" javaType="java.lang.Boolean" jdbcType="BIT" />
       <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
     </constructor>
   </resultMap>
   <sql id="Base_Column_List">
-    id, parent_id, name, status, create_time, update_time
+    id, parent_id, name, img, status, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -25,11 +26,11 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="iloveyesterday.mobile.pojo.Category">
-    insert into mobile_category (id, parent_id, name, 
+    insert into mobile_category (id, parent_id, name, img,
       status, create_time, update_time
       )
     values (#{id,jdbcType=BIGINT}, #{parentId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, 
-      #{status,jdbcType=BIT}, now(), now()
+      #{img,jdbcType=VARCHAR}, #{status,jdbcType=BIT}, now(), now()
       )
   </insert>
   <insert id="insertSelective" parameterType="iloveyesterday.mobile.pojo.Category">
@@ -84,6 +85,9 @@
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
       </if>
+      <if test="img != null">
+        img = #{img,jdbcType=VARCHAR},
+      </if>
       <if test="status != null">
         status = #{status,jdbcType=BIT},
       </if>
@@ -101,4 +105,10 @@
       update_time = now()
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <select id="selectCategoryChildrenByParentId" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="Base_Column_List"/>
+    from mobile_category
+    where parent_id = #{parentId}
+  </select>
 </mapper>

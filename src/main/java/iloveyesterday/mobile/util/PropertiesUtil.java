@@ -44,6 +44,8 @@ public class PropertiesUtil {
         return value.trim();
     }
 
-
+    public static String getImageHost() {
+        return PropertiesUtil.getProperty("ftp.server.http.prefix");
+    }
 
 }

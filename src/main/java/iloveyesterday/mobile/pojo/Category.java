@@ -9,16 +9,19 @@ public class Category {
 
     private String name;
 
+    private String img;
+
     private Boolean status;
 
     private Date createTime;
 
     private Date updateTime;
 
-    public Category(Long id, Long parentId, String name, Boolean status, Date createTime, Date updateTime) {
+    public Category(Long id, Long parentId, String name, String img, Boolean status, Date createTime, Date updateTime) {
         this.id = id;
         this.parentId = parentId;
         this.name = name;
+        this.img = img;
         this.status = status;
         this.createTime = createTime;
         this.updateTime = updateTime;
@@ -50,6 +53,14 @@ public class Category {
 
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
     }
 
     public Boolean getStatus() {
