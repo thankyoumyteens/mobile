@@ -18,6 +18,7 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/manage/lib/font-awesome/css/font-awesome.css">
 
 <script src="${pageContext.request.contextPath}/manage/lib/jquery-1.7.2.min.js" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath}/manage/lib/bootstrap/js/bootstrap.js"></script>
 <script src="${pageContext.request.contextPath}/manage/lib/jqpaginator.min.js" type="text/javascript"></script>
 
 <!-- Demo page code -->

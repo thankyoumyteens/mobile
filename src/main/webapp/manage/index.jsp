@@ -21,15 +21,12 @@
     </ul>
 </div>
 
-
-<script src="${pageContext.request.contextPath}/manage/lib/bootstrap/js/bootstrap.js"></script>
 <script type="text/javascript">
     $("[rel=tooltip]").tooltip();
     $(function () {
         $('.demo-cancel-click').click(function () {
             return false;
         });
-        check();
     });
 
 </script>

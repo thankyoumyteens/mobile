@@ -47,7 +47,6 @@
         <p class="pull-right" style=""><a href="#" target="blank"></a></p>
     </div>
 </div>
-<script src="lib/bootstrap/js/bootstrap.js"></script>
 <script type="text/javascript">
     $("[rel=tooltip]").tooltip();
     $(function () {
