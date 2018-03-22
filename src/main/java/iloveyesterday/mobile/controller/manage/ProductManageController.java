@@ -55,12 +55,13 @@ public class ProductManageController {
             return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(),
                     ResponseCode.NEED_LOGIN.getMsg());
         }
+        // todo 商家编辑
         if (user.getRole() != Const.Role.ADMIN) {
             return ResponseData.error(ResponseCode.NO_PRIVILEGE.getCode(),
                     ResponseCode.NO_PRIVILEGE.getMsg());
         }
         // todo
-        return null;
+        return productService.add(product);
     }
 
 

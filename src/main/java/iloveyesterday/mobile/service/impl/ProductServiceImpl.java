@@ -64,6 +64,16 @@ public class ProductServiceImpl implements IProductService {
         return ResponseData.success(pageResult);
     }
 
+    @Override
+    public ResponseData add(Product product) {
+        product.setStatus(Const.ProductStatus.ON_SALE);
+        int resultCount = productMapper.insert(product);
+        if (resultCount > 0) {
+            return ResponseData.success();
+        }
+        return ResponseData.error();
+    }
+
     private ProductListVo assembleProductListVo(Product product) {
         ProductListVo productListVo = new ProductListVo();
         Category category = categoryMapper.selectByPrimaryKey(product.getCategoryId());

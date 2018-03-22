@@ -115,7 +115,7 @@ CREATE TABLE `mobile_product` (
   `subtitle` varchar(200) DEFAULT NULL COMMENT '商品副标题',
   `main_image` varchar(500) DEFAULT NULL COMMENT '产品主图,url相对地址',
   `sub_images` text COMMENT '图片地址,json格式,扩展用',
-  `detail` text COMMENT '商品详情',
+  `detail` text COMMENT '商品参数 json',
   `price` decimal(20,2) NOT NULL COMMENT '价格,单位-元保留两位小数',
   `stock` bigint(20) NOT NULL COMMENT '库存数量',
   `status` int(6) DEFAULT '1' COMMENT '商品状态.1-在售 2-下架 3-删除',
@@ -124,6 +124,12 @@ CREATE TABLE `mobile_product` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8;
 
+-- 商品参数json格式
+-- {
+-- key: '容量',
+-- value: ['4G+64G', '6G+128G'],
+-- selected: 0
+-- }
 
 -- ----------------------------
 --  商品评论
@@ -141,7 +147,6 @@ CREATE TABLE `mobile_review` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8;
-
 
 -- ----------------------------
 --  商品可选参数与商品对应表
@@ -208,7 +213,7 @@ CREATE TABLE `mobile_user` (
   `avatar` varchar(200) DEFAULT NULL COMMENT '头像',
   `question` varchar(100) DEFAULT NULL COMMENT '找回密码问题',
   `answer` varchar(100) DEFAULT NULL COMMENT '找回密码答案',
-  `role` int(4) NOT NULL COMMENT '角色0-管理员,1-普通用户',
+  `role` int(4) NOT NULL COMMENT '角色0-管理员,1-普通用户,2-商家',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL COMMENT '最后一次更新时间',
   PRIMARY KEY (`id`),
