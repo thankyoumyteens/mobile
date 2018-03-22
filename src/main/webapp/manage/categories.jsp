@@ -39,7 +39,6 @@
                     <thead>
                     <tr>
                         <th>编号</th>
-                        <th>上级编号</th>
                         <th>名称</th>
                         <th>状态</th>
                         <th>图片</th>
@@ -73,10 +72,9 @@
                     var item = data[i];
                     child += '<tr>\n' +
                         '<td>' + item['id'] + '</td>\n' +
-                        '<td>' + item['parentId'] + '</td>\n' +
-                        '<td>' + item['name'] + '</td>\n' +
+                        '<td><em>' + item['name'] + '</em></td>\n' +
                         '<td>' + (item['status'] ? '可用' : '废弃') + '</td>\n' +
-                        '<td><img src="' + item['img'] + '" height="50"/></td>\n' +
+                        '<td><img src="' + item['img'] + '" style="height: 50px"/></td>\n' +
                         '<td>' + formatDateString(item['createTime']) + '</td>\n' +
                         '<td>' + formatDateString(item['updateTime']) + '</td>\n' +
                         '<td>' +
