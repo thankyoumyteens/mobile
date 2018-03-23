@@ -90,7 +90,14 @@ public class ProductServiceImpl implements IProductService {
         productVo.setName(product.getName());
         productVo.setPrice(product.getPrice());
         productVo.setStock(product.getStock());
-        productVo.setSubImages(product.getSubImages());
+        productVo.setMainImage(PropertiesUtil.getImageHost() + product.getMainImage());
+        StringBuilder subImages = new StringBuilder();
+        String[] imgUrlList = product.getSubImages().split(",");
+        for (String img : imgUrlList) {
+            subImages.append(PropertiesUtil.getImageHost()).append(img).append(",");
+        }
+        subImages = new StringBuilder(subImages.substring(0, subImages.lastIndexOf(",")));
+        productVo.setSubImages(subImages.toString());
         productVo.setSubtitle(product.getSubtitle());
 
         return ResponseData.success(productVo);

@@ -10,6 +10,8 @@ public class ProductVo {
 
     private String subtitle;
 
+    private String mainImage;
+
     private String subImages;
 
     private String detail;
@@ -17,6 +19,14 @@ public class ProductVo {
     private BigDecimal price;
 
     private Long stock;
+
+    public String getMainImage() {
+        return mainImage;
+    }
+
+    public void setMainImage(String mainImage) {
+        this.mainImage = mainImage;
+    }
 
     public Long getId() {
         return id;

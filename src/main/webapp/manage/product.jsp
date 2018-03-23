@@ -48,6 +48,7 @@
                         <label>参数</label>
                         <input type="text" id="c_key" value="" class="input-xlarge" title="">
                         <input type="text" id="c_val" value="" class="input-xlarge" title="">
+                        <input type="text" id="c_money" value="" class="input-xlarge" title="">
                         <button onclick="addDetail()">添加</button>
                         <div id="c_detailWrapper"></div>
                         <label>主图</label>
@@ -104,12 +105,17 @@
     function addDetail() {
         var key = $('#c_key').val();
         var val = $('#c_val').val();
+        var money = $('#c_money').val();
+        var o = {
+            val: val,
+            money: money
+        };
         if (g_detail[key]) {
-            g_detail[key]['value'].push(val);
+            g_detail[key]['value'].push(o);
         } else {
             g_detail[key] = {
                 key: key,
-                value: [val],
+                value: [o],
                 selected: 0
             };
         }
@@ -118,7 +124,9 @@
         for (var k in g_detail) {
             var v = g_detail[k];
             el += '名称: ' + v['key'] + '<br>';
-            el += '参数: ' + v['value'] + '<br>';
+            for (var i = 0; i < v['value'].length; i++) {
+                el += '参数: ' + v['value'][i]['val'] + '-' + v['value'][i]['money'] + '<br>';
+            }
         }
         $('#c_detailWrapper').html(el);
     }
