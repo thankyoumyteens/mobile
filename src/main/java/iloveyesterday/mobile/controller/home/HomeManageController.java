@@ -92,4 +92,13 @@ public class HomeManageController {
         }
         return "category";
     }
+
+    @RequestMapping("product.do")
+    public String product(HttpSession session) {
+        User user = (User) session.getAttribute(Const.CURRENT_ADMIN);
+        if (user == null) {
+            return "login";
+        }
+        return "product";
+    }
 }

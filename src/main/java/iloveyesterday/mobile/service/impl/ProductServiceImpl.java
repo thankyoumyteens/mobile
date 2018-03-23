@@ -10,7 +10,9 @@ import iloveyesterday.mobile.dao.ProductMapper;
 import iloveyesterday.mobile.pojo.Category;
 import iloveyesterday.mobile.pojo.Product;
 import iloveyesterday.mobile.service.IProductService;
+import iloveyesterday.mobile.util.PropertiesUtil;
 import iloveyesterday.mobile.vo.ProductListVo;
+import iloveyesterday.mobile.vo.ProductVo;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -74,6 +76,26 @@ public class ProductServiceImpl implements IProductService {
         return ResponseData.error();
     }
 
+    @Override
+    public ResponseData<ProductVo> detail(Long productId, int role) {
+        Product product = productMapper.selectByPrimaryKey(productId);
+        if (Const.Role.USER == role) {
+            if (product.getStatus() != Const.ProductStatus.ON_SALE) {
+                return ResponseData.error("商品已下架");
+            }
+        }
+        ProductVo productVo = new ProductVo();
+        productVo.setId(product.getId());
+        productVo.setDetail(product.getDetail());
+        productVo.setName(product.getName());
+        productVo.setPrice(product.getPrice());
+        productVo.setStock(product.getStock());
+        productVo.setSubImages(product.getSubImages());
+        productVo.setSubtitle(product.getSubtitle());
+
+        return ResponseData.success(productVo);
+    }
+
     private ProductListVo assembleProductListVo(Product product) {
         ProductListVo productListVo = new ProductListVo();
         Category category = categoryMapper.selectByPrimaryKey(product.getCategoryId());
@@ -84,7 +106,7 @@ public class ProductServiceImpl implements IProductService {
         productListVo.setCategory(category);
         productListVo.setName(product.getName());
         productListVo.setCreateTime(product.getCreateTime());
-        productListVo.setMainImage(product.getMainImage());
+        productListVo.setMainImage(PropertiesUtil.getImageHost() + product.getMainImage());
         productListVo.setPrice(product.getPrice());
         productListVo.setStatus(product.getStatus());
         productListVo.setStock(product.getStock());

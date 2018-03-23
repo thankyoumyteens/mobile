@@ -35,26 +35,29 @@
             <div class="well">
                 <div id="myTabContent" class="tab-content">
                     <div class="tab-pane active in" id="home">
-                        <form id="tab">
-                            <label>分类</label>
-                            <select name="" id="c_xl" class="input-xlarge" title=""></select>
-                            <label>名称</label>
-                            <input type="text" id="c_productName" value="" class="input-xlarge" title="">
-                            <label>副标题</label>
-                            <input type="text" id="c_productSubtitle" value="" class="input-xlarge" title="">
-                            <label>单价</label>
-                            <input type="number" id="c_productPrice" value="" class="input-xlarge" title="">
-                            <label>库存</label>
-                            <input type="number" id="c_productStock" value="" class="input-xlarge" title="">
-                            <label>主图</label>
-                            <input type="file" id="upload_file_main" name="upload_file" value="" class="input-xlarge">
-                            <input onclick="uploadFile()" type="button" value="上传">
-                            <img id="rImg" src="" alt="">
-                            <label>详情图片</label>
-                            <input type="file" id="upload_file_sub" name="upload_file" value="" class="input-xlarge">
-                            <input onclick="uploadFile()" type="button" value="上传">
-                            <div id="c_imgWrapper"></div>
-                        </form>
+                        <label>分类</label>
+                        <select name="" id="c_productCategory" class="input-xlarge" title=""></select>
+                        <label>名称</label>
+                        <input type="text" id="c_productName" value="" class="input-xlarge" title="">
+                        <label>副标题</label>
+                        <input type="text" id="c_productSubtitle" value="" class="input-xlarge" title="">
+                        <label>单价</label>
+                        <input type="number" id="c_productPrice" value="" class="input-xlarge" title="">
+                        <label>库存</label>
+                        <input type="number" id="c_productStock" value="" class="input-xlarge" title="">
+                        <label>参数</label>
+                        <input type="text" id="c_key" value="" class="input-xlarge" title="">
+                        <input type="text" id="c_val" value="" class="input-xlarge" title="">
+                        <button onclick="addDetail()">添加</button>
+                        <div id="c_detailWrapper"></div>
+                        <label>主图</label>
+                        <input type="file" id="upload_file_main" name="upload_file" value="" class="input-xlarge">
+                        <input onclick="uploadFile()" type="button" value="上传">
+                        <img id="rImg" src="" alt="">
+                        <label>详情图片</label>
+                        <input type="file" id="upload_file_sub" name="upload_file" value="" class="input-xlarge">
+                        <input onclick="uploadFileList()" type="button" value="上传">
+                        <div id="c_imgWrapper"></div>
                     </div>
                 </div>
             </div>
@@ -80,7 +83,7 @@
             console.log(res);
             if (res.status === 0) {
                 var data = res.data;
-                var tab = $('#c_xl');
+                var tab = $('#c_productCategory');
                 tab.html('');
                 var child = '';
                 for (var i = 0; i < data.length; i++) {
@@ -95,12 +98,36 @@
     }
 
     var g_fileUri = '';
+    var g_fileListUri = '';
+    var g_detail = {};
+
+    function addDetail() {
+        var key = $('#c_key').val();
+        var val = $('#c_val').val();
+        if (g_detail[key]) {
+            g_detail[key]['value'].push(val);
+        } else {
+            g_detail[key] = {
+                key: key,
+                value: [val],
+                selected: 0
+            };
+        }
+        console.log(g_detail);
+        var el = '';
+        for (var k in g_detail) {
+            var v = g_detail[k];
+            el += '名称: ' + v['key'] + '<br>';
+            el += '参数: ' + v['value'] + '<br>';
+        }
+        $('#c_detailWrapper').html(el);
+    }
 
     function uploadFile() {
-        var fileName = $('#upload_file').val();
+        var fileName = $('#upload_file_main').val();
         var fileType = fileName.substr(fileName.length - 4, fileName.length);
         var formData = new FormData();
-        formData.append('upload_file', $('#upload_file')[0].files[0]);
+        formData.append('upload_file', $('#upload_file_main')[0].files[0]);
         if (fileType === '.jpg' || fileType === '.png') {
             $.ajax({
                 url: '${pageContext.request.contextPath}/home/upload.do',
@@ -125,15 +152,66 @@
         }
     }
 
+    function uploadFileList() {
+        var fileName = $('#upload_file_sub').val();
+        var fileType = fileName.substr(fileName.length - 4, fileName.length);
+        var formData = new FormData();
+        formData.append('upload_file', $('#upload_file_sub')[0].files[0]);
+        if (fileType === '.jpg' || fileType === '.png') {
+            $.ajax({
+                url: '${pageContext.request.contextPath}/home/upload.do',
+                type: 'POST',
+                cache: false,
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    console.log(res);
+                    if (res.status === 0) {
+                        var src = res.data.url;
+                        if (g_fileListUri !== '') {
+                            g_fileListUri += ',';
+                        }
+                        g_fileListUri += res.data.uri;
+                        var img = '<img class="sub-img-item" src="' + src + '"/>'
+                        $('#c_imgWrapper').append(img);
+                    } else {
+                        window.location.href = '${pageContext.request.contextPath}/home/login.do';
+                    }
+                }
+            });
+        } else {
+            alert('上传文件类型错误,支持类型: .jpg .png');
+        }
+    }
+
     function add() {
-        if (g_fileUri === '') {
+        if (g_fileUri === '' || g_fileListUri === '') {
             alert('请等待图片上传完成');
             return false;
         }
-        var name = $('#c_categoryName').val();
+        var name = $('#c_productName').val();
+        var categoryId = $('#c_productCategory').val();
+        var subtitle = $('#c_productSubtitle').val();
+        var price = $('#c_productPrice').val();
+        var stock = $('#c_productStock').val();
+
+        var arr = [];
+        for (var k in g_detail) {
+            var v = g_detail[k];
+            arr.push(v);
+        }
+        var arrStr = JSON.stringify(arr);
+        console.log(arrStr);
         $.post('${pageContext.request.contextPath}/manage/product/add.do', {
             name: name,
-            img: g_fileUri
+            categoryId: categoryId,
+            subtitle: subtitle,
+            price: price,
+            stock: stock,
+            detail: arrStr,
+            mainImage: g_fileUri,
+            subImages: g_fileListUri
         }, function (res) {
             console.log(res);
             alert(res.msg);

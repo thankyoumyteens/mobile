@@ -38,6 +38,7 @@
     <ul id="dashboard-menu" class="nav nav-list collapse in">
         <li><a href="${pageContext.request.contextPath}/home/index.do">主页</a></li>
         <li><a href="${pageContext.request.contextPath}/home/categories.do">分类管理</a></li>
+        <li><a href="${pageContext.request.contextPath}/home/product.do">添加商品</a></li>
     </ul>
     <a href="#accounts-menu" class="nav-header" data-toggle="collapse"><i class="icon-briefcase"></i>账号<span
             class="label label-info"></span></a>
