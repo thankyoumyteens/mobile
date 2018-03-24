@@ -7,13 +7,14 @@
       <arg column="user_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="product_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="quantity" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="detail" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="checked" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
     </constructor>
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_id, product_id, quantity, checked, create_time, update_time
+    id, user_id, product_id, quantity, detail, checked, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -27,10 +28,11 @@
   </delete>
   <insert id="insert" parameterType="iloveyesterday.mobile.pojo.Cart">
     insert into mobile_cart (id, user_id, product_id, 
-      quantity, checked, create_time, 
+      quantity, detail, checked, create_time,
       update_time)
     values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{productId,jdbcType=BIGINT}, 
-      #{quantity,jdbcType=BIGINT}, #{checked,jdbcType=BIGINT}, now(), 
+      #{quantity,jdbcType=BIGINT},#{detail,jdbcType=VARCHAR},
+      #{checked,jdbcType=BIGINT}, now(),
       now())
   </insert>
   <insert id="insertSelective" parameterType="iloveyesterday.mobile.pojo.Cart">
@@ -94,6 +96,9 @@
       <if test="quantity != null">
         quantity = #{quantity,jdbcType=BIGINT},
       </if>
+      <if test="detail != null">
+        detail = #{detail,jdbcType=VARCHAR},
+      </if>
       <if test="checked != null">
         checked = #{checked,jdbcType=BIGINT},
       </if>
@@ -112,4 +117,25 @@
       update_time = now()
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="Base_Column_List"/>
+    from mobile_cart
+    where user_id=#{userId}
+  </select>
+  <select id="selectByUserIdANdProductId" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List"/>
+    from mobile_cart
+    where user_id=#{userId}
+    and product_id=#{productId}
+  </select>
+  <select id="selectByUserIdANdProductIdAndDetail" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List"/>
+    from mobile_cart
+    where user_id=#{userId}
+    and product_id=#{productId}
+    and detail=#{detail}
+  </select>
 </mapper>

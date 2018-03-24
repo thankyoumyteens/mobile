@@ -1,6 +1,9 @@
 package iloveyesterday.mobile.dao;
 
 import iloveyesterday.mobile.pojo.Cart;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface CartMapper {
     int deleteByPrimaryKey(Long id);
@@ -14,4 +17,14 @@ public interface CartMapper {
     int updateByPrimaryKeySelective(Cart record);
 
     int updateByPrimaryKey(Cart record);
+
+    List<Cart> selectByUserId(Long userId);
+
+    Cart selectByUserIdANdProductId(
+            @Param("userId") Long userId,
+            @Param("productId") Long productId);
+
+    Cart selectByUserIdANdProductIdAndDetail(@Param("userId") Long userId,
+                                             @Param("productId") Long productId,
+                                             @Param("detail") String detail);
 }

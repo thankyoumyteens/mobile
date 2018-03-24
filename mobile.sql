@@ -15,12 +15,13 @@ CREATE TABLE `mobile_cart` (
   `user_id` bigint(20) NOT NULL,
   `product_id` bigint(20) DEFAULT NULL COMMENT '商品id',
   `quantity` bigint(20) DEFAULT NULL COMMENT '数量',
+  `detail` text COMMENT '商品参数 json',
   `checked` bigint(20) DEFAULT NULL COMMENT '是否选择,1=已勾选,0=未勾选',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`),
   KEY `user_id_index` (`user_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=146 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 -- ----------------------------

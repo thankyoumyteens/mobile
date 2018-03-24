@@ -1,15 +1,21 @@
-package iloveyesterday.mobile.pojo;
+package iloveyesterday.mobile.vo;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
-public class Cart {
+public class CartVo {
+
     private Long id;
 
     private Long userId;
 
     private Long productId;
 
+    private String productName;
+
     private Long quantity;
+
+    private BigDecimal unitPrice;
 
     private String detail;
 
@@ -18,21 +24,6 @@ public class Cart {
     private Date createTime;
 
     private Date updateTime;
-
-    public Cart(Long id, Long userId, Long productId, Long quantity, String detail, Long checked, Date createTime, Date updateTime) {
-        this.id = id;
-        this.userId = userId;
-        this.productId = productId;
-        this.quantity = quantity;
-        this.detail = detail;
-        this.checked = checked;
-        this.createTime = createTime;
-        this.updateTime = updateTime;
-    }
-
-    public Cart() {
-        super();
-    }
 
     public Long getId() {
         return id;
@@ -50,14 +41,6 @@ public class Cart {
         this.userId = userId;
     }
 
-    public String getDetail() {
-        return detail;
-    }
-
-    public void setDetail(String detail) {
-        this.detail = detail;
-    }
-
     public Long getProductId() {
         return productId;
     }
@@ -66,12 +49,36 @@ public class Cart {
         this.productId = productId;
     }
 
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
     public Long getQuantity() {
         return quantity;
     }
 
     public void setQuantity(Long quantity) {
         this.quantity = quantity;
+    }
+
+    public BigDecimal getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(BigDecimal unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
     }
 
     public Long getChecked() {
