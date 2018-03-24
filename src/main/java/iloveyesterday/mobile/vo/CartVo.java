@@ -13,6 +13,8 @@ public class CartVo {
 
     private String productName;
 
+    private String mainImage;
+
     private Long quantity;
 
     private BigDecimal unitPrice;
@@ -39,6 +41,14 @@ public class CartVo {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getMainImage() {
+        return mainImage;
+    }
+
+    public void setMainImage(String mainImage) {
+        this.mainImage = mainImage;
     }
 
     public Long getProductId() {

@@ -48,4 +48,56 @@ public class CartController {
         }
         return cartService.list(user.getId(), pageNum, pageSize);
     }
+
+    @RequestMapping("check.do")
+    @ResponseBody
+    public ResponseData check(HttpSession session, Long cartId) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ResponseData.error(
+                    ResponseCode.NEED_LOGIN.getCode(),
+                    ResponseCode.NEED_LOGIN.getMsg()
+            );
+        }
+        return cartService.check(user.getId(), cartId);
+    }
+
+    @RequestMapping("check_all.do")
+    @ResponseBody
+    public ResponseData checkAll(HttpSession session) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ResponseData.error(
+                    ResponseCode.NEED_LOGIN.getCode(),
+                    ResponseCode.NEED_LOGIN.getMsg()
+            );
+        }
+        return cartService.checkAll(user.getId());
+    }
+
+    @RequestMapping("add.do")
+    @ResponseBody
+    public ResponseData add(HttpSession session, Long cartId) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ResponseData.error(
+                    ResponseCode.NEED_LOGIN.getCode(),
+                    ResponseCode.NEED_LOGIN.getMsg()
+            );
+        }
+        return cartService.add(user.getId(), cartId);
+    }
+
+    @RequestMapping("sub.do")
+    @ResponseBody
+    public ResponseData sub(HttpSession session, Long cartId) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ResponseData.error(
+                    ResponseCode.NEED_LOGIN.getCode(),
+                    ResponseCode.NEED_LOGIN.getMsg()
+            );
+        }
+        return cartService.sub(user.getId(), cartId);
+    }
 }
