@@ -29,6 +29,16 @@ public class ProductController {
         return productService.getListByCategoryId(Const.Role.USER, categoryId, pageNum, pageSize);
     }
 
+    @RequestMapping("search.do")
+    @ResponseBody
+    public ResponseData<PageInfo> search(
+            String keyword,
+            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize
+    ) {
+        return productService.getListByKeyword(Const.Role.USER, keyword, pageNum, pageSize);
+    }
+
     @RequestMapping("detail.do")
     @ResponseBody
     public ResponseData<ProductVo> detail(Long productId) {

@@ -13,4 +13,6 @@ public interface IProductService {
     ResponseData add(Product product);
 
     ResponseData<ProductVo> detail(Long productId, int role);
+
+    ResponseData<PageInfo> getListByKeyword(int role, String keyword, int pageNum, int pageSize);
 }

@@ -103,6 +103,31 @@ public class ProductServiceImpl implements IProductService {
         return ResponseData.success(productVo);
     }
 
+    @Override
+    public ResponseData<PageInfo> getListByKeyword(int role, String keyword, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Product> productList = null;
+        keyword = "%" + keyword + "%";
+
+        switch (role) {
+            case Const.Role.ADMIN:
+                productList = productMapper.selectByKeyword(keyword);
+                break;
+            case Const.Role.USER:
+                productList = productMapper.selectByKeywordAndStatus(keyword, Const.ProductStatus.ON_SALE);
+                break;
+        }
+
+        List<ProductListVo> productListVoList = Lists.newArrayList();
+        for (Product productItem : productList) {
+            ProductListVo productListVo = assembleProductListVo(productItem);
+            productListVoList.add(productListVo);
+        }
+        PageInfo pageResult = new PageInfo(productList);
+        pageResult.setList(productListVoList);
+        return ResponseData.success(pageResult);
+    }
+
     private ProductListVo assembleProductListVo(Product product) {
         ProductListVo productListVo = new ProductListVo();
         Category category = categoryMapper.selectByPrimaryKey(product.getCategoryId());

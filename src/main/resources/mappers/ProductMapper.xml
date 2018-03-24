@@ -190,4 +190,17 @@
     where category_id=#{categoryId}
     and status=#{status}
   </select>
+  <select id="selectByKeyword" resultMap="BaseResultMap" parameterType="string">
+    select
+    <include refid="Base_Column_List" />
+    from mobile_product
+    where `name` like #{keyword}
+  </select>
+  <select id="selectByKeywordAndStatus" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List" />
+    from mobile_product
+    where `name` like #{keyword}
+    and status=#{status}
+  </select>
 </mapper>

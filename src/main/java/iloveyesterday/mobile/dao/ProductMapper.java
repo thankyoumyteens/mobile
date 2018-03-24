@@ -27,4 +27,11 @@ public interface ProductMapper {
             @Param("categoryId") Long categoryId,
             @Param("status") int status
     );
+
+    List<Product> selectByKeyword(String keyword);
+
+    List<Product> selectByKeywordAndStatus(
+            @Param("keyword") String keyword,
+            @Param("status") int status
+    );
 }
