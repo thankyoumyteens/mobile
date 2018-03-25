@@ -75,8 +75,8 @@ CREATE TABLE `mobile_order_item` (
   `product_id` bigint(20) DEFAULT NULL COMMENT '商品id',
   `product_name` varchar(100) DEFAULT NULL COMMENT '商品名称',
   `product_image` varchar(500) DEFAULT NULL COMMENT '商品图片地址',
-  `type_names` text DEFAULT NULL COMMENT '商品属性名列表',
-  `type_values` varchar(50) DEFAULT NULL COMMENT '商品属性值列表',
+  `type_names` text DEFAULT NULL COMMENT '商品参数',
+  `type_values` varchar(50) DEFAULT NULL COMMENT '废弃',
   `current_unit_price` decimal(20,2) DEFAULT NULL COMMENT '生成订单时的商品单价，单位是元,保留两位小数',
   `quantity` int(10) DEFAULT NULL COMMENT '商品数量',
   `total_price` decimal(20,2) DEFAULT NULL COMMENT '商品总价,单位是元,保留两位小数',
@@ -140,6 +140,7 @@ CREATE TABLE `mobile_review` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '评价id',
   `order_item_id` bigint(20) NOT NULL COMMENT '订单项id',
   `user_id` bigint(20) NOT NULL COMMENT '用户id',
+  `product_id` bigint(20) NOT NULL COMMENT '商品id',
   `star` int(10) NOT NULL COMMENT '评星',
   `images` text COMMENT '图片地址,json格式,扩展用',
   `detail` text COMMENT '评价详情',
@@ -147,7 +148,7 @@ CREATE TABLE `mobile_review` (
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  商品可选参数与商品对应表

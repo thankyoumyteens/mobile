@@ -28,6 +28,18 @@ public interface Const {
     }
 
     /**
+     * 商品评论状态
+     */
+    interface ReviewStatus {
+        // 公开
+        int PUBLIC = 1;
+        // 匿名
+        int PRIVATE = 2;
+        // 删除
+        int DELETE = 3;
+    }
+
+    /**
      * 用户身份
      */
     interface Role {

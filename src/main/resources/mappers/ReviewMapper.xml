@@ -6,6 +6,7 @@
       <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="order_item_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="user_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="product_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="star" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="images" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="detail" javaType="java.lang.String" jdbcType="VARCHAR" />
@@ -15,7 +16,7 @@
     </constructor>
   </resultMap>
   <sql id="Base_Column_List">
-    id, order_item_id, user_id, star, images, detail, status, create_time, update_time
+    id, order_item_id, user_id, product_id, star, images, detail, status, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -28,11 +29,12 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="iloveyesterday.mobile.pojo.Review">
-    insert into mobile_review (id, order_item_id, user_id, 
+    insert into mobile_review (id, order_item_id, user_id, product_id,
       star, images, detail, 
       status, create_time, update_time
       )
-    values (#{id,jdbcType=BIGINT}, #{orderItemId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, 
+    values (#{id,jdbcType=BIGINT}, #{orderItemId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT},
+      #{productId,jdbcType=BIGINT},
       #{star,jdbcType=INTEGER}, #{images,jdbcType=VARCHAR}, #{detail,jdbcType=VARCHAR}, 
       #{status,jdbcType=INTEGER}, now(), now()
       )
@@ -107,6 +109,9 @@
       <if test="userId != null">
         user_id = #{userId,jdbcType=BIGINT},
       </if>
+      <if test="productId != null">
+        product_id = #{productId,jdbcType=BIGINT},
+      </if>
       <if test="star != null">
         star = #{star,jdbcType=INTEGER},
       </if>
@@ -136,4 +141,10 @@
       update_time = now()
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <select id="selectByProductId" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="Base_Column_List"/>
+    from mobile_review
+    where product_id=#{productId}
+  </select>
 </mapper>

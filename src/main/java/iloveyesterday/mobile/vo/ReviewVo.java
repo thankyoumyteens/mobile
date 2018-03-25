@@ -1,15 +1,20 @@
-package iloveyesterday.mobile.pojo;
+package iloveyesterday.mobile.vo;
+
+import iloveyesterday.mobile.pojo.User;
 
 import java.util.Date;
 
-public class Review {
+public class ReviewVo {
+
     private Long id;
 
-    private Long orderItemId;
-
-    private Long userId;
+    private User author;
 
     private Long productId;
+
+    private String productName;
+
+    private Date orderCreateTime;
 
     private Integer star;
 
@@ -23,29 +28,20 @@ public class Review {
 
     private Date updateTime;
 
-    public Review(Long id, Long orderItemId, Long userId, Long productId, Integer star, String images, String detail, Integer status, Date createTime, Date updateTime) {
-        this.id = id;
-        this.orderItemId = orderItemId;
-        this.userId = userId;
-        this.productId = productId;
-        this.star = star;
-        this.images = images;
-        this.detail = detail;
-        this.status = status;
-        this.createTime = createTime;
-        this.updateTime = updateTime;
-    }
-
-    public Review() {
-        super();
-    }
-
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
     }
 
     public Long getProductId() {
@@ -56,20 +52,20 @@ public class Review {
         this.productId = productId;
     }
 
-    public Long getOrderItemId() {
-        return orderItemId;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setOrderItemId(Long orderItemId) {
-        this.orderItemId = orderItemId;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Date getOrderCreateTime() {
+        return orderCreateTime;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setOrderCreateTime(Date orderCreateTime) {
+        this.orderCreateTime = orderCreateTime;
     }
 
     public Integer getStar() {
@@ -85,7 +81,7 @@ public class Review {
     }
 
     public void setImages(String images) {
-        this.images = images == null ? null : images.trim();
+        this.images = images;
     }
 
     public String getDetail() {
@@ -93,7 +89,7 @@ public class Review {
     }
 
     public void setDetail(String detail) {
-        this.detail = detail == null ? null : detail.trim();
+        this.detail = detail;
     }
 
     public Integer getStatus() {

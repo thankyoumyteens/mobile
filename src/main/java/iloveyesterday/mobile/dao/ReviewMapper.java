@@ -2,6 +2,8 @@ package iloveyesterday.mobile.dao;
 
 import iloveyesterday.mobile.pojo.Review;
 
+import java.util.List;
+
 public interface ReviewMapper {
     int deleteByPrimaryKey(Long id);
 
@@ -14,4 +16,6 @@ public interface ReviewMapper {
     int updateByPrimaryKeySelective(Review record);
 
     int updateByPrimaryKey(Review record);
+
+    List<Review> selectByProductId(Long productId);
 }
