@@ -3,6 +3,7 @@ package iloveyesterday.mobile.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
+import iloveyesterday.mobile.common.Const;
 import iloveyesterday.mobile.common.ResponseData;
 import iloveyesterday.mobile.dao.CartMapper;
 import iloveyesterday.mobile.dao.ProductMapper;
@@ -54,7 +55,7 @@ public class CartServiceImpl implements ICartService {
             Cart cart = new Cart();
             cart.setUserId(userId);
             cart.setProductId(productId);
-            cart.setChecked(1L);
+            cart.setChecked(Const.CartStatus.CHECKED);
             cart.setQuantity(quantity);
             cart.setDetail(detail);
 
@@ -94,7 +95,7 @@ public class CartServiceImpl implements ICartService {
         if (cart.getUserId().equals(userId)) {
             Cart cartForUpdate = new Cart();
             cartForUpdate.setId(cartId);
-            cartForUpdate.setChecked(cart.getChecked().equals(1L) ? 0 : 1L);
+            cartForUpdate.setChecked(cart.getChecked().equals(Const.CartStatus.CHECKED) ? Const.CartStatus.UNCHECKED : Const.CartStatus.CHECKED);
             cartForUpdate.setUpdateTime(new Date());
             int resultCount = cartMapper.updateByPrimaryKeySelective(cartForUpdate);
             if (resultCount > 0) {
@@ -111,10 +112,10 @@ public class CartServiceImpl implements ICartService {
             return ResponseData.error();
         }
         for (Cart cart : cartList) {
-            if (!cart.getChecked().equals(1L)) {
+            if (!cart.getChecked().equals(Const.CartStatus.CHECKED)) {
                 Cart cartForUpdate = new Cart();
                 cartForUpdate.setId(cart.getId());
-                cartForUpdate.setChecked(1L);
+                cartForUpdate.setChecked(Const.CartStatus.CHECKED);
                 cartForUpdate.setUpdateTime(new Date());
                 int resultCount = cartMapper.updateByPrimaryKeySelective(cartForUpdate);
                 if (resultCount <= 0) {

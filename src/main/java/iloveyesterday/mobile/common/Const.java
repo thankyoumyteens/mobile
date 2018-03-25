@@ -40,6 +40,42 @@ public interface Const {
     }
 
     /**
+     * 购物车状态
+     */
+    interface CartStatus {
+        // 选中
+        Long CHECKED = 1L;
+        // 未选中
+        Long UNCHECKED = 0L;
+    }
+
+    /**
+     * 订单状态
+     */
+    interface OrderStatus {
+        // 已取消
+        int CANCELED = 0;
+        // 未付款
+        int NOT_PAY = 10;
+        // 已付款
+        int PAYED = 20;
+        // 已发货
+        int SENT = 40;
+        // 交易成功
+        int SUCCESS = 50;
+        // 交易关闭
+        int CLOSED = 60;
+    }
+
+    /**
+     * 付款方式
+     */
+    interface PaymentType {
+        // 在线支付
+        int ONLINE = 1;
+    }
+
+    /**
      * 用户身份
      */
     interface Role {
