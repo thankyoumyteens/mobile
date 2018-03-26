@@ -117,7 +117,7 @@ public class ProductServiceImpl implements IProductService {
                 productList = productMapper.selectByKeywordAndStatus(keyword, Const.ProductStatus.ON_SALE);
                 break;
         }
-
+        // todo 每种参数对应不同的库存
         List<ProductListVo> productListVoList = Lists.newArrayList();
         for (Product productItem : productList) {
             ProductListVo productListVo = assembleProductListVo(productItem);

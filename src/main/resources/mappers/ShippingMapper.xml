@@ -31,7 +31,7 @@
     delete from mobile_shipping
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="iloveyesterday.mobile.pojo.Shipping">
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="iloveyesterday.mobile.pojo.Shipping">
     insert into mobile_shipping (id, user_id, receiver_name, 
       receiver_phone, receiver_mobile, receiver_province, 
       receiver_city, receiver_district, receiver_address, 
