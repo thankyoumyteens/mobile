@@ -49,6 +49,19 @@ public class ShippingController {
         return shippingService.list(user.getId());
     }
 
+    @RequestMapping("delete.do")
+    @ResponseBody
+    public ResponseData delete(HttpSession session, Long shippingId) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ResponseData.error(
+                    ResponseCode.NEED_LOGIN.getCode(),
+                    ResponseCode.NEED_LOGIN.getMsg()
+            );
+        }
+        return shippingService.delete(user.getId(), shippingId);
+    }
+
     @RequestMapping("region.do")
     @ResponseBody
     public ResponseData<List<Region>> region(@RequestParam(value = "parentId", defaultValue = "1") Double parentId) {

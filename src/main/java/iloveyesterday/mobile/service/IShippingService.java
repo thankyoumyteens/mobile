@@ -12,4 +12,6 @@ public interface IShippingService {
     ResponseData<List<Region>> region(Double parentId);
 
     ResponseData<List<Shipping>> list(Long userId);
+
+    ResponseData delete(Long userId, Long shippingId);
 }

@@ -178,4 +178,9 @@
     from mobile_shipping
     where user_id=#{userId}
   </select>
+  <delete id="deleteByPrimaryKeyAndUserId" parameterType="map">
+    delete from mobile_shipping
+    where id = #{shippingId}
+    and user_id=#{userId}
+  </delete>
 </mapper>

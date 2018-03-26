@@ -41,4 +41,13 @@ public class ShippingServiceImpl implements IShippingService {
         List<Shipping> shippingList = shippingMapper.selectByUserId(userId);
         return ResponseData.success(shippingList);
     }
+
+    @Override
+    public ResponseData delete(Long userId, Long shippingId) {
+        int resultCount = shippingMapper.deleteByPrimaryKeyAndUserId(shippingId, userId);
+        if (resultCount > 0) {
+            return ResponseData.success();
+        }
+        return ResponseData.error();
+    }
 }
