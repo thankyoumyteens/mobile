@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="iloveyesterday.mobile.dao.RegionMapper">
+  <resultMap id="BaseResultMap" type="iloveyesterday.mobile.pojo.Region">
+    <constructor>
+      <idArg column="REGION_ID" javaType="java.lang.Double" jdbcType="DOUBLE" />
+      <arg column="REGION_CODE" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="REGION_NAME" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="PARENT_ID" javaType="java.lang.Double" jdbcType="DOUBLE" />
+      <arg column="REGION_LEVEL" javaType="java.lang.Double" jdbcType="DOUBLE" />
+      <arg column="REGION_ORDER" javaType="java.lang.Double" jdbcType="DOUBLE" />
+      <arg column="REGION_NAME_EN" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="REGION_SHORTNAME_EN" javaType="java.lang.String" jdbcType="VARCHAR" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List">
+    REGION_ID, REGION_CODE, REGION_NAME, PARENT_ID, REGION_LEVEL, REGION_ORDER, REGION_NAME_EN, 
+    REGION_SHORTNAME_EN
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Double" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from region
+    where REGION_ID = #{regionId,jdbcType=DOUBLE}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Double">
+    delete from region
+    where REGION_ID = #{regionId,jdbcType=DOUBLE}
+  </delete>
+  <insert id="insert" parameterType="iloveyesterday.mobile.pojo.Region">
+    insert into region (REGION_ID, REGION_CODE, REGION_NAME, 
+      PARENT_ID, REGION_LEVEL, REGION_ORDER, 
+      REGION_NAME_EN, REGION_SHORTNAME_EN)
+    values (#{regionId,jdbcType=DOUBLE}, #{regionCode,jdbcType=VARCHAR}, #{regionName,jdbcType=VARCHAR}, 
+      #{parentId,jdbcType=DOUBLE}, #{regionLevel,jdbcType=DOUBLE}, #{regionOrder,jdbcType=DOUBLE}, 
+      #{regionNameEn,jdbcType=VARCHAR}, #{regionShortnameEn,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="iloveyesterday.mobile.pojo.Region">
+    insert into region
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="regionId != null">
+        REGION_ID,
+      </if>
+      <if test="regionCode != null">
+        REGION_CODE,
+      </if>
+      <if test="regionName != null">
+        REGION_NAME,
+      </if>
+      <if test="parentId != null">
+        PARENT_ID,
+      </if>
+      <if test="regionLevel != null">
+        REGION_LEVEL,
+      </if>
+      <if test="regionOrder != null">
+        REGION_ORDER,
+      </if>
+      <if test="regionNameEn != null">
+        REGION_NAME_EN,
+      </if>
+      <if test="regionShortnameEn != null">
+        REGION_SHORTNAME_EN,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="regionId != null">
+        #{regionId,jdbcType=DOUBLE},
+      </if>
+      <if test="regionCode != null">
+        #{regionCode,jdbcType=VARCHAR},
+      </if>
+      <if test="regionName != null">
+        #{regionName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=DOUBLE},
+      </if>
+      <if test="regionLevel != null">
+        #{regionLevel,jdbcType=DOUBLE},
+      </if>
+      <if test="regionOrder != null">
+        #{regionOrder,jdbcType=DOUBLE},
+      </if>
+      <if test="regionNameEn != null">
+        #{regionNameEn,jdbcType=VARCHAR},
+      </if>
+      <if test="regionShortnameEn != null">
+        #{regionShortnameEn,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="iloveyesterday.mobile.pojo.Region">
+    update region
+    <set>
+      <if test="regionCode != null">
+        REGION_CODE = #{regionCode,jdbcType=VARCHAR},
+      </if>
+      <if test="regionName != null">
+        REGION_NAME = #{regionName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        PARENT_ID = #{parentId,jdbcType=DOUBLE},
+      </if>
+      <if test="regionLevel != null">
+        REGION_LEVEL = #{regionLevel,jdbcType=DOUBLE},
+      </if>
+      <if test="regionOrder != null">
+        REGION_ORDER = #{regionOrder,jdbcType=DOUBLE},
+      </if>
+      <if test="regionNameEn != null">
+        REGION_NAME_EN = #{regionNameEn,jdbcType=VARCHAR},
+      </if>
+      <if test="regionShortnameEn != null">
+        REGION_SHORTNAME_EN = #{regionShortnameEn,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where REGION_ID = #{regionId,jdbcType=DOUBLE}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="iloveyesterday.mobile.pojo.Region">
+    update region
+    set REGION_CODE = #{regionCode,jdbcType=VARCHAR},
+      REGION_NAME = #{regionName,jdbcType=VARCHAR},
+      PARENT_ID = #{parentId,jdbcType=DOUBLE},
+      REGION_LEVEL = #{regionLevel,jdbcType=DOUBLE},
+      REGION_ORDER = #{regionOrder,jdbcType=DOUBLE},
+      REGION_NAME_EN = #{regionNameEn,jdbcType=VARCHAR},
+      REGION_SHORTNAME_EN = #{regionShortnameEn,jdbcType=VARCHAR}
+    where REGION_ID = #{regionId,jdbcType=DOUBLE}
+  </update>
+  <select id="selectByParentId" resultMap="BaseResultMap" parameterType="double">
+    select
+    <include refid="Base_Column_List"/>
+    from region
+    where PARENT_ID=#{parentId}
+  </select>
+</mapper>

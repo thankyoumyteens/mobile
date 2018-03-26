@@ -172,4 +172,10 @@
       update_time = now()
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="Base_Column_List"/>
+    from mobile_shipping
+    where user_id=#{userId}
+  </select>
 </mapper>

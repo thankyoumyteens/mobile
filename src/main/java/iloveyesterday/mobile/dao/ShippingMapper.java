@@ -2,6 +2,8 @@ package iloveyesterday.mobile.dao;
 
 import iloveyesterday.mobile.pojo.Shipping;
 
+import java.util.List;
+
 public interface ShippingMapper {
     int deleteByPrimaryKey(Long id);
 
@@ -14,4 +16,6 @@ public interface ShippingMapper {
     int updateByPrimaryKeySelective(Shipping record);
 
     int updateByPrimaryKey(Shipping record);
+
+    List<Shipping> selectByUserId(Long userId);
 }
