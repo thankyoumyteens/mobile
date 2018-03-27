@@ -78,7 +78,8 @@ public class ShippingController {
 
     @RequestMapping("region.do")
     @ResponseBody
-    public ResponseData<List<Region>> region(@RequestParam(value = "parentId", defaultValue = "1") Double parentId) {
+    public ResponseData<List<Region>> region(
+            @RequestParam(value = "parentId", defaultValue = "1") Double parentId) {
         return shippingService.region(parentId);
     }
 }
