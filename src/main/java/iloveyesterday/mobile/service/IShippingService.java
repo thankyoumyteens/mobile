@@ -14,4 +14,6 @@ public interface IShippingService {
     ResponseData<List<Shipping>> list(Long userId);
 
     ResponseData delete(Long userId, Long shippingId);
+
+    ResponseData update(Long userId, Shipping shipping);
 }

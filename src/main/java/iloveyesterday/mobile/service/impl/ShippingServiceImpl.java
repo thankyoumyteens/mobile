@@ -50,4 +50,22 @@ public class ShippingServiceImpl implements IShippingService {
         }
         return ResponseData.error();
     }
+
+    @Override
+    public ResponseData update(Long userId, Shipping shipping) {
+        shipping.setUserId(userId);
+        if (!checkShipping(userId, shipping.getId())) {
+            return ResponseData.error();
+        }
+        int resultCount = shippingMapper.updateByPrimaryKeySelective(shipping);
+        if (resultCount > 0) {
+            return ResponseData.success(shipping);
+        }
+        return ResponseData.error();
+    }
+
+    private boolean checkShipping(Long userId, Long shippingId) {
+        int resultCount = shippingMapper.selectByUserIdAndShippingId(userId, shippingId);
+        return resultCount > 0;
+    }
 }

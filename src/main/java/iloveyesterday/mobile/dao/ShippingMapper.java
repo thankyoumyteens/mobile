@@ -23,4 +23,8 @@ public interface ShippingMapper {
     int deleteByPrimaryKeyAndUserId(
             @Param("shippingId") Long shippingId,
             @Param("userId") Long userId);
+
+    int selectByUserIdAndShippingId(
+            @Param("userId") Long userId,
+            @Param("shippingId") Long shippingId);
 }

@@ -183,4 +183,10 @@
     where id = #{shippingId}
     and user_id=#{userId}
   </delete>
+  <select id="selectByUserIdAndShippingId" resultType="int" parameterType="map">
+    select count(1)
+    from mobile_shipping
+    where id = #{shippingId}
+    and user_id=#{userId}
+  </select>
 </mapper>
