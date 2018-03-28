@@ -55,7 +55,7 @@ public class CartServiceImpl implements ICartService {
             Cart cart = new Cart();
             cart.setUserId(userId);
             cart.setProductId(productId);
-            cart.setChecked(Const.CartStatus.CHECKED);
+            cart.setChecked(Const.CartStatus.UNCHECKED);
             cart.setQuantity(quantity);
             cart.setDetail(detail);
 
