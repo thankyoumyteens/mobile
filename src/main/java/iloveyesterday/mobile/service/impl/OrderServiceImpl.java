@@ -1,5 +1,7 @@
 package iloveyesterday.mobile.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import iloveyesterday.mobile.common.Const;
 import iloveyesterday.mobile.common.ResponseData;
@@ -7,12 +9,16 @@ import iloveyesterday.mobile.dao.*;
 import iloveyesterday.mobile.pojo.*;
 import iloveyesterday.mobile.service.IOrderService;
 import iloveyesterday.mobile.util.BigDecimalUtil;
+import iloveyesterday.mobile.util.PropertiesUtil;
+import iloveyesterday.mobile.vo.OrderItemListVo;
+import iloveyesterday.mobile.vo.OrderListVo;
 import iloveyesterday.mobile.vo.OrderVo;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -33,6 +39,7 @@ public class OrderServiceImpl implements IOrderService {
 
     @Resource
     private ShippingMapper shippingMapper;
+
 
     @Override
     public ResponseData<OrderVo> create(Long userId, Long shippingId) {
@@ -64,9 +71,115 @@ public class OrderServiceImpl implements IOrderService {
         cleanCart(cartCheckedList);
 
         OrderVo orderVo = assembleOrderVo(order, orderItemList, shippingId);
-        return ResponseData.success(orderVo); // todo
+        return ResponseData.success(orderVo);
     }
 
+    @Override
+    public ResponseData<PageInfo> list(Long userId, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Order> orderList = orderMapper.selectByUserId(userId);
+
+        List<OrderListVo> orderListVoList = Lists.newArrayList();
+        for (Order order : orderList) {
+            OrderListVo orderListVo = assembleOrderListVo(order);
+            if (orderListVo == null) {
+                return ResponseData.error();
+            }
+            orderListVoList.add(orderListVo);
+        }
+        PageInfo pageResult = new PageInfo(orderList);
+        pageResult.setList(orderListVoList);
+        return ResponseData.success(pageResult);
+    }
+
+    @Override
+    public ResponseData<OrderVo> detail(Long userId, Long orderId) {
+        Order order = orderMapper.selectByPrimaryKey(orderId);
+        if (order == null) {
+            return ResponseData.error();
+        }
+        OrderVo orderVo = assembleOrderVo(order);
+        return ResponseData.success(orderVo);
+    }
+
+    private OrderVo assembleOrderVo(Order order) {
+        List<OrderItem> orderItemList = orderItemMapper.selectByOrderNo(order.getOrderNo());
+        if (CollectionUtils.isEmpty(orderItemList)) {
+            return null;
+        }
+        return assembleOrderVo(order, orderItemList, order.getShippingId());
+    }
+
+    private OrderListVo assembleOrderListVo(Order order) {
+        OrderListVo orderListVo = new OrderListVo();
+
+        List<OrderItem> orderItemList = orderItemMapper.selectByOrderNo(order.getOrderNo());
+        if (CollectionUtils.isEmpty(orderItemList)) {
+            return null;
+        }
+
+        orderListVo.setOrderId(order.getId());
+        orderListVo.setOrderNo(order.getOrderNo());
+        orderListVo.setTotalPrice(order.getPayment());
+        orderListVo.setCreateTime(order.getCreateTime());
+
+        List<OrderItemListVo> orderItemListVoList = Lists.newArrayList();
+        for (OrderItem orderItem : orderItemList) {
+            OrderItemListVo orderItemListVo = assembleOrderItemListVo(orderItem);
+            if (orderItemListVo == null) {
+                return null;
+            }
+            orderItemListVoList.add(orderItemListVo);
+        }
+        orderListVo.setOrderItemList(orderItemListVoList);
+        orderListVo.setCount(orderItemListVoList.size());
+
+        orderListVo.setStatus(convertStatus(order.getStatus()));
+
+        return orderListVo;
+    }
+
+    /**
+     * 返回订单状态对应的文本描述
+     *
+     * @param status
+     * @return
+     */
+    private String convertStatus(Integer status) {
+        switch (status) {
+            case Const.OrderStatus.CANCELED:
+                return "已取消";
+            case Const.OrderStatus.NOT_PAY:
+                return "未付款";
+            case Const.OrderStatus.PAYED:
+                return "已付款";
+            case Const.OrderStatus.SENT:
+                return "已发货";
+            case Const.OrderStatus.SUCCESS:
+                return "已完成";
+            case Const.OrderStatus.CLOSED:
+                return "已关闭";
+            default:
+                return "未知";
+        }
+    }
+
+    private OrderItemListVo assembleOrderItemListVo(OrderItem orderItem) {
+        OrderItemListVo orderItemListVo = new OrderItemListVo();
+        orderItemListVo.setOrderItemId(orderItem.getId());
+        orderItemListVo.setDetail(orderItem.getTypeNames());
+        orderItemListVo.setMainImage(PropertiesUtil.getImageHost() + orderItem.getProductImage());
+        orderItemListVo.setProductName(orderItem.getProductName());
+        orderItemListVo.setQuantity(orderItem.getQuantity());
+        orderItemListVo.setTotalPrice(orderItem.getTotalPrice());
+        return orderItemListVo;
+    }
+
+    /**
+     * 删除购物车中已购买的商品
+     *
+     * @param cartList
+     */
     private void cleanCart(List<Cart> cartList) {
         for (Cart cart : cartList) {
             cartMapper.deleteByPrimaryKey(cart.getId());
@@ -96,30 +209,15 @@ public class OrderServiceImpl implements IOrderService {
         orderVo.setPostage(order.getPostage());
         orderVo.setSendTime(order.getSendTime());
         orderVo.setStatus(order.getStatus());
+        for (OrderItem orderItem : orderItemList) {
+            orderItem.setProductImage(PropertiesUtil.getImageHost() + orderItem.getProductImage());
+        }
         orderVo.setOrderItemList(orderItemList);
         orderVo.setPaymentTypeMsg(getPaymentTypeMsg(order.getPaymentType()));
         orderVo.setShipping(shipping);
-        orderVo.setStatusMsg(getStatusMsg(order.getStatus()));
+        orderVo.setStatusMsg(convertStatus(order.getStatus()));
 
         return orderVo;
-    }
-
-    private String getStatusMsg(Integer status) {
-        switch (status) {
-            case Const.OrderStatus.NOT_PAY:
-                return "待付款";
-            case Const.OrderStatus.CANCELED:
-                return "已取消";
-            case Const.OrderStatus.CLOSED:
-                return "已关闭";
-            case Const.OrderStatus.PAYED:
-                return "已付款";
-            case Const.OrderStatus.SENT:
-                return "已发货";
-            case Const.OrderStatus.SUCCESS:
-                return "完成";
-        }
-        return "";
     }
 
     private String getPaymentTypeMsg(Integer paymentType) {
@@ -161,6 +259,7 @@ public class OrderServiceImpl implements IOrderService {
         order.setShippingId(shippingId);
         order.setPaymentType(Const.PaymentType.ONLINE);
         order.setStatus(Const.OrderStatus.NOT_PAY);
+        order.setCreateTime(new Date());
         // 计算总价
         BigDecimal totalPrice = new BigDecimal("0");
         for (Cart cart : cartList) {

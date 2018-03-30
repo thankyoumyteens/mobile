@@ -16,6 +16,8 @@ public class OrderItem {
 
     private String productImage;
 
+    private String typeNames;
+
     private String typeValues;
 
     private BigDecimal currentUnitPrice;
@@ -28,7 +30,22 @@ public class OrderItem {
 
     private Date updateTime;
 
-    private String typeNames;
+
+    public OrderItem(Long id, Long userId, Long orderNo, Long productId, String productName, String productImage, String typeNames, String typeValues, BigDecimal currentUnitPrice, Integer quantity, BigDecimal totalPrice, Date createTime, Date updateTime) {
+        this.id = id;
+        this.userId = userId;
+        this.orderNo = orderNo;
+        this.productId = productId;
+        this.productName = productName;
+        this.productImage = productImage;
+        this.typeNames = typeNames;
+        this.typeValues = typeValues;
+        this.currentUnitPrice = currentUnitPrice;
+        this.quantity = quantity;
+        this.totalPrice = totalPrice;
+        this.createTime = createTime;
+        this.updateTime = updateTime;
+    }
 
     public OrderItem(Long id, Long userId, Long orderNo, Long productId, String productName, String productImage, String typeValues, BigDecimal currentUnitPrice, Integer quantity, BigDecimal totalPrice, Date createTime, Date updateTime) {
         this.id = id;
