@@ -200,4 +200,10 @@
     from mobile_order
     where user_id=#{userId}
   </select>
+  <select id="selectByOrderNo" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="Base_Column_List"/>
+    from mobile_order
+    where order_no=#{orderNo}
+  </select>
 </mapper>

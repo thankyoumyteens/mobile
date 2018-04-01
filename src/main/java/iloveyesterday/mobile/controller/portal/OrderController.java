@@ -51,6 +51,13 @@ public class OrderController {
         return orderService.list(user.getId(), pageNum, pageSize);
     }
 
+    /**
+     * 根据订单Id查询订单详情
+     *
+     * @param session
+     * @param orderId
+     * @return
+     */
     @RequestMapping("detail.do")
     @ResponseBody
     public ResponseData<OrderVo> detail(HttpSession session, Long orderId) {
@@ -64,5 +71,25 @@ public class OrderController {
         return orderService.detail(user.getId(), orderId);
     }
 
-    // todo 根据订单号查询订单明细
+    /**
+     * 根据订单号查询订单详情
+     *
+     * @param session
+     * @param orderNo
+     * @return
+     */
+    @RequestMapping("detail_by_no.do")
+    @ResponseBody
+    public ResponseData<OrderVo> detailByOrderNo(HttpSession session, Long orderNo) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ResponseData.error(
+                    ResponseCode.NEED_LOGIN.getCode(),
+                    ResponseCode.NEED_LOGIN.getMsg()
+            );
+        }
+        return orderService.detailByOrderNo(user.getId(), orderNo);
+    }
+
+    // todo 搜索
 }

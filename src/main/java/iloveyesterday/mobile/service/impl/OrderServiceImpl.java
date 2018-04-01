@@ -102,6 +102,16 @@ public class OrderServiceImpl implements IOrderService {
         return ResponseData.success(orderVo);
     }
 
+    @Override
+    public ResponseData<OrderVo> detailByOrderNo(Long userId, Long orderNo) {
+        Order order = orderMapper.selectByOrderNo(orderNo);
+        if (order == null) {
+            return ResponseData.error();
+        }
+        OrderVo orderVo = assembleOrderVo(order);
+        return ResponseData.success(orderVo);
+    }
+
     private OrderVo assembleOrderVo(Order order) {
         List<OrderItem> orderItemList = orderItemMapper.selectByOrderNo(order.getOrderNo());
         if (CollectionUtils.isEmpty(orderItemList)) {

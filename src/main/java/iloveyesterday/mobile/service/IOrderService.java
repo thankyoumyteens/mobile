@@ -10,4 +10,6 @@ public interface IOrderService {
     ResponseData<PageInfo> list(Long userId, int pageNum, int pageSize);
 
     ResponseData<OrderVo> detail(Long userId, Long orderId);
+
+    ResponseData<OrderVo> detailByOrderNo(Long userId, Long orderNo);
 }
