@@ -144,7 +144,8 @@ public class OrderServiceImpl implements IOrderService {
         orderListVo.setOrderItemList(orderItemListVoList);
         orderListVo.setCount(orderItemListVoList.size());
 
-        orderListVo.setStatus(convertStatus(order.getStatus()));
+        orderListVo.setStatus(order.getStatus());
+        orderListVo.setStatusMsg(convertStatus(order.getStatus()));
 
         return orderListVo;
     }

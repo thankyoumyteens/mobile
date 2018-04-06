@@ -10,7 +10,9 @@ public class OrderListVo {
 
     private Long orderNo;
 
-    private String status;
+    private Integer status;
+
+    private String statusMsg;
 
     private List<OrderItemListVo> orderItemList;
 
@@ -19,6 +21,22 @@ public class OrderListVo {
     private Integer count;
 
     private Date createTime;
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getStatusMsg() {
+        return statusMsg;
+    }
+
+    public void setStatusMsg(String statusMsg) {
+        this.statusMsg = statusMsg;
+    }
 
     public Long getOrderNo() {
         return orderNo;
@@ -34,14 +52,6 @@ public class OrderListVo {
 
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public List<OrderItemListVo> getOrderItemList() {
