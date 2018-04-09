@@ -10,12 +10,15 @@ import iloveyesterday.mobile.dao.ProductMapper;
 import iloveyesterday.mobile.pojo.Cart;
 import iloveyesterday.mobile.pojo.Product;
 import iloveyesterday.mobile.service.ICartService;
+import iloveyesterday.mobile.util.BigDecimalUtil;
+import iloveyesterday.mobile.util.JsonUtil;
 import iloveyesterday.mobile.util.PropertiesUtil;
 import iloveyesterday.mobile.vo.CartVo;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -191,7 +194,11 @@ public class CartServiceImpl implements ICartService {
         cartVo.setCreateTime(cart.getCreateTime());
         cartVo.setProductName(product.getName());
         cartVo.setQuantity(cart.getQuantity());
-        cartVo.setUnitPrice(product.getPrice());
+        BigDecimal unitPrice = product.getPrice();
+        // 加上选择的参数(detail)价格
+        unitPrice = BigDecimalUtil.add(unitPrice.doubleValue(),
+                JsonUtil.getDetailPrice(cart.getDetail()).doubleValue());
+        cartVo.setUnitPrice(unitPrice);
         cartVo.setUpdateTime(cart.getUpdateTime());
 
         return cartVo;

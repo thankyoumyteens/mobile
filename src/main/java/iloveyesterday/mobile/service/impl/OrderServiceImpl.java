@@ -9,6 +9,7 @@ import iloveyesterday.mobile.dao.*;
 import iloveyesterday.mobile.pojo.*;
 import iloveyesterday.mobile.service.IOrderService;
 import iloveyesterday.mobile.util.BigDecimalUtil;
+import iloveyesterday.mobile.util.JsonUtil;
 import iloveyesterday.mobile.util.PropertiesUtil;
 import iloveyesterday.mobile.vo.OrderItemListVo;
 import iloveyesterday.mobile.vo.OrderListVo;
@@ -247,7 +248,9 @@ public class OrderServiceImpl implements IOrderService {
                 return null;
             }
             BigDecimal unitPrice = product.getPrice();
-            // todo 加上选择的参数(detail)价格
+            // 加上选择的参数(detail)价格
+            unitPrice = BigDecimalUtil.add(unitPrice.doubleValue(),
+                    JsonUtil.getDetailPrice(cart.getDetail()).doubleValue());
             OrderItem orderItem = new OrderItem();
             orderItem.setCurrentUnitPrice(unitPrice);
             orderItem.setOrderNo(order.getOrderNo());
@@ -279,11 +282,14 @@ public class OrderServiceImpl implements IOrderService {
                 return null;
             }
             BigDecimal unitPrice = product.getPrice();
-            // todo 加上选择的参数(detail)价格
+//            JsonUtil.stringToMap(cart.getDetail());
             totalPrice = BigDecimalUtil.add(
                     totalPrice.doubleValue(),
                     BigDecimalUtil.mul(cart.getQuantity(), unitPrice.doubleValue()).doubleValue()
             );
+            // 加上选择的参数(detail)价格
+            totalPrice = BigDecimalUtil.add(totalPrice.doubleValue(),
+                    JsonUtil.getDetailPrice(cart.getDetail()).doubleValue());
         }
         order.setPostage(0); // todo 运费为0
         order.setPayment(BigDecimalUtil.add(totalPrice.doubleValue(), order.getPostage()));
