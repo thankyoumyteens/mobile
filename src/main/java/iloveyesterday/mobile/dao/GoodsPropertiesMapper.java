@@ -3,6 +3,7 @@ package iloveyesterday.mobile.dao;
 import iloveyesterday.mobile.pojo.GoodsProperties;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public interface GoodsPropertiesMapper {
     int deleteByPrimaryKey(Long id);
@@ -18,4 +19,6 @@ public interface GoodsPropertiesMapper {
     int updateByPrimaryKey(GoodsProperties record);
 
     BigDecimal selectMinimumPrice(Long goodsId);
+
+    List<GoodsProperties> selectByGoodsId(Long goodsId);
 }

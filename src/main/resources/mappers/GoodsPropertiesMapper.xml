@@ -169,4 +169,10 @@
     from mobile_goods_properties
     where goods_id=#{goodsId}
   </select>
+  <select id="selectByGoodsId" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="Base_Column_List"/>
+    from mobile_goods_properties
+    where goods_id=#{goodsId}
+  </select>
 </mapper>
