@@ -1,36 +1,32 @@
-package iloveyesterday.mobile.vo;
+package iloveyesterday.mobile.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartVo {
-
+public class GoodsComment {
     private Long id;
 
     private Long userId;
 
-    private Long productId;
+    private Long goodsId;
 
-    private String productName;
+    private Long propertiesId;
 
-    private String mainImage;
+    private String images;
 
-    private Long quantity;
+    private String text;
 
-    private BigDecimal unitPrice;
+    private Integer star;
 
-    private String detail;
-
-    private Long checked;
+    private Integer status;
 
     private Date createTime;
 

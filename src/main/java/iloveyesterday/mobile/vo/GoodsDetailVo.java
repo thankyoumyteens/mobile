@@ -1,23 +1,23 @@
 package iloveyesterday.mobile.vo;
 
-import iloveyesterday.mobile.pojo.Category;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductListVo {
+public class GoodsDetailVo {
 
-    private Long id;
+    private Long goodsId;
 
-    private Category category;
+    private Long categoryId;
+
+    private Long sellerId; // 预留
 
     private String name;
 
@@ -25,13 +25,11 @@ public class ProductListVo {
 
     private String mainImage;
 
-    private BigDecimal price;
-
-    private Long stock;
+    private String subImages;
 
     private Integer status;
 
-    private Date createTime;
+    private String statusText;
 
-    private Date updateTime;
+    private List<GoodsPropertiesVo> propertiesList;
 }

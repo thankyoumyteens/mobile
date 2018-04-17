@@ -10,15 +10,9 @@ public interface OrderItemMapper {
 
     int insert(OrderItem record);
 
-    int insertSelective(OrderItem record);
-
     OrderItem selectByPrimaryKey(Long id);
 
     int updateByPrimaryKeySelective(OrderItem record);
-
-    int updateByPrimaryKeyWithBLOBs(OrderItem record);
-
-    int updateByPrimaryKey(OrderItem record);
 
     void batchInsert(@Param("orderItemList") List<OrderItem> orderItemList);
 

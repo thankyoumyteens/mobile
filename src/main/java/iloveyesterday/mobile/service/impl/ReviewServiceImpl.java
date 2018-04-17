@@ -88,7 +88,6 @@ public class ReviewServiceImpl implements IReviewService {
         reviewVo.setId(review.getId());
         reviewVo.setAuthor(userForReview);
         reviewVo.setCreateTime(review.getCreateTime());
-        reviewVo.setDetail(orderItem.getTypeNames());
         reviewVo.setImages(review.getImages());
         reviewVo.setOrderCreateTime(orderItem.getCreateTime());
         reviewVo.setProductId(review.getProductId());

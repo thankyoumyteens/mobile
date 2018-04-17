@@ -7,46 +7,23 @@
       <arg column="user_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="order_no" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="product_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="properties_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="product_name" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="product_image" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="type_names" javaType="java.lang.String" jdbcType="LONGVARCHAR" />
-      <arg column="type_values" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="current_unit_price" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
       <arg column="quantity" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="total_price" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
       <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
-    </constructor>
-  </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="iloveyesterday.mobile.pojo.OrderItem">
-    <constructor>
-      <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="user_id" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="order_no" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="product_id" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="product_name" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="product_image" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="type_values" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="current_unit_price" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
-      <arg column="quantity" javaType="java.lang.Integer" jdbcType="INTEGER" />
-      <arg column="total_price" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
-      <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
-      <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
-      <arg column="type_names" javaType="java.lang.String" jdbcType="LONGVARCHAR" />
     </constructor>
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_id, order_no, product_id, product_name, product_image, type_names, type_values, current_unit_price,
+    id, user_id, order_no, product_id, properties_id, product_name, product_image, current_unit_price,
     quantity, total_price, create_time, update_time
   </sql>
-  <sql id="Blob_Column_List">
-    type_names
-  </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from mobile_order_item
     where id = #{id,jdbcType=BIGINT}
   </select>
@@ -56,100 +33,13 @@
   </delete>
   <insert id="insert" parameterType="iloveyesterday.mobile.pojo.OrderItem">
     insert into mobile_order_item (id, user_id, order_no, 
-      product_id, product_name, product_image, 
-      type_values, current_unit_price, quantity, 
-      total_price, create_time, update_time, 
-      type_names)
+      product_id, properties_id, product_name, product_image,
+      current_unit_price, quantity,
+      total_price, create_time, update_time)
     values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{orderNo,jdbcType=BIGINT}, 
-      #{productId,jdbcType=BIGINT}, #{productName,jdbcType=VARCHAR}, #{productImage,jdbcType=VARCHAR}, 
-      #{typeValues,jdbcType=VARCHAR}, #{currentUnitPrice,jdbcType=DECIMAL}, #{quantity,jdbcType=INTEGER}, 
+      #{productId,jdbcType=BIGINT}, #{propertiesId,jdbcType=BIGINT}, #{productName,jdbcType=VARCHAR}, #{productImage,jdbcType=VARCHAR},
+      #{currentUnitPrice,jdbcType=DECIMAL}, #{quantity,jdbcType=INTEGER},
       #{totalPrice,jdbcType=DECIMAL}, now(), now(), 
-      #{typeNames,jdbcType=LONGVARCHAR})
-  </insert>
-  <insert id="insertSelective" parameterType="iloveyesterday.mobile.pojo.OrderItem">
-    insert into mobile_order_item
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      <if test="userId != null">
-        user_id,
-      </if>
-      <if test="orderNo != null">
-        order_no,
-      </if>
-      <if test="productId != null">
-        product_id,
-      </if>
-      <if test="productName != null">
-        product_name,
-      </if>
-      <if test="productImage != null">
-        product_image,
-      </if>
-      <if test="typeValues != null">
-        type_values,
-      </if>
-      <if test="currentUnitPrice != null">
-        current_unit_price,
-      </if>
-      <if test="quantity != null">
-        quantity,
-      </if>
-      <if test="totalPrice != null">
-        total_price,
-      </if>
-      <if test="createTime != null">
-        create_time,
-      </if>
-      <if test="updateTime != null">
-        update_time,
-      </if>
-      <if test="typeNames != null">
-        type_names,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=BIGINT},
-      </if>
-      <if test="userId != null">
-        #{userId,jdbcType=BIGINT},
-      </if>
-      <if test="orderNo != null">
-        #{orderNo,jdbcType=BIGINT},
-      </if>
-      <if test="productId != null">
-        #{productId,jdbcType=BIGINT},
-      </if>
-      <if test="productName != null">
-        #{productName,jdbcType=VARCHAR},
-      </if>
-      <if test="productImage != null">
-        #{productImage,jdbcType=VARCHAR},
-      </if>
-      <if test="typeValues != null">
-        #{typeValues,jdbcType=VARCHAR},
-      </if>
-      <if test="currentUnitPrice != null">
-        #{currentUnitPrice,jdbcType=DECIMAL},
-      </if>
-      <if test="quantity != null">
-        #{quantity,jdbcType=INTEGER},
-      </if>
-      <if test="totalPrice != null">
-        #{totalPrice,jdbcType=DECIMAL},
-      </if>
-      <if test="createTime != null">
-        now(),
-      </if>
-      <if test="updateTime != null">
-        now(),
-      </if>
-      <if test="typeNames != null">
-        #{typeNames,jdbcType=LONGVARCHAR},
-      </if>
-    </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="iloveyesterday.mobile.pojo.OrderItem">
     update mobile_order_item
@@ -163,14 +53,14 @@
       <if test="productId != null">
         product_id = #{productId,jdbcType=BIGINT},
       </if>
+      <if test="propertiesId != null">
+        properties_id = #{propertiesId,jdbcType=BIGINT},
+      </if>
       <if test="productName != null">
         product_name = #{productName,jdbcType=VARCHAR},
       </if>
       <if test="productImage != null">
         product_image = #{productImage,jdbcType=VARCHAR},
-      </if>
-      <if test="typeValues != null">
-        type_values = #{typeValues,jdbcType=VARCHAR},
       </if>
       <if test="currentUnitPrice != null">
         current_unit_price = #{currentUnitPrice,jdbcType=DECIMAL},
@@ -190,49 +80,17 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="iloveyesterday.mobile.pojo.OrderItem">
-    update mobile_order_item
-    set user_id = #{userId,jdbcType=BIGINT},
-      order_no = #{orderNo,jdbcType=BIGINT},
-      product_id = #{productId,jdbcType=BIGINT},
-      product_name = #{productName,jdbcType=VARCHAR},
-      product_image = #{productImage,jdbcType=VARCHAR},
-      type_values = #{typeValues,jdbcType=VARCHAR},
-      current_unit_price = #{currentUnitPrice,jdbcType=DECIMAL},
-      quantity = #{quantity,jdbcType=INTEGER},
-      total_price = #{totalPrice,jdbcType=DECIMAL},
-      update_time = now(),
-      type_names = #{typeNames,jdbcType=LONGVARCHAR}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="iloveyesterday.mobile.pojo.OrderItem">
-    update mobile_order_item
-    set user_id = #{userId,jdbcType=BIGINT},
-      order_no = #{orderNo,jdbcType=BIGINT},
-      product_id = #{productId,jdbcType=BIGINT},
-      product_name = #{productName,jdbcType=VARCHAR},
-      product_image = #{productImage,jdbcType=VARCHAR},
-      type_values = #{typeValues,jdbcType=VARCHAR},
-      current_unit_price = #{currentUnitPrice,jdbcType=DECIMAL},
-      quantity = #{quantity,jdbcType=INTEGER},
-      total_price = #{totalPrice,jdbcType=DECIMAL},
-      update_time = now()
-    where id = #{id,jdbcType=BIGINT}
-  </update>
   <insert id="batchInsert" parameterType="list">
     insert into mobile_order_item (id, user_id, order_no,
-    product_id, product_name, product_image,
-    type_values, current_unit_price, quantity,
-    total_price, create_time, update_time,
-    type_names)
+    product_id, properties_id, product_name, product_image,
+    current_unit_price, quantity,
+    total_price, create_time, update_time)
     values
     <foreach collection="orderItemList" index="index" item="item" separator=",">
       (
       #{item.id}, #{item.userId},
-      #{item.orderNo},#{item.productId},#{item.productName},#{item.productImage},
-      #{item.typeValues},
-      #{item.currentUnitPrice},#{item.quantity},#{item.totalPrice},now(),now(),
-      #{item.typeNames}
+      #{item.orderNo},#{item.productId},#{item.propertiesId},#{item.productName},#{item.productImage},
+      #{item.currentUnitPrice},#{item.quantity},#{item.totalPrice},now(),now()
       )
     </foreach>
   </insert>

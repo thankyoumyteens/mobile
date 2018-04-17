@@ -11,17 +11,21 @@ import java.math.BigDecimal;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderItemListVo {
+public class GoodsPropertiesVo {
 
-    private Long orderItemId;
+    private Long propertiesId;
 
-    private String productName;
+    private String name;
 
-    private String detail;
+    private String text;
 
     private String mainImage;
 
-    private BigDecimal totalPrice;
+    private BigDecimal price;
 
-    private Integer quantity;
+    private Long stock;
+
+    private Integer status;
+
+    private String statusText;
 }
