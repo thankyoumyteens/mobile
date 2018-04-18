@@ -4,6 +4,7 @@ public interface Const {
 
     // session key
     String CURRENT_USER = "currentUser";
+    String CURRENT_SELLER = "currentSeller";
     String CURRENT_ADMIN = "currentAdmin";
 
     String EMAIL = "email";
@@ -83,5 +84,7 @@ public interface Const {
         int ADMIN = 0;
         // 普通用户
         int USER = 1;
+        // 商家
+        int SELLER = 2;
     }
 }
