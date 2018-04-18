@@ -6,11 +6,14 @@ import com.google.common.collect.Lists;
 import iloveyesterday.mobile.common.Const;
 import iloveyesterday.mobile.common.ResponseData;
 import iloveyesterday.mobile.dao.CartMapper;
+import iloveyesterday.mobile.dao.GoodsMapper;
+import iloveyesterday.mobile.dao.GoodsPropertiesMapper;
 import iloveyesterday.mobile.dao.ProductMapper;
 import iloveyesterday.mobile.pojo.Cart;
+import iloveyesterday.mobile.pojo.Goods;
+import iloveyesterday.mobile.pojo.GoodsProperties;
 import iloveyesterday.mobile.pojo.Product;
 import iloveyesterday.mobile.service.ICartService;
-import iloveyesterday.mobile.util.BigDecimalUtil;
 import iloveyesterday.mobile.util.JsonUtil;
 import iloveyesterday.mobile.util.PropertiesUtil;
 import iloveyesterday.mobile.vo.CartVo;
@@ -18,7 +21,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -30,6 +32,12 @@ public class CartServiceImpl implements ICartService {
 
     @Resource
     private ProductMapper productMapper;
+
+    @Resource
+    private GoodsMapper goodsMapper;
+
+    @Resource
+    private GoodsPropertiesMapper propertiesMapper;
 
     @Override
     public ResponseData create(Long userId, Long productId, Long quantity, String detail) {
@@ -136,12 +144,12 @@ public class CartServiceImpl implements ICartService {
             return ResponseData.error();
         }
         if (cart.getUserId().equals(userId)) {
-            Product product = productMapper.selectByPrimaryKey(cart.getProductId());
-            if (product == null) {
-                return ResponseData.error();
+            GoodsProperties properties = propertiesMapper.selectByPrimaryKey(Long.valueOf(cart.getDetail()));
+            if (properties == null) {
+                return ResponseData.error("商品已下架");
             }
             Long count = cart.getQuantity() + 1;
-            if (count > product.getStock()) {
+            if (count > properties.getStock()) {
                 return ResponseData.error("库存不足");
             }
             Cart cartForUpdate = new Cart();
@@ -163,9 +171,16 @@ public class CartServiceImpl implements ICartService {
             return ResponseData.error();
         }
         if (cart.getUserId().equals(userId)) {
+            GoodsProperties properties = propertiesMapper.selectByPrimaryKey(Long.valueOf(cart.getDetail()));
+            if (properties == null) {
+                return ResponseData.error("商品已下架");
+            }
             Long count = cart.getQuantity() - 1;
             if (count <= 0) {
                 return ResponseData.error("不能为0");
+            }
+            if (count > properties.getStock()) {
+                return ResponseData.error("库存不足");
             }
             Cart cartForUpdate = new Cart();
             cartForUpdate.setId(cartId);
@@ -179,26 +194,68 @@ public class CartServiceImpl implements ICartService {
         return ResponseData.error();
     }
 
+    @Override
+    public ResponseData createByGoods(Long userId, Long goodsId, Long propertiesId, Long quantity) {
+        Goods goods = goodsMapper.selectByPrimaryKey(goodsId);
+        GoodsProperties properties = propertiesMapper.selectByPrimaryKey(propertiesId);
+
+        if (goods == null || properties == null) {
+            return ResponseData.error("商品不存在");
+        }
+        // 加入购物车不影响库存
+        // 如果已经在购物车中则增加数量
+        Cart cartExist = cartMapper.selectByUserIdAndGoodsInfo(userId, goodsId, String.valueOf(propertiesId));
+        if (cartExist != null) {
+            Long count = cartExist.getQuantity() + quantity;
+            if (count > properties.getStock()) {
+                return ResponseData.error("库存不足");
+            }
+            Cart cartForUpdate = new Cart();
+            cartForUpdate.setId(cartExist.getId());
+            cartForUpdate.setQuantity(count);
+            cartForUpdate.setUpdateTime(new Date());
+            int resultCount = cartMapper.updateByPrimaryKeySelective(cartForUpdate);
+            if (resultCount > 0) {
+                return ResponseData.success("成功");
+            }
+            return ResponseData.error();
+        } else {
+            Cart cart = new Cart();
+            cart.setUserId(userId);
+            cart.setProductId(goodsId);
+            cart.setChecked(Const.CartStatus.UNCHECKED);
+            cart.setQuantity(quantity);
+            cart.setDetail(String.valueOf(propertiesId));
+
+            if (quantity > properties.getStock()) {
+                return ResponseData.error("库存不足");
+            }
+
+            int resultCount = cartMapper.insert(cart);
+            if (resultCount > 0) {
+                return ResponseData.success();
+            }
+            return ResponseData.error();
+        }
+    }
+
     private CartVo assembleCartVo(Cart cart) {
         CartVo cartVo = new CartVo();
-        Product product = productMapper.selectByPrimaryKey(cart.getProductId());
-        if (product == null) {
+        Goods product = goodsMapper.selectByPrimaryKey(cart.getProductId());
+        GoodsProperties properties = propertiesMapper.selectByPrimaryKey(Long.valueOf(cart.getDetail()));
+        if (product == null || properties == null) {
             return null;
         }
         cartVo.setId(cart.getId());
         cartVo.setUserId(cart.getUserId());
         cartVo.setProductId(cart.getProductId());
         cartVo.setChecked(cart.getChecked());
-        cartVo.setDetail(cart.getDetail());
+        cartVo.setDetail(JsonUtil.getPropertiesString(properties.getText()));
         cartVo.setMainImage(PropertiesUtil.getImageHost() + product.getMainImage());
         cartVo.setCreateTime(cart.getCreateTime());
         cartVo.setProductName(product.getName());
         cartVo.setQuantity(cart.getQuantity());
-        BigDecimal unitPrice = product.getPrice();
-        // 加上选择的参数(detail)价格
-        unitPrice = BigDecimalUtil.add(unitPrice.doubleValue(),
-                JsonUtil.getDetailPrice(cart.getDetail()).doubleValue());
-        cartVo.setUnitPrice(unitPrice);
+        cartVo.setUnitPrice(properties.getPrice());
         cartVo.setUpdateTime(cart.getUpdateTime());
 
         return cartVo;

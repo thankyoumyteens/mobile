@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class JsonUtil {
 
@@ -24,7 +25,19 @@ public final class JsonUtil {
         return obj;
     }
 
-    public static BigDecimal getDetailPrice(List<LinkedHashMap<String, Object>> list) {
+    public static String getPropertiesString(String text) {
+        StringBuilder sb = new StringBuilder();
+        LinkedHashMap<String, String> map = stringToObject(text);
+        for (Map.Entry<String, String> item : map.entrySet()) {
+            String key = item.getKey();
+            String value = item.getValue();
+            sb.append(value).append(" ");
+            System.out.println();
+        }
+        return sb.toString().trim();
+    }
+
+    private static BigDecimal getDetailPrice(List<LinkedHashMap<String, Object>> list) {
         BigDecimal totalMoney = new BigDecimal("0");
         for (LinkedHashMap<String, Object> item : list) {
             String key = item.get("key").toString();

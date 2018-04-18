@@ -44,5 +44,7 @@ public class OrderVo {
     //订单的明细
     private List<OrderItem> orderItemList;
 
+    private List<OrderItemListVo> itemList;
+
     private Shipping shipping;
 }

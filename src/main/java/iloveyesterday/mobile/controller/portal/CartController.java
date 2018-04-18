@@ -34,6 +34,19 @@ public class CartController {
         return cartService.create(user.getId(), productId, quantity, detail);
     }
 
+    @RequestMapping("create_goods.do")
+    @ResponseBody
+    public ResponseData createGoods(HttpSession session, Long goodsId, Long propertiesId, Long quantity) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ResponseData.error(
+                    ResponseCode.NEED_LOGIN.getCode(),
+                    ResponseCode.NEED_LOGIN.getMsg()
+            );
+        }
+        return cartService.createByGoods(user.getId(), goodsId, propertiesId, quantity);
+    }
+
     @RequestMapping("list.do")
     @ResponseBody
     public ResponseData<PageInfo> list(HttpSession session,
@@ -100,4 +113,6 @@ public class CartController {
         }
         return cartService.sub(user.getId(), cartId);
     }
+
+    // todo delete
 }

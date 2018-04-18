@@ -15,4 +15,6 @@ public interface ICartService {
     ResponseData add(Long userId, Long cartId);
 
     ResponseData sub(Long userId, Long cartId);
+
+    ResponseData createByGoods(Long userId, Long goodsId, Long propertiesId, Long quantity);
 }

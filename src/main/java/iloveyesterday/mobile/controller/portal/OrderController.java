@@ -22,6 +22,13 @@ public class OrderController {
     @Resource
     private IOrderService orderService;
 
+    /**
+     * 根据购物车中的商品生成订单
+     *
+     * @param session
+     * @param shippingId
+     * @return
+     */
     @RequestMapping("create.do")
     @ResponseBody
     public ResponseData<OrderVo> create(HttpSession session, Long shippingId) {
@@ -90,6 +97,8 @@ public class OrderController {
         }
         return orderService.detailByOrderNo(user.getId(), orderNo);
     }
+
+    // todo 根据商品和收货地址创建订单(立即购买)
 
     // todo 搜索订单
 }
