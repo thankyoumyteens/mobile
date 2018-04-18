@@ -1,6 +1,7 @@
 package iloveyesterday.mobile.dao;
 
 import iloveyesterday.mobile.pojo.Order;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -20,4 +21,6 @@ public interface OrderMapper {
     List<Order> selectByUserId(Long userId);
 
     Order selectByOrderNo(Long orderNo);
+
+    List<Order> selectByOrderNoList(@Param("orderNoList") List<Long> orderNoList);
 }

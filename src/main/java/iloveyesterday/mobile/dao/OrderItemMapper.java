@@ -17,4 +17,6 @@ public interface OrderItemMapper {
     void batchInsert(@Param("orderItemList") List<OrderItem> orderItemList);
 
     List<OrderItem> selectByOrderNo(Long orderNo);
+
+    List<OrderItem> selectByKeyword(String keyword);
 }

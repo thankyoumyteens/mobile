@@ -44,7 +44,7 @@ public class OrderController {
 
     @RequestMapping("list.do")
     @ResponseBody
-    public ResponseData<PageInfo> List(
+    public ResponseData<PageInfo> list(
             HttpSession session,
             @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
@@ -100,5 +100,29 @@ public class OrderController {
 
     // todo 根据商品和收货地址创建订单(立即购买)
 
-    // todo 搜索订单
+    /**
+     * 查找订单
+     *
+     * @param session
+     * @param keyword
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping("search.do")
+    @ResponseBody
+    public ResponseData<PageInfo> search(
+            HttpSession session,
+            String keyword,
+            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ResponseData.error(
+                    ResponseCode.NEED_LOGIN.getCode(),
+                    ResponseCode.NEED_LOGIN.getMsg()
+            );
+        }
+        return orderService.search(user.getId(), keyword, pageNum, pageSize);
+    }
 }

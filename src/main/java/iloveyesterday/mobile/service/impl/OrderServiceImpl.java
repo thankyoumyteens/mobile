@@ -115,6 +115,11 @@ public class OrderServiceImpl implements IOrderService {
         return ResponseData.success(orderVo);
     }
 
+    @Override
+    public ResponseData<PageInfo> search(Long userId, String keyword, int pageNum, int pageSize) {
+        return null;
+    }
+
     private OrderVo assembleOrderVo(Order order) {
         List<OrderItem> orderItemList = orderItemMapper.selectByOrderNo(order.getOrderNo());
         if (CollectionUtils.isEmpty(orderItemList)) {

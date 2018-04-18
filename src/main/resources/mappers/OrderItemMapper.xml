@@ -100,4 +100,10 @@
     from mobile_order_item
     where order_no=#{orderNo}
   </select>
+  <select id="selectByKeyword" resultMap="BaseResultMap" parameterType="string">
+    select
+    <include refid="Base_Column_List" />
+    from mobile_order_item
+    where `product_name` like #{keyword}
+  </select>
 </mapper>

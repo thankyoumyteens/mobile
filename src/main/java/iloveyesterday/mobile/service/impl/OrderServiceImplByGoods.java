@@ -342,6 +342,33 @@ public class OrderServiceImplByGoods implements IOrderService {
         return ResponseData.success(orderVo);
     }
 
+    @Override
+    public ResponseData<PageInfo> search(Long userId, String keyword, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<OrderItem> orderItemList;
+        keyword = "%" + keyword + "%";
+        orderItemList = orderItemMapper.selectByKeyword(keyword);
+
+        List<Long> orderNoList = Lists.newArrayList();
+        for (OrderItem item : orderItemList) {
+            if (orderNoList.indexOf(item.getOrderNo()) < 0) {
+                orderNoList.add(item.getOrderNo());
+            }
+        }
+        List<Order> orderList = orderMapper.selectByOrderNoList(orderNoList);
+        List<OrderListVo> orderListVoList = Lists.newArrayList();
+        for (Order order : orderList) {
+            OrderListVo orderListVo = assembleOrderListVo(order);
+            if (orderListVo == null) {
+                return ResponseData.error("失败");
+            }
+            orderListVoList.add(orderListVo);
+        }
+        PageInfo pageResult = new PageInfo(orderList);
+        pageResult.setList(orderListVoList);
+        return ResponseData.success(pageResult);
+    }
+
     /**
      * 生成订单号
      *

@@ -12,4 +12,6 @@ public interface IOrderService {
     ResponseData<OrderVo> detail(Long userId, Long orderId);
 
     ResponseData<OrderVo> detailByOrderNo(Long userId, Long orderNo);
+
+    ResponseData<PageInfo> search(Long userId, String keyword, int pageNum, int pageSize);
 }

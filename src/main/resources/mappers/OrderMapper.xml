@@ -206,4 +206,14 @@
     from mobile_order
     where order_no=#{orderNo}
   </select>
+  <select id="selectByOrderNoList" resultMap="BaseResultMap" parameterType="list">
+    select
+    <include refid="Base_Column_List"/>
+    from mobile_order
+    where order_no
+    in
+    <foreach collection="orderNoList" index="index" item="item" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </select>
 </mapper>
