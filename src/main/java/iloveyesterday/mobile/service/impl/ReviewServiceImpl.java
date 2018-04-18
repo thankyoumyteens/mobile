@@ -34,7 +34,7 @@ public class ReviewServiceImpl implements IReviewService {
     @Override
     public ResponseData create(Review review) {
         // 设置为公开评论
-        review.setStatus(Const.ReviewStatus.PUBLIC);
+        review.setStatus(Const.CommentStatus.PUBLIC);
         int resultCount = reviewMapper.insert(review);
         if (resultCount > 0) {
             return ResponseData.success();
@@ -50,7 +50,7 @@ public class ReviewServiceImpl implements IReviewService {
         List<ReviewVo> reviewVoList = Lists.newArrayList();
 
         for (Review review : reviewList) {
-            if (!review.getStatus().equals(Const.ReviewStatus.DELETE)) {
+            if (!review.getStatus().equals(Const.CommentStatus.DELETE)) {
                 // 去掉处于删除状态的评论
                 ReviewVo reviewVo = assembleReviewVo(review);
                 reviewVoList.add(reviewVo);
@@ -73,11 +73,11 @@ public class ReviewServiceImpl implements IReviewService {
         }
 
         User userForReview = new User();
-        if (review.getStatus().equals(Const.ReviewStatus.PRIVATE)) {
+        if (review.getStatus().equals(Const.CommentStatus.PRIVATE)) {
             // 匿名
             userForReview.setNickname("******");
         }
-        if (review.getStatus().equals(Const.ReviewStatus.PUBLIC)) {
+        if (review.getStatus().equals(Const.CommentStatus.PUBLIC)) {
             userForReview.setId(user.getId());
             userForReview.setNickname(user.getNickname());
         }

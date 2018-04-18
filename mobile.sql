@@ -172,7 +172,7 @@ CREATE TABLE `mobile_goods_comment` (
   `user_id` bigint(20) NOT NULL COMMENT '买家id',
   `goods_id` bigint(20) NOT NULL COMMENT '商品id',
   `properties_id` bigint(20) NOT NULL COMMENT '商品规格id',
-  `images` text DEFAULT NULL COMMENT '图片地址,json格式,扩展用',
+  `images` text DEFAULT NULL COMMENT '图片地址',
   `text` text DEFAULT NULL COMMENT '评论',
   `star` int(10) NOT NULL COMMENT '评星',
   `status` int(6) DEFAULT '1' COMMENT '评论状态.1-公开 2-匿名 3-删除',
@@ -271,6 +271,9 @@ CREATE TABLE `mobile_user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_name_unique` (`username`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+INSERT INTO `mobile`.`mobile_user`(`id`, `username`, `password`, `email`, `phone`, `nickname`, `avatar`, `question`, `answer`, `role`, `create_time`, `update_time`) VALUES (1, 'admin', '427338237BD929443EC5D48E24FD2B1A', 'admin@admin.com', '12345677901', '管理员', '1.jpg', '问题', '答案', 0, '2018-03-12 20:06:41', '2018-03-12 20:06:41');
+
 
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -31,7 +31,7 @@ public interface Const {
     /**
      * 商品评论状态
      */
-    interface ReviewStatus {
+    interface CommentStatus {
         // 公开
         int PUBLIC = 1;
         // 匿名
