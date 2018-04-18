@@ -1,5 +1,6 @@
 package iloveyesterday.mobile.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import iloveyesterday.mobile.common.Const;
@@ -11,6 +12,7 @@ import iloveyesterday.mobile.util.BigDecimalUtil;
 import iloveyesterday.mobile.util.JsonUtil;
 import iloveyesterday.mobile.util.PropertiesUtil;
 import iloveyesterday.mobile.vo.OrderItemListVo;
+import iloveyesterday.mobile.vo.OrderListVo;
 import iloveyesterday.mobile.vo.OrderVo;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -198,6 +200,12 @@ public class OrderServiceImplByGoods implements IOrderService {
         return orderItemListVo;
     }
 
+    /**
+     * 格式化规格 -> 蓝色 裸机 4GB+64GB
+     *
+     * @param propertiesId
+     * @return
+     */
     private String getProperties(Long propertiesId) {
         GoodsProperties properties = propertiesMapper.selectByPrimaryKey(propertiesId);
         return JsonUtil.getPropertiesString(properties.getText());
@@ -241,6 +249,49 @@ public class OrderServiceImplByGoods implements IOrderService {
         return orderItemList;
     }
 
+    private OrderListVo assembleOrderListVo(Order order) {
+        OrderListVo orderListVo = new OrderListVo();
+
+        List<OrderItem> orderItemList = orderItemMapper.selectByOrderNo(order.getOrderNo());
+        if (CollectionUtils.isEmpty(orderItemList) || orderItemList.size() <= 0) {
+            return null;
+        }
+
+        orderListVo.setOrderId(order.getId());
+        orderListVo.setOrderNo(order.getOrderNo());
+        orderListVo.setTotalPrice(order.getPayment());
+        orderListVo.setCreateTime(order.getCreateTime());
+
+        List<OrderItemListVo> orderItemListVoList = Lists.newArrayList();
+        for (OrderItem orderItem : orderItemList) {
+            OrderItemListVo orderItemListVo = assembleOrderItemListVo(orderItem);
+            if (orderItemListVo == null) {
+                return null;
+            }
+            orderItemListVoList.add(orderItemListVo);
+        }
+        orderListVo.setOrderItemList(orderItemListVoList);
+        orderListVo.setCount(orderItemListVoList.size());
+        orderListVo.setStatus(order.getStatus());
+        orderListVo.setStatusMsg(convertStatus(order.getStatus()));
+
+        return orderListVo;
+    }
+
+    private OrderVo assembleOrderVo(Order order) {
+        List<OrderItem> orderItemList = orderItemMapper.selectByOrderNo(order.getOrderNo());
+        if (CollectionUtils.isEmpty(orderItemList) || orderItemList.size() <= 0) {
+            return null;
+        }
+        return assembleOrderVo(order, orderItemList, order.getShippingId());
+    }
+
+    /**
+     * 获取购物车中已经选中的商品
+     *
+     * @param userId
+     * @return
+     */
     private List<Cart> getCartCheckedList(Long userId) {
         List<Cart> cartList = cartMapper.selectByUserId(userId);
         // todo 通过sql查询status == 1的数据
@@ -255,17 +306,40 @@ public class OrderServiceImplByGoods implements IOrderService {
 
     @Override
     public ResponseData<PageInfo> list(Long userId, int pageNum, int pageSize) {
-        return null;
+        PageHelper.startPage(pageNum, pageSize);
+        List<Order> orderList = orderMapper.selectByUserId(userId);
+
+        List<OrderListVo> orderListVoList = Lists.newArrayList();
+        for (Order order : orderList) {
+            OrderListVo orderListVo = assembleOrderListVo(order);
+            if (orderListVo == null) {
+                return ResponseData.error("失败");
+            }
+            orderListVoList.add(orderListVo);
+        }
+        PageInfo pageResult = new PageInfo(orderList);
+        pageResult.setList(orderListVoList);
+        return ResponseData.success(pageResult);
     }
 
     @Override
     public ResponseData<OrderVo> detail(Long userId, Long orderId) {
-        return null;
+        Order order = orderMapper.selectByPrimaryKey(orderId);
+        if (order == null) {
+            return ResponseData.error();
+        }
+        OrderVo orderVo = assembleOrderVo(order);
+        return ResponseData.success(orderVo);
     }
 
     @Override
     public ResponseData<OrderVo> detailByOrderNo(Long userId, Long orderNo) {
-        return null;
+        Order order = orderMapper.selectByOrderNo(orderNo);
+        if (order == null) {
+            return ResponseData.error();
+        }
+        OrderVo orderVo = assembleOrderVo(order);
+        return ResponseData.success(orderVo);
     }
 
     /**
