@@ -1,15 +1,13 @@
 package iloveyesterday.mobile.service.impl;
 
-import com.google.common.collect.Lists;
 import iloveyesterday.mobile.service.IFileService;
-import iloveyesterday.mobile.util.FTPUtil;
+import iloveyesterday.mobile.util.OssUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.UUID;
 
 @Service("fileService")
@@ -34,11 +32,13 @@ public class FileServiceImpl implements IFileService {
         try {
             // 上传文件
             file.transferTo(targetFile);
-            // 上传到ftp服务器
-            FTPUtil.uploadFile(Lists.newArrayList(targetFile));
+//             上传到ftp服务器
+//            FTPUtil.uploadFile(Lists.newArrayList(targetFile));
+            // 上传到阿里云OSS
+            OssUtil.uploadFile(targetFile);
             // 删除暂存的图片
             targetFile.delete();
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error("上传文件异常", e);
             return null;
         }

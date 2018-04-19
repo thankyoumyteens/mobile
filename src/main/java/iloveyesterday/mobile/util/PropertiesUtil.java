@@ -50,7 +50,11 @@ public class PropertiesUtil {
     }
 
     public static String getImageHost() {
-        return PropertiesUtil.getImageHost("");
+        String server = PropertiesUtil.getProperty("aliyun.oss.server");
+        if (!server.endsWith("/")) {
+            server = server + "/";
+        }
+        return server;
     }
 
 }
