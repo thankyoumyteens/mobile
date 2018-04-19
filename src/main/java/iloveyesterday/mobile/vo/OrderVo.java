@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -31,15 +30,15 @@ public class OrderVo {
 
     private String statusMsg;
 
-    private Date paymentTime;
+    private String paymentTime;
 
-    private Date sendTime;
+    private String sendTime;
 
-    private Date endTime;
+    private String endTime;
 
-    private Date closeTime;
+    private String closeTime;
 
-    private Date createTime;
+    private String createTime;
 
     //订单的明细
     private List<OrderItem> orderItemList;

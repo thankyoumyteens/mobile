@@ -9,6 +9,7 @@ import iloveyesterday.mobile.dao.*;
 import iloveyesterday.mobile.pojo.*;
 import iloveyesterday.mobile.service.IOrderService;
 import iloveyesterday.mobile.util.BigDecimalUtil;
+import iloveyesterday.mobile.util.DateTimeUtil;
 import iloveyesterday.mobile.util.JsonUtil;
 import iloveyesterday.mobile.util.PropertiesUtil;
 import iloveyesterday.mobile.vo.OrderItemListVo;
@@ -94,15 +95,15 @@ public class OrderServiceImplByGoods implements IOrderService {
         OrderVo orderVo = new OrderVo();
 
         Shipping shipping = shippingMapper.selectByPrimaryKey(shippingId);
-        orderVo.setCloseTime(order.getCloseTime());
-        orderVo.setCreateTime(order.getCreateTime());
-        orderVo.setEndTime(order.getEndTime());
+        orderVo.setCloseTime(DateTimeUtil.dateToStr(order.getCloseTime()));
+        orderVo.setCreateTime(DateTimeUtil.dateToStr(order.getCreateTime()));
+        orderVo.setEndTime(DateTimeUtil.dateToStr(order.getEndTime()));
         orderVo.setOrderNo(order.getOrderNo());
         orderVo.setPayment(order.getPayment());
-        orderVo.setPaymentTime(order.getPaymentTime());
+        orderVo.setPaymentTime(DateTimeUtil.dateToStr(order.getPaymentTime()));
         orderVo.setPaymentType(order.getPaymentType());
         orderVo.setPostage(order.getPostage());
-        orderVo.setSendTime(order.getSendTime());
+        orderVo.setSendTime(DateTimeUtil.dateToStr(order.getSendTime()));
         orderVo.setStatus(order.getStatus());
         List<OrderItemListVo> itemList = Lists.newArrayList();
         for (OrderItem orderItem : orderItemList) {
@@ -260,7 +261,7 @@ public class OrderServiceImplByGoods implements IOrderService {
         orderListVo.setOrderId(order.getId());
         orderListVo.setOrderNo(order.getOrderNo());
         orderListVo.setTotalPrice(order.getPayment());
-        orderListVo.setCreateTime(order.getCreateTime());
+        orderListVo.setCreateTime(DateTimeUtil.dateToStr(order.getCreateTime()));
 
         List<OrderItemListVo> orderItemListVoList = Lists.newArrayList();
         for (OrderItem orderItem : orderItemList) {

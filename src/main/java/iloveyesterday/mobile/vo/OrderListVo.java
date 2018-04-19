@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -29,5 +28,5 @@ public class OrderListVo {
 
     private Integer count;
 
-    private Date createTime;
+    private String createTime;
 }

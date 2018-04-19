@@ -9,6 +9,7 @@ import iloveyesterday.mobile.dao.*;
 import iloveyesterday.mobile.pojo.*;
 import iloveyesterday.mobile.service.IOrderService;
 import iloveyesterday.mobile.util.BigDecimalUtil;
+import iloveyesterday.mobile.util.DateTimeUtil;
 import iloveyesterday.mobile.util.JsonUtil;
 import iloveyesterday.mobile.util.PropertiesUtil;
 import iloveyesterday.mobile.vo.OrderItemListVo;
@@ -139,7 +140,7 @@ public class OrderServiceImpl implements IOrderService {
         orderListVo.setOrderId(order.getId());
         orderListVo.setOrderNo(order.getOrderNo());
         orderListVo.setTotalPrice(order.getPayment());
-        orderListVo.setCreateTime(order.getCreateTime());
+        orderListVo.setCreateTime(DateTimeUtil.dateToStr(order.getCreateTime()));
 
         List<OrderItemListVo> orderItemListVoList = Lists.newArrayList();
         for (OrderItem orderItem : orderItemList) {
@@ -217,15 +218,15 @@ public class OrderServiceImpl implements IOrderService {
 
         Shipping shipping = shippingMapper.selectByPrimaryKey(shippingId);
 
-        orderVo.setCloseTime(order.getCloseTime());
-        orderVo.setCreateTime(order.getCreateTime());
-        orderVo.setEndTime(order.getEndTime());
-        orderVo.setOrderNo(order.getOrderNo());
-        orderVo.setPayment(order.getPayment());
-        orderVo.setPaymentTime(order.getPaymentTime());
-        orderVo.setPaymentType(order.getPaymentType());
-        orderVo.setPostage(order.getPostage());
-        orderVo.setSendTime(order.getSendTime());
+//        orderVo.setCloseTime(order.getCloseTime());
+//        orderVo.setCreateTime(order.getCreateTime());
+//        orderVo.setEndTime(order.getEndTime());
+//        orderVo.setOrderNo(order.getOrderNo());
+//        orderVo.setPayment(order.getPayment());
+//        orderVo.setPaymentTime(order.getPaymentTime());
+//        orderVo.setPaymentType(order.getPaymentType());
+//        orderVo.setPostage(order.getPostage());
+//        orderVo.setSendTime(order.getSendTime());
         orderVo.setStatus(order.getStatus());
         for (OrderItem orderItem : orderItemList) {
             orderItem.setProductImage(PropertiesUtil.getImageHost() + orderItem.getProductImage());
