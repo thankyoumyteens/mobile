@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -31,8 +30,4 @@ public class CartVo {
     private String detail;
 
     private Long checked;
-
-    private Date createTime;
-
-    private Date updateTime;
 }

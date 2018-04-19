@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -21,7 +19,7 @@ public class CommentVo {
 
     private String goodsName;
 
-    private Date orderCreateTime;
+    private String orderCreateTime;
 
     private Integer star;
 
@@ -31,9 +29,9 @@ public class CommentVo {
 
     private String properties;
 
-    private Date createTime;
+    private String createTime;
 
-    private Date updateTime;
+    private String updateTime;
 
     @Getter
     @Setter

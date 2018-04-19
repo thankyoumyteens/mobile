@@ -9,6 +9,7 @@ import iloveyesterday.mobile.dao.GoodsCommentMapper;
 import iloveyesterday.mobile.dao.GoodsMapper;
 import iloveyesterday.mobile.dao.GoodsPropertiesMapper;
 import iloveyesterday.mobile.pojo.Goods;
+import iloveyesterday.mobile.pojo.GoodsComment;
 import iloveyesterday.mobile.pojo.GoodsProperties;
 import iloveyesterday.mobile.service.IGoodsService;
 import iloveyesterday.mobile.util.PropertiesUtil;
@@ -189,6 +190,20 @@ public class GoodsServiceImpl implements IGoodsService {
             return null;
         }
         goodsListVo.setPrice(price.toString());
+        List<GoodsComment> commentList = goodsCommentMapper.selectByGoodsId(goods.getId());
+        goodsListVo.setCommentCount((long) commentList.size());
+
+        // 筛选好评
+        int count = 0;
+        for (GoodsComment comment : commentList) {
+            if (comment.getStar() > 5 || comment.getStar() < 4) {
+                continue;
+            }
+            count++;
+        }
+        double rate = (count * 1.0 / commentList.size()) * 100;
+        // 保留一位小数, 如果要其它位,如4位,这里两个10改成10000
+        goodsListVo.setCommentStatus(((double) (Math.round(rate * 10)) / 10) + "%");
         return goodsListVo;
     }
 }

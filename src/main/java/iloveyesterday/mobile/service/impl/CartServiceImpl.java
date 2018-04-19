@@ -252,11 +252,9 @@ public class CartServiceImpl implements ICartService {
         cartVo.setChecked(cart.getChecked());
         cartVo.setDetail(JsonUtil.getPropertiesString(properties.getText()));
         cartVo.setMainImage(PropertiesUtil.getImageHost() + product.getMainImage());
-        cartVo.setCreateTime(cart.getCreateTime());
         cartVo.setProductName(product.getName());
         cartVo.setQuantity(cart.getQuantity());
         cartVo.setUnitPrice(properties.getPrice());
-        cartVo.setUpdateTime(cart.getUpdateTime());
 
         return cartVo;
     }
