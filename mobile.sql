@@ -170,8 +170,8 @@ DROP TABLE IF EXISTS `mobile_goods_comment`;
 CREATE TABLE `mobile_goods_comment` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `user_id` bigint(20) NOT NULL COMMENT '买家id',
-  `goods_id` bigint(20) NOT NULL COMMENT '商品id',
-  `properties_id` bigint(20) NOT NULL COMMENT '商品规格id',
+  `order_item_id` bigint(20) NOT NULL COMMENT '商品id',
+  `goods_id` bigint(20) NOT NULL COMMENT '商品规格id',
   `images` text DEFAULT NULL COMMENT '图片地址',
   `text` text DEFAULT NULL COMMENT '评论',
   `star` int(10) NOT NULL COMMENT '评星',

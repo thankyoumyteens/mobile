@@ -22,6 +22,13 @@ public class CommentController {
     @Resource
     private ICommentService commentService;
 
+    /**
+     * 填写评论
+     *
+     * @param session
+     * @param comment
+     * @return
+     */
     @RequestMapping("create.do")
     @ResponseBody
     public ResponseData create(HttpSession session, GoodsComment comment) {
@@ -45,7 +52,80 @@ public class CommentController {
         return commentService.list(goodsId, pageNum, pageSize);
     }
 
-    // todo 根据评星筛选评价
-    // todo 筛选有图评论
-    // todo 筛选有文字评论
+    /**
+     * 获取当前登陆用户的评论
+     *
+     * @param session
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping("user_comments.do")
+    @ResponseBody
+    public ResponseData<PageInfo> userComments(
+            HttpSession session,
+            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ResponseData.error(
+                    ResponseCode.NEED_LOGIN.getCode(),
+                    ResponseCode.NEED_LOGIN.getMsg()
+            );
+        }
+        return commentService.getUserComments(user.getId(), pageNum, pageSize);
+    }
+
+    /**
+     * 根据评星筛选评价
+     *
+     * @param goodsId
+     * @param level    好评/中评/差评
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping("list_level.do")
+    @ResponseBody
+    public ResponseData<PageInfo> listByLevel(
+            Long goodsId,
+            int level,
+            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        return commentService.listByLevel(goodsId, level, pageNum, pageSize);
+    }
+
+    /**
+     * 筛选有图评论
+     *
+     * @param goodsId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping("list_img.do")
+    @ResponseBody
+    public ResponseData<PageInfo> listWithImages(
+            Long goodsId,
+            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        return commentService.listWithImages(goodsId, pageNum, pageSize);
+    }
+
+    /**
+     * 筛选有文字评论
+     *
+     * @param goodsId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping("list_text.do")
+    @ResponseBody
+    public ResponseData<PageInfo> listWithText(
+            Long goodsId,
+            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        return commentService.listWithText(goodsId, pageNum, pageSize);
+    }
 }

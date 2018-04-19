@@ -16,9 +16,9 @@ public class GoodsComment {
 
     private Long userId;
 
-    private Long goodsId;
+    private Long orderItemId;
 
-    private Long propertiesId;
+    private Long goodsId;
 
     private String images;
 

@@ -1,6 +1,5 @@
 package iloveyesterday.mobile.vo;
 
-import iloveyesterday.mobile.pojo.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,11 +15,11 @@ public class CommentVo {
 
     private Long commentId;
 
-    private User author;
+    private Author author;
 
-    private Long productId;
+    private Long goodsId;
 
-    private String productName;
+    private String goodsName;
 
     private Date orderCreateTime;
 
@@ -28,11 +27,22 @@ public class CommentVo {
 
     private String images;
 
-    private String detail;
+    private String text;
 
-    private Integer status;
+    private String properties;
 
     private Date createTime;
 
     private Date updateTime;
+
+    @Getter
+    @Setter
+    public static class Author {
+
+        private Long userId;
+
+        private String avatar;
+
+        private String nickname;
+    }
 }

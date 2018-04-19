@@ -41,6 +41,18 @@ public interface Const {
     }
 
     /**
+     * 评论级别
+     */
+    interface CommentLevel {
+        // 好评
+        int GOOD = 1;
+        // 中评
+        int NORMAL = 2;
+        // 差评
+        int BAD = 3;
+    }
+
+    /**
      * 购物车状态
      */
     interface CartStatus {
