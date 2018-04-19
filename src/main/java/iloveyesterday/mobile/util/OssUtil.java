@@ -31,10 +31,12 @@ public final class OssUtil {
                 getOssClient().createBucket(bucketName);
             }
 
+            String dir = PropertiesUtil.getProperty("aliyun.oss.dir", "");
+
             for (File file : fileList) {
                 // 文件存储入OSS，Object的名称为fileKey
                 String fileKey = file.getName();
-                getOssClient().putObject(bucketName, fileKey, file);
+                getOssClient().putObject(bucketName, dir + fileKey, file);
             }
         } catch (OSSException | ClientException e) {
             e.printStackTrace();
