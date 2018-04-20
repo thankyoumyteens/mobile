@@ -6,6 +6,7 @@ import iloveyesterday.mobile.common.ResponseData;
 import iloveyesterday.mobile.pojo.User;
 import iloveyesterday.mobile.service.IOrderService;
 import iloveyesterday.mobile.service.IPayService;
+import iloveyesterday.mobile.util.PropertiesUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -68,6 +69,8 @@ public class PayController {
             if (data.isSuccess()) {
                 // 成功 跳转
                 response.getWriter().write(data.getMsg());
+                response.sendRedirect(PropertiesUtil.getProperty(
+                        "server.root", "/"));
             } else {
                 response.getWriter().write(data.getMsg());
             }
