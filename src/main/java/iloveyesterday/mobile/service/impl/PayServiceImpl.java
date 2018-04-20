@@ -32,6 +32,9 @@ public class PayServiceImpl implements IPayService {
         if (order == null) {
             return ResponseData.error("订单不存在");
         }
+        if (order.getStatus() == Const.OrderStatus.PAYED) {
+            return ResponseData.error("已付款");
+        }
         // 商户订单号，商户网站订单系统中唯一订单号，必填
         String out_trade_no = order.getOrderNo().toString();
         // 订单名称，必填
