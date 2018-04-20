@@ -23,4 +23,16 @@ public interface OrderMapper {
     Order selectByOrderNo(Long orderNo);
 
     List<Order> selectByOrderNoList(@Param("orderNoList") List<Long> orderNoList);
+
+    Order selectByPrimaryKeyAndUserId(
+            @Param("orderId") Long orderId,
+            @Param("userId") Long userId);
+
+    Order selectByOrderNoAndUserId(
+            @Param("orderNo") Long orderNo,
+            @Param("userId") Long userId);
+
+    List<Order> selectByUserIdAndStatus(
+            @Param("userId") Long userId,
+            @Param("status") int status);
 }

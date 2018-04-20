@@ -370,6 +370,115 @@ public class OrderServiceImplByGoods implements IOrderService {
         return ResponseData.success(pageResult);
     }
 
+    @Override
+    public ResponseData<OrderVo> create(Long userId, Long goodsId, Long propertiesId, int count, Long shippingId) {
+        List<Cart> cartCheckedList = Lists.newArrayList();
+
+        Cart cart = new Cart();
+        cart.setChecked(Const.CartStatus.CHECKED);
+        cart.setDetail(propertiesId.toString());
+        cart.setProductId(goodsId);
+        cart.setQuantity((long) count);
+        cart.setUserId(userId);
+        cartCheckedList.add(cart);
+        // 生成订单项
+        List<OrderItem> orderItemList = assembleOrderItem(userId, cartCheckedList);
+        if (CollectionUtils.isEmpty(orderItemList)) {
+            return ResponseData.error("生成订单失败");
+        }
+        // 生成订单
+        Order order = assembleOrder(userId, shippingId);
+        if (order == null) {
+            return ResponseData.error("生成订单失败");
+        }
+
+        BigDecimal totalPrice = new BigDecimal("0");
+        for (OrderItem item : orderItemList) {
+            item.setOrderNo(order.getOrderNo());
+            totalPrice = BigDecimalUtil.add(totalPrice.doubleValue(), item.getTotalPrice().doubleValue());
+        }
+        order.setPayment(totalPrice);
+
+        // 确认库存
+        if (!checkStock(orderItemList)) {
+            return ResponseData.error("库存不足");
+        }
+
+        // 添加数据
+        orderMapper.insert(order);
+        orderItemMapper.batchInsert(orderItemList);
+
+        // 减少库存
+        reduceStock(orderItemList);
+
+        OrderVo orderVo = assembleOrderVo(order, orderItemList, shippingId);
+        return ResponseData.success(orderVo);
+    }
+
+    @Override
+    public ResponseData<OrderVo> confirm(Long userId, Long orderId) {
+        Order order = orderMapper.selectByPrimaryKeyAndUserId(orderId, userId);
+        if (order == null) {
+            return ResponseData.error("订单不存在");
+        }
+        if (order.getStatus() < Const.OrderStatus.PAYED) {
+            return ResponseData.error("请先付款");
+        }
+        if (order.getStatus() >= Const.OrderStatus.SUCCESS) {
+            // 订单已完成
+            return ResponseData.error();
+        }
+        Order orderForUpdate = new Order();
+        orderForUpdate.setId(order.getId());
+        orderForUpdate.setUpdateTime(new Date());
+        orderForUpdate.setStatus(Const.OrderStatus.SUCCESS);
+        orderForUpdate.setEndTime(new Date());
+        int resultCount = orderMapper.updateByPrimaryKeySelective(orderForUpdate);
+        if (resultCount > 0) {
+            return ResponseData.success();
+        }
+        return ResponseData.error();
+    }
+
+    @Override
+    public ResponseData<OrderVo> cancel(Long userId, Long orderId) {
+        Order order = orderMapper.selectByPrimaryKeyAndUserId(orderId, userId);
+        if (order == null) {
+            return ResponseData.error("订单不存在");
+        }
+        if (order.getStatus() != Const.OrderStatus.NOT_PAY) {
+            return ResponseData.error("无法取消");
+        }
+        Order orderForUpdate = new Order();
+        orderForUpdate.setId(order.getId());
+        orderForUpdate.setUpdateTime(new Date());
+        orderForUpdate.setStatus(Const.OrderStatus.CANCELED);
+        orderForUpdate.setCloseTime(new Date());
+        int resultCount = orderMapper.updateByPrimaryKeySelective(orderForUpdate);
+        if (resultCount > 0) {
+            return ResponseData.success();
+        }
+        return ResponseData.error();
+    }
+
+    @Override
+    public ResponseData<PageInfo> listByStatus(Long userId, int status, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Order> orderList = orderMapper.selectByUserIdAndStatus(userId, status);
+
+        List<OrderListVo> orderListVoList = Lists.newArrayList();
+        for (Order order : orderList) {
+            OrderListVo orderListVo = assembleOrderListVo(order);
+            if (orderListVo == null) {
+                return ResponseData.error();
+            }
+            orderListVoList.add(orderListVo);
+        }
+        PageInfo pageResult = new PageInfo(orderList);
+        pageResult.setList(orderListVoList);
+        return ResponseData.success(pageResult);
+    }
+
     /**
      * 生成订单号
      *

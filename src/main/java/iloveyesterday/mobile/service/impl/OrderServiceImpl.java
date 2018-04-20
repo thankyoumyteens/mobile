@@ -7,7 +7,6 @@ import iloveyesterday.mobile.common.Const;
 import iloveyesterday.mobile.common.ResponseData;
 import iloveyesterday.mobile.dao.*;
 import iloveyesterday.mobile.pojo.*;
-import iloveyesterday.mobile.service.IOrderService;
 import iloveyesterday.mobile.util.BigDecimalUtil;
 import iloveyesterday.mobile.util.DateTimeUtil;
 import iloveyesterday.mobile.util.JsonUtil;
@@ -27,7 +26,8 @@ import java.util.Random;
  * 废弃
  */
 //@Service("orderService")
-public class OrderServiceImpl implements IOrderService {
+//     implements IOrderService
+public class OrderServiceImpl {
 
     @Resource
     private OrderMapper orderMapper;
@@ -45,7 +45,6 @@ public class OrderServiceImpl implements IOrderService {
     private ShippingMapper shippingMapper;
 
 
-    @Override
     public ResponseData<OrderVo> create(Long userId, Long shippingId) {
         List<Cart> cartList = cartMapper.selectByUserId(userId);
         List<Cart> cartCheckedList = Lists.newArrayList();
@@ -78,7 +77,6 @@ public class OrderServiceImpl implements IOrderService {
         return ResponseData.success(orderVo);
     }
 
-    @Override
     public ResponseData<PageInfo> list(Long userId, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         List<Order> orderList = orderMapper.selectByUserId(userId);
@@ -96,7 +94,7 @@ public class OrderServiceImpl implements IOrderService {
         return ResponseData.success(pageResult);
     }
 
-    @Override
+
     public ResponseData<OrderVo> detail(Long userId, Long orderId) {
         Order order = orderMapper.selectByPrimaryKey(orderId);
         if (order == null) {
@@ -106,7 +104,7 @@ public class OrderServiceImpl implements IOrderService {
         return ResponseData.success(orderVo);
     }
 
-    @Override
+
     public ResponseData<OrderVo> detailByOrderNo(Long userId, Long orderNo) {
         Order order = orderMapper.selectByOrderNo(orderNo);
         if (order == null) {
@@ -116,8 +114,11 @@ public class OrderServiceImpl implements IOrderService {
         return ResponseData.success(orderVo);
     }
 
-    @Override
     public ResponseData<PageInfo> search(Long userId, String keyword, int pageNum, int pageSize) {
+        return null;
+    }
+
+    public ResponseData<OrderVo> create(Long userId, Long goodsId, Long propertiesId, int count, Long shippingId) {
         return null;
     }
 

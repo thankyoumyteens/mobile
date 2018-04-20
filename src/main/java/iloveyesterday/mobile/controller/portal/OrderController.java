@@ -59,6 +59,54 @@ public class OrderController {
     }
 
     /**
+     * 未付款订单
+     *
+     * @param session
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping("list_not_pay.do")
+    @ResponseBody
+    public ResponseData<PageInfo> listByNotPay(
+            HttpSession session,
+            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ResponseData.error(
+                    ResponseCode.NEED_LOGIN.getCode(),
+                    ResponseCode.NEED_LOGIN.getMsg()
+            );
+        }
+        return orderService.listByStatus(user.getId(), Const.OrderStatus.NOT_PAY, pageNum, pageSize);
+    }
+
+    /**
+     * 已付款订单
+     *
+     * @param session
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping("list_payed.do")
+    @ResponseBody
+    public ResponseData<PageInfo> listByPayed(
+            HttpSession session,
+            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ResponseData.error(
+                    ResponseCode.NEED_LOGIN.getCode(),
+                    ResponseCode.NEED_LOGIN.getMsg()
+            );
+        }
+        return orderService.listByStatus(user.getId(), Const.OrderStatus.PAYED, pageNum, pageSize);
+    }
+
+    /**
      * 根据订单Id查询订单详情
      *
      * @param session
@@ -98,13 +146,77 @@ public class OrderController {
         return orderService.detailByOrderNo(user.getId(), orderNo);
     }
 
-    // todo 根据商品和收货地址创建订单(立即购买)
+    /**
+     * 根据商品和收货地址创建订单(立即购买)
+     *
+     * @param session
+     * @param shippingId
+     * @return
+     */
+    @RequestMapping("create_order.do")
+    @ResponseBody
+    public ResponseData<OrderVo> createOrder(
+            HttpSession session,
+            Long goodsId, Long propertiesId, int count, Long shippingId) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ResponseData.error(
+                    ResponseCode.NEED_LOGIN.getCode(),
+                    ResponseCode.NEED_LOGIN.getMsg()
+            );
+        }
+        return orderService.create(user.getId(), goodsId, propertiesId, count, shippingId);
+    }
 
-    // todo 确认收货
+    /**
+     * 确认收货
+     *
+     * @param session
+     * @param orderId
+     * @return
+     */
+    @RequestMapping("confirm.do")
+    @ResponseBody
+    public ResponseData<OrderVo> confirm(HttpSession session, Long orderId) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ResponseData.error(
+                    ResponseCode.NEED_LOGIN.getCode(),
+                    ResponseCode.NEED_LOGIN.getMsg()
+            );
+        }
+        return orderService.confirm(user.getId(), orderId);
+    }
+
+    /**
+     * 取消订单(未付款)
+     *
+     * @param session
+     * @param orderId
+     * @return
+     */
+    @RequestMapping("cancel.do")
+    @ResponseBody
+    public ResponseData<OrderVo> cancel(HttpSession session, Long orderId) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ResponseData.error(
+                    ResponseCode.NEED_LOGIN.getCode(),
+                    ResponseCode.NEED_LOGIN.getMsg()
+            );
+        }
+        return orderService.cancel(user.getId(), orderId);
+    }
+
+    // todo 已付款
+
+    // todo 已发货(需要快递单号, 商家账号)
 
     // todo 物流
 
     // todo 退款
+
+    // todo 处理退款请求(商家)
 
 
     /**
