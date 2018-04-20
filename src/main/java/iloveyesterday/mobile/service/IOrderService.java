@@ -22,4 +22,6 @@ public interface IOrderService {
     ResponseData<OrderVo> cancel(Long userId, Long orderId);
 
     ResponseData<PageInfo> listByStatus(Long userId, int status, int pageNum, int pageSize);
+
+    ResponseData payed(Long orderNo);
 }

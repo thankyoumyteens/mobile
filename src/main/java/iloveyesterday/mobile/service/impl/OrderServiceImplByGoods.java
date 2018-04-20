@@ -479,6 +479,24 @@ public class OrderServiceImplByGoods implements IOrderService {
         return ResponseData.success(pageResult);
     }
 
+    @Override
+    public ResponseData payed(Long orderNo) {
+        Order order = orderMapper.selectByOrderNo(orderNo);
+        if (order == null) {
+            return ResponseData.error("订单不存在");
+        }
+        Order orderForUpdate = new Order();
+        orderForUpdate.setId(order.getId());
+        orderForUpdate.setUpdateTime(new Date());
+        orderForUpdate.setStatus(Const.OrderStatus.PAYED);
+        orderForUpdate.setPaymentTime(new Date());
+        int resultCount = orderMapper.updateByPrimaryKeySelective(orderForUpdate);
+        if (resultCount > 0) {
+            return ResponseData.success();
+        }
+        return ResponseData.error();
+    }
+
     /**
      * 生成订单号
      *

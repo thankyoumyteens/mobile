@@ -89,6 +89,16 @@ public interface Const {
     }
 
     /**
+     * 支付平台
+     */
+    interface PaymentPlatform {
+        // 支付宝
+        int ALIPAY = 1;
+        // 微信
+        int WECHAT = 2;
+    }
+
+    /**
      * 用户身份
      */
     interface Role {
