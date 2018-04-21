@@ -29,7 +29,7 @@
     delete from mobile_goods
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="iloveyesterday.mobile.pojo.Goods">
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="iloveyesterday.mobile.pojo.Goods">
     insert into mobile_goods (id, category_id, seller_id, 
       name, subtitle,
       main_image, sub_images, status, 
@@ -182,5 +182,13 @@
     from mobile_goods
     where `name` like #{keyword}
     and status=#{status}
+  </select>
+  <select id="selectBySellerIdAndCategoryIdAndName" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List" />
+    from mobile_goods
+    where `name`=#{name}
+    and seller_id=#{sellerId}
+    and category_id=#{categoryId}
   </select>
 </mapper>

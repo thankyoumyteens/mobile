@@ -136,7 +136,7 @@ CREATE TABLE `mobile_goods` (
   `status` int(6) DEFAULT '1' COMMENT '商品状态.1-在售 2-下架 3-删除',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 -- 规格
 DROP TABLE IF EXISTS `mobile_goods_properties`;

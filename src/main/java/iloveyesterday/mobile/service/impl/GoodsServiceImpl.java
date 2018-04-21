@@ -13,6 +13,7 @@ import iloveyesterday.mobile.pojo.GoodsComment;
 import iloveyesterday.mobile.pojo.GoodsProperties;
 import iloveyesterday.mobile.service.IGoodsService;
 import iloveyesterday.mobile.util.PropertiesUtil;
+import iloveyesterday.mobile.vo.GoodsAddVo;
 import iloveyesterday.mobile.vo.GoodsDetailVo;
 import iloveyesterday.mobile.vo.GoodsListVo;
 import iloveyesterday.mobile.vo.GoodsPropertiesVo;
@@ -93,6 +94,41 @@ public class GoodsServiceImpl implements IGoodsService {
         GoodsDetailVo detailVo = assembleGoodsDetailVo(goods);
 
         return ResponseData.success(detailVo);
+    }
+
+    @Override
+    public ResponseData add(GoodsAddVo goodsVo) {
+        int resultCount = -1;
+        GoodsProperties properties = new GoodsProperties();
+        Goods goods = goodsMapper.selectBySellerIdAndCategoryIdAndName(goodsVo.getSellerId(), goodsVo.getCategoryId(), goodsVo.getName());
+        if (goods == null) {
+            goods = new Goods();
+            goods.setStatus(Const.ProductStatus.ON_SALE);
+            goods.setCategoryId(goodsVo.getCategoryId());
+            goods.setMainImage(goodsVo.getMainImage());
+            goods.setName(goodsVo.getName());
+            goods.setSellerId(goodsVo.getSellerId());
+            goods.setSubImages(goodsVo.getSubImages());
+            goods.setSubtitle(goodsVo.getSubtitle());
+            resultCount = goodsMapper.insert(goods);
+            if (resultCount <= 0) {
+                return ResponseData.error();
+            }
+        }
+        // todo 防止重复
+        properties.setGoodsId(goods.getId());
+        properties.setStock(goodsVo.getStock());
+        properties.setMainImage(goodsVo.getMainImage());
+        properties.setPrice(new BigDecimal(goodsVo.getPrice()));
+        properties.setStatus(Const.ProductStatus.ON_SALE);
+        properties.setText(goodsVo.getProperties());
+
+        resultCount = goodsPropertiesMapper.insert(properties);
+
+        if (resultCount > 0) {
+            return ResponseData.success();
+        }
+        return ResponseData.error();
     }
 
     private GoodsDetailVo assembleGoodsDetailVo(Goods goods) {

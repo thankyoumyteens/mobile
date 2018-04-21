@@ -33,4 +33,9 @@ public interface GoodsMapper {
             @Param("keyword") String keyword,
             @Param("status") int status
     );
+
+    Goods selectBySellerIdAndCategoryIdAndName(
+            @Param("sellerId") Long sellerId,
+            @Param("categoryId") Long categoryId,
+            @Param("name") String name);
 }
