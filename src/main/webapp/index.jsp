@@ -3,22 +3,19 @@
 <html>
 <head>
     <meta charset=utf-8>
-    <meta name=viewport content="width=device-width,initial-scale=1">
+    <meta name=viewport content="width=device-width,initial-scale=1,user-scalable=no">
     <title>mobile-web</title>
     <style>* {
         margin: 0;
         padding: 0;
     }</style>
-    <link href=static/css/app.33b50dc021766bcd82efdadbad302d3b.css rel=stylesheet>
+    <link href=static/css/app.3cd0694b98c7e37cf9de29446c39a999.css rel=stylesheet>
 </head>
 <body>
-
-
 <div id=app></div>
 <script type=text/javascript src=static/js/manifest.14a76fad9b304f57d579.js></script>
-<script type=text/javascript src=static/js/vendor.558c771eb988451838f8.js></script>
-<script type=text/javascript src=static/js/app.012989993d857828b62f.js></script>
-
+<script type=text/javascript src=static/js/vendor.34fcbc5e9190ede93711.js></script>
+<script type=text/javascript src=static/js/app.f41dd0974662c8236a51.js></script>
 <%--springmvc上传文件--%>
 <%--<form name="form1" id="f1" action="user/upload.do" method="post" enctype="multipart/form-data">--%>
 <%--<input type="file" name="upload_file" />--%>
