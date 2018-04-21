@@ -98,7 +98,7 @@ public class GoodsServiceImpl implements IGoodsService {
 
     @Override
     public ResponseData add(GoodsAddVo goodsVo) {
-        int resultCount = -1;
+        int resultCount;
         GoodsProperties properties = new GoodsProperties();
         Goods goods = goodsMapper.selectBySellerIdAndCategoryIdAndName(goodsVo.getSellerId(), goodsVo.getCategoryId(), goodsVo.getName());
         if (goods == null) {
