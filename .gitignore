@@ -37,6 +37,9 @@ Thumbs.db
 /node_modules/
 /dist/
 
+#vue
+static/
+
 #user
 gen/
 /gen/
