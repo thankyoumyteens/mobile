@@ -45,6 +45,23 @@ public class PayController {
         }
     }
 
+    @RequestMapping("test_callback.do")
+    public void testCallback(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException, InterruptedException {
+        response.setContentType("text/html;charset=" + AlipayConfig.CHARSET);
+        // 成功 跳转
+        response.getWriter().write(
+                "支付成功, 3秒后跳转到首页, 手动跳转请点击 " +
+                        "<a href='" + PropertiesUtil.getProperty("server.root", "/") + "'>链接</a>");
+        String html = "<script>" +
+                "setTimeout(function () {\n" +
+                "window.location.href = '" +
+                PropertiesUtil.getProperty("server.root", "/") +
+                "'\n" +
+                "}, 3000)" +
+                "</script>";
+        response.getWriter().write(html);
+    }
+
     /**
      * 支付宝回调
      *
@@ -54,7 +71,7 @@ public class PayController {
      * @throws IOException
      */
     @RequestMapping("alipay_callback.do")
-    public void alipayCallback(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
+    public void alipayCallback(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException, InterruptedException {
         response.setContentType("text/html;charset=" + AlipayConfig.CHARSET);
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
@@ -68,11 +85,24 @@ public class PayController {
             data = payService.save(user.getId(), Long.valueOf(orderNo), alipayOrderNo);
             if (data.isSuccess()) {
                 // 成功 跳转
-                response.getWriter().write(data.getMsg());
-                response.sendRedirect(PropertiesUtil.getProperty(
-                        "server.root", "/"));
+                response.getWriter().write(
+                        "支付成功, 3秒后跳转到首页, 手动跳转请点击 " +
+                                "<a href='" + PropertiesUtil.getProperty("server.root", "/") + "'>链接</a>");
+                String html = "<script>" +
+                        "setTimeout(function () {\n" +
+                        "window.location.href = '" +
+                        PropertiesUtil.getProperty("server.root", "/") +
+                        "'\n" +
+                        "}, 3000)" +
+                        "</script>";
+                response.getWriter().write(html);
+//                response.sendRedirect(PropertiesUtil.getProperty(
+//                        "server.root", "/"));
             } else {
                 response.getWriter().write(data.getMsg());
+                response.getWriter().write(
+                        "跳转到首页请点击 " +
+                                "<a href='" + PropertiesUtil.getProperty("server.root", "/") + "'>链接</a>");
             }
         }
     }
