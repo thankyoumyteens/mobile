@@ -9,13 +9,17 @@
         margin: 0;
         padding: 0;
     }</style>
-    <link href=static/css/app.3cd0694b98c7e37cf9de29446c39a999.css rel=stylesheet>
+    <link href=static/css/app.751b8ee543d385778cfba0b3a8c97c2f.css rel=stylesheet>
 </head>
 <body>
 <div id=app></div>
 <script type=text/javascript src=static/js/manifest.14a76fad9b304f57d579.js></script>
 <script type=text/javascript src=static/js/vendor.34fcbc5e9190ede93711.js></script>
-<script type=text/javascript src=static/js/app.f41dd0974662c8236a51.js></script>
+<script type=text/javascript src=static/js/app.6e2b6aaa0c3a12180e7b.js></script>
+</body>
+</html>
+
+
 <%--springmvc上传文件--%>
 <%--<form name="form1" id="f1" action="user/upload.do" method="post" enctype="multipart/form-data">--%>
 <%--<input type="file" name="upload_file" />--%>
@@ -35,5 +39,5 @@
 <%--<input type="submit" value="富文本图片上传文件" />--%>
 <%--</form>--%>
 
-</body>
-</html>
+<%--</body>--%>
+<%--</html>--%>
