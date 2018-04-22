@@ -124,4 +124,18 @@
       update_time = now()
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <select id="selectByAlipayOrderNo" resultMap="BaseResultMap" parameterType="long">
+    select
+    <include refid="Base_Column_List"/>
+    from mobile_pay_info
+    where
+    platform_number=#{alipayOrderNo}
+  </select>
+  <select id="selectByOrderNoAndUserId" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List"/>
+    from mobile_pay_info
+    where order_no=#{orderNo}
+    and user_id=#{userId}
+  </select>
 </mapper>

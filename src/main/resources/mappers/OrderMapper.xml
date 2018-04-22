@@ -237,4 +237,9 @@
     where status=#{status}
     and user_id=#{userId}
   </select>
+  <select id="selectUserIdByOrderNo" resultType="long" parameterType="long">
+    select user_id
+    from mobile_order
+    where order_no=#{orderNo}
+  </select>
 </mapper>

@@ -36,4 +36,5 @@ public interface OrderMapper {
             @Param("userId") Long userId,
             @Param("status") int status);
 
+    Long selectUserIdByOrderNo(Long orderNo);
 }
