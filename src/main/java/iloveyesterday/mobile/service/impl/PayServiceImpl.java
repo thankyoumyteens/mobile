@@ -16,6 +16,7 @@ import iloveyesterday.mobile.dao.PayInfoMapper;
 import iloveyesterday.mobile.pojo.Order;
 import iloveyesterday.mobile.pojo.PayInfo;
 import iloveyesterday.mobile.service.IPayService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -154,27 +155,58 @@ public class PayServiceImpl implements IPayService {
         if (order == null) {
             return ResponseData.error("订单不存在");
         }
-        PayInfo payInfo = payInfoMapper.selectByOrderNoAndUserId(orderNo, userId);
-        if (payInfo == null) {
-            return ResponseData.success("未支付");
-        }
         try {
             //商户订单号，商户网站订单系统中唯一订单号，必填
             String out_trade_no = orderNo.toString();
             //支付宝交易号
-            String trade_no = payInfo.getPlatformNumber();
-            /**********************/
+//            String trade_no = payInfo.getPlatformNumber();
             // SDK 公共请求类，包含公共请求参数，以及封装了签名与验签，开发者无需关注签名与验签
             AlipayClient client = new DefaultAlipayClient(AlipayConfig.URL, AlipayConfig.APPID, AlipayConfig.RSA_PRIVATE_KEY, AlipayConfig.FORMAT, AlipayConfig.CHARSET, AlipayConfig.ALIPAY_PUBLIC_KEY, AlipayConfig.SIGNTYPE);
             AlipayTradeQueryRequest alipay_request = new AlipayTradeQueryRequest();
 
             AlipayTradeQueryModel model = new AlipayTradeQueryModel();
             model.setOutTradeNo(out_trade_no);
-            model.setTradeNo(trade_no);
+//            model.setTradeNo(trade_no);
             alipay_request.setBizModel(model);
 
             AlipayTradeQueryResponse alipay_response = client.execute(alipay_request);
-            System.out.println(alipay_response.getBody());
+//            System.out.println(alipay_response.getBody());
+            if (!StringUtils.equals(alipay_response.getTradeStatus(), "WAIT_BUYER_PAY")) {
+                if (order.getStatus() == Const.OrderStatus.NOT_PAY) {
+                    // 更新订单状态
+                    Order orderForUpdate = new Order();
+                    orderForUpdate.setId(order.getId());
+                    orderForUpdate.setUpdateTime(new Date());
+                    if (!StringUtils.equals(alipay_response.getTradeStatus(), "TRADE_SUCCESS")) {
+                        orderForUpdate.setStatus(Const.OrderStatus.PAYED);
+                        orderForUpdate.setPaymentTime(new Date());
+                    }
+                    if (!StringUtils.equals(alipay_response.getTradeStatus(), "TRADE_CLOSED")) {
+                        orderForUpdate.setStatus(Const.OrderStatus.CLOSED);
+                    }
+                    if (!StringUtils.equals(alipay_response.getTradeStatus(), "TRADE_FINISHED")) {
+//                    orderForUpdate.setStatus(Const.OrderStatus.PAYED);
+                    }
+                    orderMapper.updateByPrimaryKeySelective(orderForUpdate);
+                    // 记录支付平台信息
+                    PayInfo payInfo = payInfoMapper.selectByOrderNoAndUserId(orderNo, userId);
+                    if (payInfo == null) {
+                        payInfo = new PayInfo();
+                        payInfo.setPlatformStatus(alipay_response.getTradeStatus());
+                        payInfo.setUserId(userId);
+                        payInfo.setPayPlatform(Const.PaymentPlatform.ALIPAY);
+                        payInfo.setOrderNo(orderNo);
+                        payInfo.setPlatformNumber(alipay_response.getTradeNo());
+                        payInfoMapper.insert(payInfo);
+                    } else {
+                        PayInfo payInfoForUpdate = new PayInfo();
+                        payInfoForUpdate.setId(payInfo.getId());
+                        payInfoForUpdate.setPlatformStatus(alipay_response.getTradeStatus());
+                        payInfoForUpdate.setUpdateTime(new Date());
+                        payInfoMapper.updateByPrimaryKeySelective(payInfoForUpdate);
+                    }
+                }
+            }
             return ResponseData.success(convertAlipayStatus(alipay_response.getTradeStatus()));
         } catch (AlipayApiException e) {
             e.printStackTrace();
