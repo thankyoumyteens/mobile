@@ -49,7 +49,6 @@ public class PayController {
         if (user == null) {
             response.getWriter().write("请登陆");
         } else {
-            // todo 先查询支付状态,如果未支付才去支付
             ResponseData data = payService.createForm(user.getId(), orderNo);
             if (data.isSuccess()) {
                 response.getWriter().write(data.getData().toString());//直接将完整的表单html输出到页面

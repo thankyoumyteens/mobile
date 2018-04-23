@@ -101,5 +101,17 @@ public class CartController {
         return cartService.sub(user.getId(), cartId);
     }
 
-    // todo delete
+    @RequestMapping("delete.do")
+    @ResponseBody
+    public ResponseData delete(HttpSession session, Long cartId) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ResponseData.error(
+                    ResponseCode.NEED_LOGIN.getCode(),
+                    ResponseCode.NEED_LOGIN.getMsg()
+            );
+        }
+        return cartService.delete(user.getId(), cartId);
+    }
+
 }

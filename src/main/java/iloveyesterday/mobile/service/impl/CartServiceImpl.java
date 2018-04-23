@@ -192,6 +192,19 @@ public class CartServiceImpl implements ICartService {
         }
     }
 
+    @Override
+    public ResponseData delete(Long userId, Long cartId) {
+        Cart cart = cartMapper.selectByPrimaryKeyAndUserId(cartId, userId);
+        if (cart == null) {
+            return ResponseData.success();
+        }
+        int resultCount = cartMapper.deleteByPrimaryKey(cartId);
+        if (resultCount > 0) {
+            return ResponseData.success();
+        }
+        return ResponseData.error();
+    }
+
     private CartVo assembleCartVo(Cart cart) {
         CartVo cartVo = new CartVo();
         Goods product = goodsMapper.selectByPrimaryKey(cart.getProductId());

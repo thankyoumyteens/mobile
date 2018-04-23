@@ -31,4 +31,8 @@ public interface CartMapper {
     Cart selectByUserIdAndGoodsInfo(@Param("userId") Long userId,
                                     @Param("goodsId") Long goodsId,
                                     @Param("propertiedId") String propertiedId);
+
+    Cart selectByPrimaryKeyAndUserId(
+            @Param("cartId") Long cartId,
+            @Param("userId") Long userId);
 }

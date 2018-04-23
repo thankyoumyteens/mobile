@@ -295,7 +295,7 @@ public class OrderServiceImplByGoods implements IOrderService {
      */
     private List<Cart> getCartCheckedList(Long userId) {
         List<Cart> cartList = cartMapper.selectByUserId(userId);
-        // todo 通过sql查询status == 1的数据
+        // todo 通过sql查询 status == Const.CartStatus.CHECKED 的数据
         List<Cart> cartCheckedList = Lists.newArrayList();
         for (Cart cart : cartList) {
             if (cart.getChecked().equals(Const.CartStatus.CHECKED)) {

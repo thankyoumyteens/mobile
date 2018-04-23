@@ -146,4 +146,11 @@
     and product_id=#{goodsId}
     and detail=#{propertiedId}
   </select>
+  <select id="selectByPrimaryKeyAndUserId" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List"/>
+    from mobile_cart
+    where user_id=#{userId}
+    and id=#{cartId}
+  </select>
 </mapper>

@@ -60,4 +60,13 @@ public interface ICartService {
      * @return
      */
     ResponseData createByGoods(Long userId, Long goodsId, Long propertiesId, Long quantity);
+
+    /**
+     * 删除购物车项
+     *
+     * @param userId
+     * @param cartId
+     * @return
+     */
+    ResponseData delete(Long userId, Long cartId);
 }
