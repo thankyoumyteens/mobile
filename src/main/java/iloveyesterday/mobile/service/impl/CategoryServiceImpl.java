@@ -7,10 +7,7 @@ import iloveyesterday.mobile.dao.CategoryMapper;
 import iloveyesterday.mobile.pojo.Category;
 import iloveyesterday.mobile.service.ICategoryService;
 import iloveyesterday.mobile.util.PropertiesUtil;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -20,8 +17,6 @@ import java.util.Set;
 
 @Service("categoryService")
 public class CategoryServiceImpl implements ICategoryService {
-
-    private Logger logger = LoggerFactory.getLogger(CategoryServiceImpl.class);
 
     @Resource
     private CategoryMapper categoryMapper;
@@ -61,9 +56,6 @@ public class CategoryServiceImpl implements ICategoryService {
 
     public ResponseData<List<Category>> getChildrenParallelCategory(Long categoryId) {
         List<Category> categoryList = categoryMapper.selectCategoryChildrenByParentId(categoryId);
-        if (CollectionUtils.isEmpty(categoryList)) {
-            logger.info("未找到当前分类的子分类");
-        }
         for (Category category : categoryList) {
             category.setImg(PropertiesUtil.getImageHost() + category.getImg());
         }

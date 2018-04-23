@@ -16,6 +16,7 @@ import iloveyesterday.mobile.dao.PayInfoMapper;
 import iloveyesterday.mobile.pojo.Order;
 import iloveyesterday.mobile.pojo.PayInfo;
 import iloveyesterday.mobile.service.IPayService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ import javax.annotation.Resource;
 import java.util.Date;
 
 @Service("payService")
+@Slf4j
 public class PayServiceImpl implements IPayService {
 
     @Resource
@@ -83,7 +85,7 @@ public class PayServiceImpl implements IPayService {
             form = client.pageExecute(alipay_request).getBody();
             return ResponseData.success(form);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("alipay->createForm", e);
         }
         return ResponseData.error();
     }
@@ -209,7 +211,7 @@ public class PayServiceImpl implements IPayService {
             }
             return ResponseData.success(convertAlipayStatus(alipay_response.getTradeStatus()));
         } catch (AlipayApiException e) {
-            e.printStackTrace();
+            log.error("alipay->query", e);
         }
         return ResponseData.error();
     }
