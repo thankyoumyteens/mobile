@@ -6,6 +6,7 @@ use `mobile`;
 SET NAMES utf8;
 SET FOREIGN_KEY_CHECKS = 0;
 
+
 -- ----------------------------
 --  购物车
 -- ----------------------------
@@ -107,22 +108,6 @@ CREATE TABLE `mobile_pay_info` (
 -- ----------------------------
 --  商品
 -- ----------------------------
-DROP TABLE IF EXISTS `mobile_product`;
-CREATE TABLE `mobile_product` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '商品id',
-  `category_id` bigint(20) NOT NULL COMMENT '分类id,对应mobile_category表的主键',
-  `name` varchar(100) NOT NULL COMMENT '商品名称',
-  `subtitle` varchar(200) DEFAULT NULL COMMENT '商品副标题',
-  `main_image` varchar(500) DEFAULT NULL COMMENT '产品主图,url相对地址',
-  `sub_images` text COMMENT '图片地址,json格式,扩展用',
-  `detail` text COMMENT '商品参数 json',
-  `price` decimal(20,2) NOT NULL COMMENT '价格,单位-元保留两位小数',
-  `stock` bigint(20) NOT NULL COMMENT '库存数量',
-  `status` int(6) DEFAULT '1' COMMENT '商品状态.1-在售 2-下架 3-删除',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `mobile_goods`;
 CREATE TABLE `mobile_goods` (
@@ -138,6 +123,7 @@ CREATE TABLE `mobile_goods` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`),
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- 规格
 DROP TABLE IF EXISTS `mobile_goods_properties`;
 CREATE TABLE `mobile_goods_properties` (
@@ -154,6 +140,7 @@ CREATE TABLE `mobile_goods_properties` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- 详情
 DROP TABLE IF EXISTS `mobile_goods_detail`;
 CREATE TABLE `mobile_goods_detail` (
@@ -165,6 +152,7 @@ CREATE TABLE `mobile_goods_detail` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- 评论
 DROP TABLE IF EXISTS `mobile_goods_comment`;
 CREATE TABLE `mobile_goods_comment` (
@@ -176,54 +164,6 @@ CREATE TABLE `mobile_goods_comment` (
   `text` text DEFAULT NULL COMMENT '评论',
   `star` int(10) NOT NULL COMMENT '评星',
   `status` int(6) DEFAULT '1' COMMENT '评论状态.1-公开 2-匿名 3-删除',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
--- ----------------------------
---  商品评论
--- ----------------------------
-DROP TABLE IF EXISTS `mobile_review`;
-CREATE TABLE `mobile_review` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '评价id',
-  `order_item_id` bigint(20) NOT NULL COMMENT '订单项id',
-  `user_id` bigint(20) NOT NULL COMMENT '用户id',
-  `product_id` bigint(20) NOT NULL COMMENT '商品id',
-  `star` int(10) NOT NULL COMMENT '评星',
-  `images` text COMMENT '图片地址,json格式,扩展用',
-  `detail` text COMMENT '评价详情',
-  `status` int(6) DEFAULT '1' COMMENT '评论状态.1-公开 2-匿名 3-删除',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
---  商品可选参数与商品对应表
--- ----------------------------
-DROP TABLE IF EXISTS `mobile_type_link`;
-CREATE TABLE `mobile_type_link` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '类别Id',
-  `product_id` bigint(20) NOT NULL COMMENT '商品id,对应mobile_product表的主键',
-  `type_id` bigint(20) NOT NULL COMMENT '分类id,对应mobile_type表的主键',
-  `status` tinyint(1) DEFAULT '1' COMMENT '类别状态1-正常,2-已废弃',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
--- ----------------------------
---  商品可选参数
--- ----------------------------
-DROP TABLE IF EXISTS `mobile_type`;
-CREATE TABLE `mobile_type` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '类别Id',
-  `name` varchar(50) DEFAULT NULL COMMENT '类别名称',
-  `values` varchar(500) DEFAULT NULL COMMENT '值列表, 用逗号分隔',
-  `status` tinyint(1) DEFAULT '1' COMMENT '类别状态1-正常,2-已废弃',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
@@ -273,7 +213,6 @@ CREATE TABLE `mobile_user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `mobile`.`mobile_user`(`id`, `username`, `password`, `email`, `phone`, `nickname`, `avatar`, `question`, `answer`, `role`, `create_time`, `update_time`) VALUES (1, 'admin', '427338237BD929443EC5D48E24FD2B1A', 'admin@admin.com', '12345677901', '管理员', '1.jpg', '问题', '答案', 0, '2018-03-12 20:06:41', '2018-03-12 20:06:41');
-
 
 
 SET FOREIGN_KEY_CHECKS = 1;
