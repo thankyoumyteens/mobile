@@ -8,11 +8,9 @@ import iloveyesterday.mobile.common.ResponseData;
 import iloveyesterday.mobile.dao.CartMapper;
 import iloveyesterday.mobile.dao.GoodsMapper;
 import iloveyesterday.mobile.dao.GoodsPropertiesMapper;
-import iloveyesterday.mobile.dao.ProductMapper;
 import iloveyesterday.mobile.pojo.Cart;
 import iloveyesterday.mobile.pojo.Goods;
 import iloveyesterday.mobile.pojo.GoodsProperties;
-import iloveyesterday.mobile.pojo.Product;
 import iloveyesterday.mobile.service.ICartService;
 import iloveyesterday.mobile.util.JsonUtil;
 import iloveyesterday.mobile.util.PropertiesUtil;
@@ -30,57 +28,12 @@ public class CartServiceImpl implements ICartService {
     @Resource
     private CartMapper cartMapper;
 
-    @Resource
-    private ProductMapper productMapper;
 
     @Resource
     private GoodsMapper goodsMapper;
 
     @Resource
     private GoodsPropertiesMapper propertiesMapper;
-
-    @Override
-    public ResponseData create(Long userId, Long productId, Long quantity, String detail) {
-        Product product = productMapper.selectByPrimaryKey(productId);
-        if (product == null) {
-            return ResponseData.error();
-        }
-        // 加入购物车不影响库存
-        // 如果已经在购物车中则增加数量
-        Cart cartExist = cartMapper.selectByUserIdANdProductIdAndDetail(userId, productId, detail);
-        if (cartExist != null) {
-            Long count = cartExist.getQuantity() + quantity;
-            if (count > product.getStock()) {
-                return ResponseData.error("库存不足");
-            }
-            Cart cartForUpdate = new Cart();
-            cartForUpdate.setId(cartExist.getId());
-            cartForUpdate.setQuantity(count);
-            cartForUpdate.setUpdateTime(new Date());
-            int resultCount = cartMapper.updateByPrimaryKeySelective(cartForUpdate);
-            if (resultCount > 0) {
-                return ResponseData.success();
-            }
-            return ResponseData.error();
-        } else {
-            Cart cart = new Cart();
-            cart.setUserId(userId);
-            cart.setProductId(productId);
-            cart.setChecked(Const.CartStatus.UNCHECKED);
-            cart.setQuantity(quantity);
-            cart.setDetail(detail);
-
-            if (quantity > product.getStock()) {
-                return ResponseData.error("库存不足");
-            }
-
-            int resultCount = cartMapper.insert(cart);
-            if (resultCount > 0) {
-                return ResponseData.success();
-            }
-            return ResponseData.error();
-        }
-    }
 
     @Override
     public ResponseData<PageInfo> list(Long userId, int pageNum, int pageSize) {

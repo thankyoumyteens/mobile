@@ -51,6 +51,9 @@ public class PropertiesUtil {
 
     public static String getImageHost() {
         String server = PropertiesUtil.getProperty("aliyun.oss.server");
+        if (server == null) {
+            return "";
+        }
         if (!server.endsWith("/")) {
             server = server + "/";
         }

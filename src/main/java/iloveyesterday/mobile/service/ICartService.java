@@ -6,17 +6,6 @@ import iloveyesterday.mobile.common.ResponseData;
 public interface ICartService {
 
     /**
-     * 添加商品到购物车(废弃)
-     *
-     * @param userId
-     * @param productId
-     * @param quantity  商品数量
-     * @param detail
-     * @return
-     */
-    ResponseData create(Long userId, Long productId, Long quantity, String detail);
-
-    /**
      * 获取用户的购物车列表
      *
      * @param userId

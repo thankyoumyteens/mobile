@@ -21,19 +21,6 @@ public class CartController {
     @Resource
     private ICartService cartService;
 
-    @RequestMapping("create.do")
-    @ResponseBody
-    public ResponseData create(HttpSession session, Long productId, Long quantity, String detail) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
-            return ResponseData.error(
-                    ResponseCode.NEED_LOGIN.getCode(),
-                    ResponseCode.NEED_LOGIN.getMsg()
-            );
-        }
-        return cartService.create(user.getId(), productId, quantity, detail);
-    }
-
     @RequestMapping("create_goods.do")
     @ResponseBody
     public ResponseData createGoods(HttpSession session, Long goodsId, Long propertiesId, Long quantity) {

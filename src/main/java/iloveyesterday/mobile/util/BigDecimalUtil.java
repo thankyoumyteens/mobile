@@ -2,7 +2,7 @@ package iloveyesterday.mobile.util;
 
 import java.math.BigDecimal;
 
-public class BigDecimalUtil {
+public final class BigDecimalUtil {
 
     private BigDecimalUtil(){
 
