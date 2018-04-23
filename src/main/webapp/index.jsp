@@ -9,16 +9,17 @@
         margin: 0;
         padding: 0;
     }</style>
-    <link href=static/css/app.751b8ee543d385778cfba0b3a8c97c2f.css rel=stylesheet>
+    <script type=text/javascript
+            src="http://webapi.amap.com/maps?v=1.4.6&key=3e96ffff6dfa652d245d64b6bdbc72a2"></script>
+    <link href=static/css/app.f69c2899352c537d5cf49ef8dd916d2b.css rel=stylesheet>
 </head>
 <body>
 <div id=app></div>
 <script type=text/javascript src=static/js/manifest.14a76fad9b304f57d579.js></script>
 <script type=text/javascript src=static/js/vendor.34fcbc5e9190ede93711.js></script>
-<script type=text/javascript src=static/js/app.6e2b6aaa0c3a12180e7b.js></script>
+<script type=text/javascript src=static/js/app.7ba965c1609ebed35ef9.js></script>
 </body>
 </html>
-
 
 <%--springmvc上传文件--%>
 <%--<form name="form1" id="f1" action="user/upload.do" method="post" enctype="multipart/form-data">--%>

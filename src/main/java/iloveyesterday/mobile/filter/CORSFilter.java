@@ -7,23 +7,31 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * 允许跨域
- * 用于测试
+ * 跨域
  */
 public class CORSFilter implements Filter {
 
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) res;
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost:8080"); // 跨域
+
+        // 允许的域名
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
+        // 允许的请求类型，多个用逗号隔开
         response.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
+        // 预请求缓存时间，单位秒
         response.setHeader("Access-Control-Max-Age", "3600");
+        // 在实际请求中，允许的自定义header，多个用逗号隔开
         response.setHeader("Access-Control-Allow-Headers", "x-requested-with, Content-Type");
+        // 是否允许带凭证的请求
         response.setHeader("Access-Control-Allow-Credentials", "true");
+
         chain.doFilter(req, res);
     }
 
-    public void init(FilterConfig filterConfig) {}
+    public void init(FilterConfig filterConfig) {
+    }
 
-    public void destroy() {}
+    public void destroy() {
+    }
 
 }
