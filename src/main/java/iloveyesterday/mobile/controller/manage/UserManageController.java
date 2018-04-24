@@ -1,6 +1,7 @@
 package iloveyesterday.mobile.controller.manage;
 
 import iloveyesterday.mobile.common.Const;
+import iloveyesterday.mobile.common.ResponseCode;
 import iloveyesterday.mobile.common.ResponseData;
 import iloveyesterday.mobile.pojo.User;
 import iloveyesterday.mobile.service.IUserService;
@@ -69,5 +70,20 @@ public class UserManageController {
         return ResponseData.success();
     }
 
+    /**
+     * 获取用户信息
+     *
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "get_user_info.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseData<User> getUserInfo(HttpSession session) {
+        User user = (User) session.getAttribute(Const.CURRENT_SELLER);
+        if (user == null) {
+            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
+        }
+        return ResponseData.success(user);
+    }
 
 }
