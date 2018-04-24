@@ -49,6 +49,9 @@ public class UserServiceImpl implements IUserService {
         if (!responseData.isSuccess()) {
             return responseData;
         }
+        if (StringUtils.isBlank(user.getUsername())) {
+            return ResponseData.error("用户名不能为空");
+        }
         // 默认普通用户
         if (user.getRole() == null) {
             user.setRole(Const.Role.USER);
