@@ -208,10 +208,6 @@ public class OrderController {
         return orderService.cancel(user.getId(), orderId);
     }
 
-    // todo 已付款
-
-    // todo 提醒发货
-
     // todo 已发货(需要快递单号, 商家账号)
 
     // todo 物流
