@@ -38,4 +38,14 @@ public interface GoodsMapper {
             @Param("sellerId") Long sellerId,
             @Param("categoryId") Long categoryId,
             @Param("name") String name);
+
+    List<Goods> selectBySellerId(Long sellerId);
+
+    List<Goods> selectBySellerIdAndCategoryId(
+            @Param("sellerId") Long sellerId,
+            @Param("categoryId") Long categoryId);
+
+    List<Goods> selectByKeywordAndSellerId(
+            @Param("sellerId") Long sellerId,
+            @Param("keyword") String keyword);
 }

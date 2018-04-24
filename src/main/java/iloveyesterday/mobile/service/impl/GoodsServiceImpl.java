@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @Service("goodsService")
@@ -125,6 +126,69 @@ public class GoodsServiceImpl implements IGoodsService {
 
         resultCount = goodsPropertiesMapper.insert(properties);
 
+        if (resultCount > 0) {
+            return ResponseData.success();
+        }
+        return ResponseData.error();
+    }
+
+    @Override
+    public ResponseData<PageInfo> getListBySellerId(Long sellerId, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Goods> goodsList = goodsMapper.selectBySellerId(sellerId);
+        List<GoodsListVo> resultList = convertToVoList(goodsList);
+        if (resultList == null) {
+            return ResponseData.error("失败");
+        }
+        PageInfo pageResult = new PageInfo(goodsList);
+        pageResult.setList(resultList);
+        return ResponseData.success(pageResult);
+    }
+
+    @Override
+    public ResponseData<PageInfo> getListByCategoryIdAndSellerId(Long sellerId, Long categoryId, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Goods> goodsList = goodsMapper.selectBySellerIdAndCategoryId(sellerId, categoryId);
+        List<GoodsListVo> resultList = convertToVoList(goodsList);
+        if (resultList == null) {
+            return ResponseData.error("失败");
+        }
+        PageInfo pageResult = new PageInfo(goodsList);
+        pageResult.setList(resultList);
+        return ResponseData.success(pageResult);
+    }
+
+    @Override
+    public ResponseData<PageInfo> getListByKeywordAndSellerId(Long sellerId, String keyword, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        keyword = "%" + keyword + "%";
+        List<Goods> goodsList = goodsMapper.selectByKeywordAndSellerId(sellerId, keyword);
+        List<GoodsListVo> resultList = convertToVoList(goodsList);
+        if (resultList == null) {
+            return ResponseData.error("失败");
+        }
+        PageInfo pageResult = new PageInfo(goodsList);
+        pageResult.setList(resultList);
+        return ResponseData.success(pageResult);
+    }
+
+    @Override
+    public ResponseData changeStatus(Long sellerId, Long goodsId, int status) {
+        Goods goods = goodsMapper.selectByPrimaryKey(goodsId);
+        if (goods == null) {
+            return ResponseData.error("商品不存在");
+        }
+        if (!sellerId.equals(goods.getSellerId())) {
+            return ResponseData.error("无权执行此操作");
+        }
+        if (goods.getStatus() == status) {
+            return ResponseData.success();
+        }
+        Goods goodsForUpdate = new Goods();
+        goodsForUpdate.setId(goodsId);
+        goodsForUpdate.setStatus(status);
+        goodsForUpdate.setUpdateTime(new Date());
+        int resultCount = goodsMapper.updateByPrimaryKeySelective(goodsForUpdate);
         if (resultCount > 0) {
             return ResponseData.success();
         }

@@ -50,10 +50,12 @@ public class UserServiceImpl implements IUserService {
             return responseData;
         }
         // 默认普通用户
-        user.setRole(Const.Role.USER);
+        if (user.getRole() == null) {
+            user.setRole(Const.Role.USER);
+        }
         String md5Password = MD5Util.MD5EncodeUtf8(user.getPassword());
         user.setPassword(md5Password);
-
+        // todo 默认头像
         user.setAvatar("1.jpg");
 
         int resultCount = userMapper.insert(user);

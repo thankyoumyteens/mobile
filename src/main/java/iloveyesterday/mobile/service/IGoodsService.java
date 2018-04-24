@@ -13,4 +13,12 @@ public interface IGoodsService {
     ResponseData<GoodsDetailVo> detail(Long goodsId, int role);
 
     ResponseData add(GoodsAddVo goodsVo);
+
+    ResponseData<PageInfo> getListBySellerId(Long sellerId, int pageNum, int pageSize);
+
+    ResponseData<PageInfo> getListByCategoryIdAndSellerId(Long sellerId, Long categoryId, int pageNum, int pageSize);
+
+    ResponseData<PageInfo> getListByKeywordAndSellerId(Long sellerId, String keyword, int pageNum, int pageSize);
+
+    ResponseData changeStatus(Long sellerId, Long goodsId, int status);
 }
