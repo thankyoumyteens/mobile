@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="iloveyesterday.mobile.dao.MessageMapper">
+    <resultMap id="BaseResultMap" type="iloveyesterday.mobile.pojo.Message">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="from_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="to_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="message" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="data" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="send_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="receive_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, from_id, to_id, type, status, message, data, send_time, receive_time
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from mobile_message
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from mobile_message
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="iloveyesterday.mobile.pojo.Message">
+    insert into mobile_message (id, from_id, to_id, 
+      type, status, message, 
+      data, send_time, receive_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{fromId,jdbcType=BIGINT}, #{toId,jdbcType=BIGINT}, 
+      #{type,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{message,jdbcType=VARCHAR}, 
+      #{data,jdbcType=VARCHAR}, now(), now()
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="iloveyesterday.mobile.pojo.Message">
+        insert into mobile_message
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="fromId != null">
+                from_id,
+            </if>
+            <if test="toId != null">
+                to_id,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="message != null">
+                message,
+            </if>
+            <if test="data != null">
+                data,
+            </if>
+            <if test="sendTime != null">
+                send_time,
+            </if>
+            <if test="receiveTime != null">
+                receive_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="fromId != null">
+                #{fromId,jdbcType=BIGINT},
+            </if>
+            <if test="toId != null">
+                #{toId,jdbcType=BIGINT},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="message != null">
+                #{message,jdbcType=VARCHAR},
+            </if>
+            <if test="data != null">
+                #{data,jdbcType=VARCHAR},
+            </if>
+            <if test="sendTime != null">
+                #{sendTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="receiveTime != null">
+                #{receiveTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="iloveyesterday.mobile.pojo.Message">
+        update mobile_message
+        <set>
+            <if test="fromId != null">
+                from_id = #{fromId,jdbcType=BIGINT},
+            </if>
+            <if test="toId != null">
+                to_id = #{toId,jdbcType=BIGINT},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="message != null">
+                message = #{message,jdbcType=VARCHAR},
+            </if>
+            <if test="data != null">
+                data = #{data,jdbcType=VARCHAR},
+            </if>
+            <if test="sendTime != null">
+                send_time = now(),
+            </if>
+            <if test="receiveTime != null">
+                receive_time = now(),
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="iloveyesterday.mobile.pojo.Message">
+    update mobile_message
+    set from_id = #{fromId,jdbcType=BIGINT},
+      to_id = #{toId,jdbcType=BIGINT},
+      type = #{type,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      message = #{message,jdbcType=VARCHAR},
+      data = #{data,jdbcType=VARCHAR},
+      send_time = #{sendTime,jdbcType=TIMESTAMP},
+      receive_time = #{receiveTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <select id="selectByToId" resultMap="BaseResultMap" parameterType="long">
+        select
+        <include refid="Base_Column_List"/>
+        from mobile_message
+        where to_id=#{userId}
+    </select>
+</mapper>

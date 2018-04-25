@@ -8,6 +8,24 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 
 -- ----------------------------
+--  消息
+-- ----------------------------
+DROP TABLE IF EXISTS `mobile_message`;
+CREATE TABLE `mobile_message` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `from_id` bigint(20) NOT NULL COMMENT '发送方Id',
+  `to_id` bigint(20) DEFAULT NULL COMMENT '接收方Id',
+  `type` int(5) DEFAULT NULL COMMENT '消息类型',
+  `status` int(5) DEFAULT NULL COMMENT '处理状态',
+  `message` varchar(100) COMMENT '消息正文',
+  `data` text DEFAULT NULL COMMENT '附加数据',
+  `send_time` datetime DEFAULT NULL COMMENT '消息发送时间',
+  `receive_time` datetime DEFAULT NULL COMMENT '消息接收时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- ----------------------------
 --  购物车
 -- ----------------------------
 DROP TABLE IF EXISTS `mobile_cart`;

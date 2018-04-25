@@ -109,4 +109,27 @@ public interface Const {
         // 商家
         int SELLER = 2;
     }
+
+    /**
+     * 消息类型
+     */
+    interface MessageType {
+        int DEFAULT = 0;
+        // 提醒发货
+        int DELIVERY = 1;
+    }
+
+    /**
+     * 消息状态
+     */
+    interface MessageStatus {
+        // 已发送, 未收到
+        int SENT = 1;
+        // 已收到
+        int RECEIVED = 2;
+        // 已处理
+        int DONE = 3;
+        // 忽略
+        int IGONRE = 4;
+    }
 }

@@ -10,6 +10,8 @@ import org.codehaus.jackson.type.JavaType;
 import org.codehaus.jackson.type.TypeReference;
 
 import java.text.SimpleDateFormat;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Slf4j
 public class JsonUtil {
@@ -92,4 +94,16 @@ public class JsonUtil {
         }
     }
 
+
+    public static String getPropertiesString(String text) {
+        StringBuilder sb = new StringBuilder();
+        LinkedHashMap<String, String> map = string2Obj(text, LinkedHashMap.class);
+        for (Map.Entry<String, String> item : map.entrySet()) {
+            String key = item.getKey();
+            String value = item.getValue();
+            sb.append(value).append(" ");
+            System.out.println();
+        }
+        return sb.toString().trim();
+    }
 }
