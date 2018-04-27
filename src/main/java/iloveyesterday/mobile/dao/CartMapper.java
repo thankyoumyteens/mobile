@@ -35,4 +35,8 @@ public interface CartMapper {
     Cart selectByPrimaryKeyAndUserId(
             @Param("cartId") Long cartId,
             @Param("userId") Long userId);
+
+    List<Cart> selectByUserIdAndChecked(
+            @Param("userId")Long userId,
+            @Param("checked")Long checked);
 }

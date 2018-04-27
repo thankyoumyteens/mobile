@@ -52,7 +52,7 @@ public class OrderServiceImplByGoods implements IOrderService {
         // 取出被选中的购物车商品
         List<Cart> cartCheckedList = getCartCheckedList(userId);
         if (CollectionUtils.isEmpty(cartCheckedList) || cartCheckedList.size() <= 0) {
-            ResponseData.error("请选择要购买的商品");
+            return ResponseData.error("请选择要购买的商品");
         }
 
         // 生成订单项
@@ -294,15 +294,7 @@ public class OrderServiceImplByGoods implements IOrderService {
      * @return
      */
     private List<Cart> getCartCheckedList(Long userId) {
-        List<Cart> cartList = cartMapper.selectByUserId(userId);
-        // todo 通过sql查询 status == Const.CartStatus.CHECKED 的数据
-        List<Cart> cartCheckedList = Lists.newArrayList();
-        for (Cart cart : cartList) {
-            if (cart.getChecked().equals(Const.CartStatus.CHECKED)) {
-                cartCheckedList.add(cart);
-            }
-        }
-        return cartCheckedList;
+        return cartMapper.selectByUserIdAndChecked(userId, Const.CartStatus.CHECKED);
     }
 
     @Override

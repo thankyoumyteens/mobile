@@ -58,8 +58,7 @@ public class UserServiceImpl implements IUserService {
         }
         String md5Password = MD5Util.MD5EncodeUtf8(user.getPassword());
         user.setPassword(md5Password);
-        // todo 默认头像
-        user.setAvatar("1.jpg");
+        user.setAvatar("avatar.jpg");
 
         int resultCount = userMapper.insert(user);
         if (resultCount == 0) {
