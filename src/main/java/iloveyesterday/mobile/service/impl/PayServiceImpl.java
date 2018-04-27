@@ -173,20 +173,21 @@ public class PayServiceImpl implements IPayService {
 
             AlipayTradeQueryResponse alipay_response = client.execute(alipay_request);
 //            System.out.println(alipay_response.getBody());
-            if (!StringUtils.equals(alipay_response.getTradeStatus(), "WAIT_BUYER_PAY")) {
+            String tradeStatus = alipay_response.getTradeStatus();
+            if (StringUtils.isNotBlank(tradeStatus) && !StringUtils.equals(tradeStatus, "WAIT_BUYER_PAY")) {
                 if (order.getStatus() == Const.OrderStatus.NOT_PAY) {
                     // 更新订单状态
                     Order orderForUpdate = new Order();
                     orderForUpdate.setId(order.getId());
                     orderForUpdate.setUpdateTime(new Date());
-                    if (!StringUtils.equals(alipay_response.getTradeStatus(), "TRADE_SUCCESS")) {
+                    if (!StringUtils.equals(tradeStatus, "TRADE_SUCCESS")) {
                         orderForUpdate.setStatus(Const.OrderStatus.PAYED);
                         orderForUpdate.setPaymentTime(new Date());
                     }
-                    if (!StringUtils.equals(alipay_response.getTradeStatus(), "TRADE_CLOSED")) {
+                    if (!StringUtils.equals(tradeStatus, "TRADE_CLOSED")) {
                         orderForUpdate.setStatus(Const.OrderStatus.CLOSED);
                     }
-                    if (!StringUtils.equals(alipay_response.getTradeStatus(), "TRADE_FINISHED")) {
+                    if (!StringUtils.equals(tradeStatus, "TRADE_FINISHED")) {
 //                    orderForUpdate.setStatus(Const.OrderStatus.PAYED);
                     }
                     orderMapper.updateByPrimaryKeySelective(orderForUpdate);
@@ -194,7 +195,7 @@ public class PayServiceImpl implements IPayService {
                     PayInfo payInfo = payInfoMapper.selectByOrderNoAndUserId(orderNo, userId);
                     if (payInfo == null) {
                         payInfo = new PayInfo();
-                        payInfo.setPlatformStatus(alipay_response.getTradeStatus());
+                        payInfo.setPlatformStatus(tradeStatus);
                         payInfo.setUserId(userId);
                         payInfo.setPayPlatform(Const.PaymentPlatform.ALIPAY);
                         payInfo.setOrderNo(orderNo);
@@ -203,13 +204,13 @@ public class PayServiceImpl implements IPayService {
                     } else {
                         PayInfo payInfoForUpdate = new PayInfo();
                         payInfoForUpdate.setId(payInfo.getId());
-                        payInfoForUpdate.setPlatformStatus(alipay_response.getTradeStatus());
+                        payInfoForUpdate.setPlatformStatus(tradeStatus);
                         payInfoForUpdate.setUpdateTime(new Date());
                         payInfoMapper.updateByPrimaryKeySelective(payInfoForUpdate);
                     }
                 }
             }
-            return ResponseData.success(convertAlipayStatus(alipay_response.getTradeStatus()));
+            return ResponseData.successMessage(convertAlipayStatus(tradeStatus));
         } catch (AlipayApiException e) {
             log.error("alipay->query", e);
         }
@@ -217,6 +218,9 @@ public class PayServiceImpl implements IPayService {
     }
 
     private String convertAlipayStatus(String tradeStatus) {
+        if (StringUtils.isBlank(tradeStatus)) {
+            return "支付失败";
+        }
         switch (tradeStatus) {
             case "WAIT_BUYER_PAY":
                 return "交易创建，等待买家付款";
@@ -227,7 +231,7 @@ public class PayServiceImpl implements IPayService {
             case "TRADE_FINISHED":
                 return "交易结束，不可退款";
             default:
-                return "未知状态";
+                return "支付失败";
         }
     }
 }
