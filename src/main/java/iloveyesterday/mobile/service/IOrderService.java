@@ -17,9 +17,9 @@ public interface IOrderService {
 
     ResponseData<OrderVo> create(Long userId, Long goodsId, Long propertiesId, int count, Long shippingId);
 
-    ResponseData<OrderVo> confirm(Long userId, Long orderId);
+    ResponseData<OrderVo> confirm(Long userId, Long orderNo);
 
-    ResponseData<OrderVo> cancel(Long userId, Long orderId);
+    ResponseData<OrderVo> cancel(Long userId, Long orderNo);
 
     ResponseData<PageInfo> listByStatus(Long userId, int status, int pageNum, int pageSize);
 

@@ -416,8 +416,8 @@ public class OrderServiceImplByGoods implements IOrderService {
     }
 
     @Override
-    public ResponseData<OrderVo> confirm(Long userId, Long orderId) {
-        Order order = orderMapper.selectByPrimaryKeyAndUserId(orderId, userId);
+    public ResponseData<OrderVo> confirm(Long userId, Long orderNo) {
+        Order order = orderMapper.selectByOrderNoAndUserId(orderNo, userId);
         if (order == null) {
             return ResponseData.error("订单不存在");
         }
@@ -441,8 +441,8 @@ public class OrderServiceImplByGoods implements IOrderService {
     }
 
     @Override
-    public ResponseData<OrderVo> cancel(Long userId, Long orderId) {
-        Order order = orderMapper.selectByPrimaryKeyAndUserId(orderId, userId);
+    public ResponseData<OrderVo> cancel(Long userId, Long orderNo) {
+        Order order = orderMapper.selectByOrderNoAndUserId(orderNo, userId);
         if (order == null) {
             return ResponseData.error("订单不存在");
         }

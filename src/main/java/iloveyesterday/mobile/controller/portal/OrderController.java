@@ -172,12 +172,12 @@ public class OrderController {
      * 确认收货
      *
      * @param session
-     * @param orderId
+     * @param orderNo
      * @return
      */
     @RequestMapping("confirm.do")
     @ResponseBody
-    public ResponseData<OrderVo> confirm(HttpSession session, Long orderId) {
+    public ResponseData<OrderVo> confirm(HttpSession session, Long orderNo) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return ResponseData.error(
@@ -185,19 +185,19 @@ public class OrderController {
                     ResponseCode.NEED_LOGIN.getMsg()
             );
         }
-        return orderService.confirm(user.getId(), orderId);
+        return orderService.confirm(user.getId(), orderNo);
     }
 
     /**
      * 取消订单(未付款)
      *
      * @param session
-     * @param orderId
+     * @param orderNo
      * @return
      */
     @RequestMapping("cancel.do")
     @ResponseBody
-    public ResponseData<OrderVo> cancel(HttpSession session, Long orderId) {
+    public ResponseData<OrderVo> cancel(HttpSession session, Long orderNo) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return ResponseData.error(
@@ -205,7 +205,7 @@ public class OrderController {
                     ResponseCode.NEED_LOGIN.getMsg()
             );
         }
-        return orderService.cancel(user.getId(), orderId);
+        return orderService.cancel(user.getId(), orderNo);
     }
 
     // todo 已发货(需要快递单号, 商家账号)
