@@ -21,4 +21,6 @@ public interface IGoodsService {
     ResponseData<PageInfo> getListByKeywordAndSellerId(Long sellerId, String keyword, int pageNum, int pageSize);
 
     ResponseData changeStatus(Long sellerId, Long goodsId, int status);
+
+    ResponseData deleteProperty(Long propertiesId);
 }

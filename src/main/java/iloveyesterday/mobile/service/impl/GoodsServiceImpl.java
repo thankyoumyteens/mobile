@@ -5,9 +5,11 @@ import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import iloveyesterday.mobile.common.Const;
 import iloveyesterday.mobile.common.ResponseData;
+import iloveyesterday.mobile.dao.CategoryMapper;
 import iloveyesterday.mobile.dao.GoodsCommentMapper;
 import iloveyesterday.mobile.dao.GoodsMapper;
 import iloveyesterday.mobile.dao.GoodsPropertiesMapper;
+import iloveyesterday.mobile.pojo.Category;
 import iloveyesterday.mobile.pojo.Goods;
 import iloveyesterday.mobile.pojo.GoodsComment;
 import iloveyesterday.mobile.pojo.GoodsProperties;
@@ -36,6 +38,9 @@ public class GoodsServiceImpl implements IGoodsService {
 
     @Resource
     private GoodsCommentMapper goodsCommentMapper;
+
+    @Resource
+    private CategoryMapper categoryMapper;
 
     @Override
     public ResponseData<PageInfo> getListByCategoryId(int role, Long categoryId, int pageNum, int pageSize) {
@@ -195,6 +200,15 @@ public class GoodsServiceImpl implements IGoodsService {
         return ResponseData.error();
     }
 
+    @Override
+    public ResponseData deleteProperty(Long propertiesId) {
+        int resultCount = goodsPropertiesMapper.deleteByPrimaryKey(propertiesId);
+        if (resultCount > 0) {
+            return ResponseData.success();
+        }
+        return ResponseData.error();
+    }
+
     private GoodsDetailVo assembleGoodsDetailVo(Goods goods) {
         GoodsDetailVo detailVo = new GoodsDetailVo();
         List<GoodsProperties> propertiesList = goodsPropertiesMapper.selectByGoodsId(goods.getId());
@@ -282,7 +296,10 @@ public class GoodsServiceImpl implements IGoodsService {
         GoodsListVo goodsListVo = new GoodsListVo();
         goodsListVo.setGoodsId(goods.getId());
         goodsListVo.setCategoryId(goods.getCategoryId());
+        goodsListVo.setCategoryName(getCategoryName(goods.getCategoryId()));
         goodsListVo.setName(goods.getName());
+        goodsListVo.setStatus(goods.getStatus());
+        goodsListVo.setStatusMsg(getStatusMsg(goods.getStatus()));
         goodsListVo.setMainImage(PropertiesUtil.getImageHost() + goods.getMainImage());
         goodsListVo.setSubtitle(goods.getSubtitle());
         BigDecimal price = goodsPropertiesMapper.selectMinimumPrice(goods.getId());
@@ -305,5 +322,26 @@ public class GoodsServiceImpl implements IGoodsService {
         // 保留一位小数, 如果要其它位,如4位,这里两个10改成10000
         goodsListVo.setCommentStatus(((double) (Math.round(rate * 10)) / 10) + "%");
         return goodsListVo;
+    }
+
+    private String getStatusMsg(Integer status) {
+        switch (status) {
+            case Const.ProductStatus.ON_SALE:
+                return "在售";
+            case Const.ProductStatus.NOT_ON_SALE:
+                return "下架";
+            case Const.ProductStatus.DELETE:
+                return "删除";
+            default:
+                return "";
+        }
+    }
+
+    private String getCategoryName(Long categoryId) {
+        Category category = categoryMapper.selectByPrimaryKey(categoryId);
+        if (category == null) {
+            return null;
+        }
+        return category.getName();
     }
 }

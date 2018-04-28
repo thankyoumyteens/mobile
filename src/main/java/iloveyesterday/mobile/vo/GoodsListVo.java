@@ -15,6 +15,8 @@ public class GoodsListVo {
 
     private Long categoryId;
 
+    private String categoryName;
+
     private Long sellerId; // 预留
 
     private String name;
@@ -22,6 +24,10 @@ public class GoodsListVo {
     private String subtitle;
 
     private String mainImage;
+
+    private Integer status;
+
+    private String statusMsg;
 
     private String price; // 单价, 取所有规格中最低的价格
 

@@ -162,6 +162,7 @@
         <include refid="Base_Column_List"/>
         from mobile_goods
         where category_id=#{categoryId}
+        and status != 3
     </select>
     <select id="selectByCategoryIdAndStatus" resultMap="BaseResultMap" parameterType="map">
         select
@@ -175,6 +176,7 @@
         <include refid="Base_Column_List"/>
         from mobile_goods
         where `name` like #{keyword}
+        and status != 3
     </select>
     <select id="selectByKeywordAndStatus" resultMap="BaseResultMap" parameterType="map">
         select
@@ -190,12 +192,14 @@
         where `name`=#{name}
         and seller_id=#{sellerId}
         and category_id=#{categoryId}
+        and status != 3
     </select>
     <select id="selectBySellerId" resultMap="BaseResultMap" parameterType="long">
         select
         <include refid="Base_Column_List"/>
         from mobile_goods
         where seller_id=#{sellerId}
+        and status != 3
     </select>
     <select id="selectBySellerIdAndCategoryId" resultMap="BaseResultMap" parameterType="map">
         select
@@ -203,6 +207,7 @@
         from mobile_goods
         where seller_id=#{sellerId}
         and category_id=#{categoryId}
+        and status != 3
     </select>
     <select id="selectByKeywordAndSellerId" resultMap="BaseResultMap" parameterType="map">
         select
@@ -210,5 +215,6 @@
         from mobile_goods
         where seller_id=#{sellerId}
         and `name` like #{keyword}
+        and status != 3
     </select>
 </mapper>
