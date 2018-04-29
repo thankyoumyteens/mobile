@@ -165,6 +165,11 @@ public class GoodsServiceImpl implements IGoodsService {
         if (goods.getStatus() == status) {
             return ResponseData.success();
         }
+        List<GoodsProperties> propertiesList = goodsPropertiesMapper.selectByGoodsId(goodsId);
+        if (CollectionUtils.isEmpty(propertiesList)) {
+            // 规格为空的商品不能上架
+            return ResponseData.error("请先完善商品细节");
+        }
         Goods goodsForUpdate = new Goods();
         goodsForUpdate.setId(goodsId);
         goodsForUpdate.setStatus(status);
@@ -178,8 +183,21 @@ public class GoodsServiceImpl implements IGoodsService {
 
     @Override
     public ResponseData deleteProperty(Long propertiesId) {
+        GoodsProperties properties = goodsPropertiesMapper.selectByPrimaryKey(propertiesId);
+        if (properties == null) {
+            return ResponseData.success();
+        }
+        Long goodsId = properties.getGoodsId();
         int resultCount = goodsPropertiesMapper.deleteByPrimaryKey(propertiesId);
         if (resultCount > 0) {
+            List<GoodsProperties> propertiesList = goodsPropertiesMapper.selectByGoodsId(goodsId);
+            if (CollectionUtils.isEmpty(propertiesList)) {
+                // 下架规格为空的商品
+                Goods goods = new Goods();
+                goods.setId(goodsId);
+                goods.setStatus(Const.ProductStatus.NOT_ON_SALE);
+                resultCount = goodsMapper.updateByPrimaryKeySelective(goods);
+            }
             return ResponseData.success();
         }
         return ResponseData.error();
