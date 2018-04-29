@@ -209,6 +209,26 @@ public class GoodsServiceImpl implements IGoodsService {
         return ResponseData.error();
     }
 
+    @Override
+    public ResponseData addOrUpdateProperties(GoodsProperties properties) {
+        int resultCount;
+        if (properties.getId() != null && properties.getId() > 0) {
+            // update
+            properties.setUpdateTime(new Date());
+            resultCount = goodsPropertiesMapper.updateByPrimaryKeySelective(properties);
+        } else {
+            // insert
+            properties.setId(null);
+            properties.setName("手机");
+            properties.setStatus(Const.ProductStatus.ON_SALE);
+            resultCount = goodsPropertiesMapper.insert(properties);
+        }
+        if (resultCount > 0) {
+            return ResponseData.success();
+        }
+        return ResponseData.error();
+    }
+
     private GoodsDetailVo assembleGoodsDetailVo(Goods goods) {
         GoodsDetailVo detailVo = new GoodsDetailVo();
         List<GoodsProperties> propertiesList = goodsPropertiesMapper.selectByGoodsId(goods.getId());

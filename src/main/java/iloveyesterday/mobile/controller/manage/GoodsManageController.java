@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import iloveyesterday.mobile.common.Const;
 import iloveyesterday.mobile.common.ResponseCode;
 import iloveyesterday.mobile.common.ResponseData;
+import iloveyesterday.mobile.pojo.GoodsProperties;
 import iloveyesterday.mobile.pojo.User;
 import iloveyesterday.mobile.service.IFileService;
 import iloveyesterday.mobile.service.IGoodsService;
@@ -93,6 +94,23 @@ public class GoodsManageController {
         Long userId = ((User) data.getData()).getId();
         goods.setSellerId(userId);
         return goodsService.add(goods);
+    }
+
+    /**
+     * 添加或修改商品规格
+     *
+     * @param session
+     * @param properties
+     * @return
+     */
+    @RequestMapping("update_properties.do")
+    @ResponseBody
+    public ResponseData addOrUpdateProperties(HttpSession session, GoodsProperties properties) {
+        ResponseData data = checkLogin(session);
+        if (!data.isSuccess()) {
+            return data;
+        }
+        return goodsService.addOrUpdateProperties(properties);
     }
 
     // todo update

@@ -2,6 +2,7 @@ package iloveyesterday.mobile.service;
 
 import com.github.pagehelper.PageInfo;
 import iloveyesterday.mobile.common.ResponseData;
+import iloveyesterday.mobile.pojo.GoodsProperties;
 import iloveyesterday.mobile.vo.GoodsAddVo;
 import iloveyesterday.mobile.vo.GoodsDetailVo;
 
@@ -23,4 +24,6 @@ public interface IGoodsService {
     ResponseData changeStatus(Long sellerId, Long goodsId, int status);
 
     ResponseData deleteProperty(Long propertiesId);
+
+    ResponseData addOrUpdateProperties(GoodsProperties properties);
 }
