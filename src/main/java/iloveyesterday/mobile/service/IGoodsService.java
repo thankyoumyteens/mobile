@@ -2,8 +2,8 @@ package iloveyesterday.mobile.service;
 
 import com.github.pagehelper.PageInfo;
 import iloveyesterday.mobile.common.ResponseData;
+import iloveyesterday.mobile.pojo.Goods;
 import iloveyesterday.mobile.pojo.GoodsProperties;
-import iloveyesterday.mobile.vo.GoodsAddVo;
 import iloveyesterday.mobile.vo.GoodsDetailVo;
 
 public interface IGoodsService {
@@ -13,7 +13,7 @@ public interface IGoodsService {
 
     ResponseData<GoodsDetailVo> detail(Long goodsId, int role);
 
-    ResponseData add(GoodsAddVo goodsVo);
+    ResponseData add(Goods goods);
 
     ResponseData<PageInfo> getListBySellerId(Long sellerId, int pageNum, int pageSize);
 

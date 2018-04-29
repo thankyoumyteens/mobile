@@ -15,7 +15,6 @@ import iloveyesterday.mobile.pojo.GoodsComment;
 import iloveyesterday.mobile.pojo.GoodsProperties;
 import iloveyesterday.mobile.service.IGoodsService;
 import iloveyesterday.mobile.util.PropertiesUtil;
-import iloveyesterday.mobile.vo.GoodsAddVo;
 import iloveyesterday.mobile.vo.GoodsDetailVo;
 import iloveyesterday.mobile.vo.GoodsListVo;
 import iloveyesterday.mobile.vo.GoodsPropertiesVo;
@@ -103,34 +102,11 @@ public class GoodsServiceImpl implements IGoodsService {
     }
 
     @Override
-    public ResponseData add(GoodsAddVo goodsVo) {
+    public ResponseData add(Goods goods) {
         int resultCount;
-        GoodsProperties properties = new GoodsProperties();
-        Goods goods = goodsMapper.selectBySellerIdAndCategoryIdAndName(goodsVo.getSellerId(), goodsVo.getCategoryId(), goodsVo.getName());
-        if (goods == null) {
-            goods = new Goods();
-            goods.setStatus(Const.ProductStatus.ON_SALE);
-            goods.setCategoryId(goodsVo.getCategoryId());
-            goods.setMainImage(goodsVo.getMainImage());
-            goods.setName(goodsVo.getName());
-            goods.setSellerId(goodsVo.getSellerId());
-            goods.setSubImages(goodsVo.getSubImages());
-            goods.setSubtitle(goodsVo.getSubtitle());
-            resultCount = goodsMapper.insert(goods);
-            if (resultCount <= 0) {
-                return ResponseData.error();
-            }
-        }
-        // todo 防止重复
-        properties.setGoodsId(goods.getId());
-        properties.setStock(goodsVo.getStock());
-        properties.setMainImage(goodsVo.getMainImage());
-        properties.setPrice(new BigDecimal(goodsVo.getPrice()));
-        properties.setStatus(Const.ProductStatus.ON_SALE);
-        properties.setText(goodsVo.getProperties());
-
-        resultCount = goodsPropertiesMapper.insert(properties);
-
+        // 默认下架, 上架编辑完成后手动上架
+        goods.setStatus(Const.ProductStatus.NOT_ON_SALE);
+        resultCount = goodsMapper.insert(goods);
         if (resultCount > 0) {
             return ResponseData.success();
         }
@@ -231,10 +207,6 @@ public class GoodsServiceImpl implements IGoodsService {
 
     private GoodsDetailVo assembleGoodsDetailVo(Goods goods) {
         GoodsDetailVo detailVo = new GoodsDetailVo();
-        List<GoodsProperties> propertiesList = goodsPropertiesMapper.selectByGoodsId(goods.getId());
-        if (CollectionUtils.isEmpty(propertiesList)) {
-            return null;
-        }
         detailVo.setCategoryId(goods.getCategoryId());
         detailVo.setGoodsId(goods.getId());
         detailVo.setMainImage(PropertiesUtil.getImageHost() + goods.getMainImage());
@@ -243,6 +215,13 @@ public class GoodsServiceImpl implements IGoodsService {
         detailVo.setStatusText(convertStatus(goods.getStatus()));
         detailVo.setSubImages(getSubImagesWithUrl(goods.getSubImages()));
         detailVo.setSubtitle(goods.getSubtitle());
+        List<GoodsProperties> propertiesList = goodsPropertiesMapper.selectByGoodsId(goods.getId());
+        if (CollectionUtils.isEmpty(propertiesList)) {
+            if (goods.getStatus() != Const.ProductStatus.ON_SALE) {
+                return detailVo;
+            }
+            return null;
+        }
         List<GoodsPropertiesVo> propertiesVoList = convertToPropertiesVoList(propertiesList);
         detailVo.setPropertiesList(propertiesVoList);
         return detailVo;
@@ -324,6 +303,9 @@ public class GoodsServiceImpl implements IGoodsService {
         goodsListVo.setSubtitle(goods.getSubtitle());
         BigDecimal price = goodsPropertiesMapper.selectMinimumPrice(goods.getId());
         if (price == null) {
+            if (goods.getStatus() != Const.ProductStatus.ON_SALE) {
+                return goodsListVo;
+            }
             return null;
         }
         goodsListVo.setPrice(price.toString());

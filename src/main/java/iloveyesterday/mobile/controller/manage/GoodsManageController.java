@@ -5,12 +5,12 @@ import com.google.common.collect.Maps;
 import iloveyesterday.mobile.common.Const;
 import iloveyesterday.mobile.common.ResponseCode;
 import iloveyesterday.mobile.common.ResponseData;
+import iloveyesterday.mobile.pojo.Goods;
 import iloveyesterday.mobile.pojo.GoodsProperties;
 import iloveyesterday.mobile.pojo.User;
 import iloveyesterday.mobile.service.IFileService;
 import iloveyesterday.mobile.service.IGoodsService;
 import iloveyesterday.mobile.util.PropertiesUtil;
-import iloveyesterday.mobile.vo.GoodsAddVo;
 import iloveyesterday.mobile.vo.GoodsDetailVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -86,7 +86,7 @@ public class GoodsManageController {
 
     @RequestMapping("add.do")
     @ResponseBody
-    public ResponseData add(HttpSession session, GoodsAddVo goods) {
+    public ResponseData add(HttpSession session, Goods goods) {
         ResponseData data = checkLogin(session);
         if (!data.isSuccess()) {
             return data;

@@ -37,7 +37,7 @@
     values (#{id,jdbcType=BIGINT}, #{categoryId,jdbcType=BIGINT}, #{sellerId,jdbcType=BIGINT}, 
       #{name,jdbcType=VARCHAR}, #{subtitle,jdbcType=VARCHAR},
       #{mainImage,jdbcType=VARCHAR}, #{subImages,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+      now(), now())
   </insert>
     <insert id="insertSelective" parameterType="iloveyesterday.mobile.pojo.Goods">
         insert into mobile_goods
