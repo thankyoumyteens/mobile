@@ -10,4 +10,6 @@ public interface GoodsDetailMapper {
     GoodsDetail selectByPrimaryKey(Long id);
 
     int updateByPrimaryKeySelective(GoodsDetail record);
+
+    GoodsDetail selectByGoodsId(Long goodsId);
 }

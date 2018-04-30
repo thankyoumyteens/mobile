@@ -5,14 +5,8 @@ import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import iloveyesterday.mobile.common.Const;
 import iloveyesterday.mobile.common.ResponseData;
-import iloveyesterday.mobile.dao.CategoryMapper;
-import iloveyesterday.mobile.dao.GoodsCommentMapper;
-import iloveyesterday.mobile.dao.GoodsMapper;
-import iloveyesterday.mobile.dao.GoodsPropertiesMapper;
-import iloveyesterday.mobile.pojo.Category;
-import iloveyesterday.mobile.pojo.Goods;
-import iloveyesterday.mobile.pojo.GoodsComment;
-import iloveyesterday.mobile.pojo.GoodsProperties;
+import iloveyesterday.mobile.dao.*;
+import iloveyesterday.mobile.pojo.*;
 import iloveyesterday.mobile.service.IGoodsService;
 import iloveyesterday.mobile.util.PropertiesUtil;
 import iloveyesterday.mobile.vo.GoodsDetailVo;
@@ -40,6 +34,9 @@ public class GoodsServiceImpl implements IGoodsService {
 
     @Resource
     private CategoryMapper categoryMapper;
+
+    @Resource
+    private GoodsDetailMapper detailMapper;
 
     @Override
     public ResponseData<PageInfo> getListByCategoryId(int role, Long categoryId, int pageNum, int pageSize) {
@@ -216,6 +213,30 @@ public class GoodsServiceImpl implements IGoodsService {
             properties.setName("手机");
             properties.setStatus(Const.ProductStatus.ON_SALE);
             resultCount = goodsPropertiesMapper.insert(properties);
+        }
+        if (resultCount > 0) {
+            return ResponseData.success();
+        }
+        return ResponseData.error();
+    }
+
+    @Override
+    public ResponseData<GoodsDetail> getDetail(Long goodsId) {
+        GoodsDetail detail = detailMapper.selectByGoodsId(goodsId);
+        return ResponseData.success(detail);
+    }
+
+    @Override
+    public ResponseData<GoodsDetail> updateDetail(GoodsDetail detail) {
+        int resultCount;
+        ResponseData responseData = getDetail(detail.getGoodsId());
+        if (responseData.isSuccess()) {
+            GoodsDetail goodsDetail = (GoodsDetail) responseData.getData();
+            detail.setId(goodsDetail.getId());
+            detail.setUpdateTime(new Date());
+            resultCount = detailMapper.updateByPrimaryKeySelective(detail);
+        } else {
+            resultCount = detailMapper.insert(detail);
         }
         if (resultCount > 0) {
             return ResponseData.success();

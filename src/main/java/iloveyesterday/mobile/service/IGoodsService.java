@@ -3,6 +3,7 @@ package iloveyesterday.mobile.service;
 import com.github.pagehelper.PageInfo;
 import iloveyesterday.mobile.common.ResponseData;
 import iloveyesterday.mobile.pojo.Goods;
+import iloveyesterday.mobile.pojo.GoodsDetail;
 import iloveyesterday.mobile.pojo.GoodsProperties;
 import iloveyesterday.mobile.vo.GoodsDetailVo;
 
@@ -26,4 +27,8 @@ public interface IGoodsService {
     ResponseData deleteProperty(Long propertiesId);
 
     ResponseData addOrUpdateProperties(GoodsProperties properties);
+
+    ResponseData<GoodsDetail> getDetail(Long goodsId);
+
+    ResponseData<GoodsDetail> updateDetail(GoodsDetail detail);
 }

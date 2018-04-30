@@ -6,6 +6,7 @@ import iloveyesterday.mobile.common.Const;
 import iloveyesterday.mobile.common.ResponseCode;
 import iloveyesterday.mobile.common.ResponseData;
 import iloveyesterday.mobile.pojo.Goods;
+import iloveyesterday.mobile.pojo.GoodsDetail;
 import iloveyesterday.mobile.pojo.GoodsProperties;
 import iloveyesterday.mobile.pojo.User;
 import iloveyesterday.mobile.service.IFileService;
@@ -113,7 +114,41 @@ public class GoodsManageController {
         return goodsService.addOrUpdateProperties(properties);
     }
 
-    // todo update
+    // todo update goods
+
+    /**
+     * 获取商品详细介绍
+     *
+     * @param session
+     * @param goodsId
+     * @return
+     */
+    @RequestMapping("goods_detail.do")
+    @ResponseBody
+    public ResponseData<GoodsDetail> getDetail(HttpSession session, Long goodsId) {
+        ResponseData data = checkLogin(session);
+        if (!data.isSuccess()) {
+            return data;
+        }
+        return goodsService.getDetail(goodsId);
+    }
+
+    /**
+     * 编写商品详细介绍
+     *
+     * @param session
+     * @param detail
+     * @return
+     */
+    @RequestMapping("update_detail.do")
+    @ResponseBody
+    public ResponseData<GoodsDetail> updateDetail(HttpSession session, GoodsDetail detail) {
+        ResponseData data = checkLogin(session);
+        if (!data.isSuccess()) {
+            return data;
+        }
+        return goodsService.updateDetail(detail);
+    }
 
     /**
      * 上架商品
