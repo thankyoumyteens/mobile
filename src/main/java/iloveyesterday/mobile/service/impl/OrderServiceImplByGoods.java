@@ -328,7 +328,7 @@ public class OrderServiceImplByGoods implements IOrderService {
         for (Order order : orderList) {
             OrderListVo orderListVo = assembleOrderListVo(order);
             if (orderListVo == null) {
-                return ResponseData.error("失败");
+                return ResponseData.error("获取订单失败");
             }
             orderListVoList.add(orderListVo);
         }
@@ -509,6 +509,28 @@ public class OrderServiceImplByGoods implements IOrderService {
             return ResponseData.success();
         }
         return ResponseData.error();
+    }
+
+    @Override
+    public ResponseData<PageInfo> listBySeller(Long sellerId, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<OrderSeller> orderSellerList = orderSellerMapper.selectBySellerId(sellerId);
+        List<Long> orderNoList = Lists.newArrayList();
+        for (OrderSeller orderSeller : orderSellerList) {
+            orderNoList.add(orderSeller.getOrderNo());
+        }
+        List<Order> orderList = orderMapper.selectByOrderNoList(orderNoList);
+        List<OrderListVo> orderListVoList = Lists.newArrayList();
+        for (Order order : orderList) {
+            OrderListVo orderListVo = assembleOrderListVo(order);
+            if (orderListVo == null) {
+                return ResponseData.error("获取失败");
+            }
+            orderListVoList.add(orderListVo);
+        }
+        PageInfo pageResult = new PageInfo(orderList);
+        pageResult.setList(orderListVoList);
+        return ResponseData.success(pageResult);
     }
 
     /**

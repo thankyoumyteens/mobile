@@ -117,4 +117,10 @@
             )
         </foreach>
     </insert>
+    <select id="selectBySellerId" resultMap="BaseResultMap" parameterType="long">
+        select
+        <include refid="Base_Column_List"/>
+        from mobile_order_seller
+        where seller_id=#{sellerId}
+    </select>
 </mapper>

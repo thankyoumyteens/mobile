@@ -19,4 +19,6 @@ public interface OrderSellerMapper {
     int updateByPrimaryKey(OrderSeller record);
 
     void batchInsert(@Param("orderSellerList") List<OrderSeller> orderSellerList);
+
+    List<OrderSeller> selectBySellerId(Long sellerId);
 }

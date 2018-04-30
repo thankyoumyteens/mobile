@@ -24,4 +24,6 @@ public interface IOrderService {
     ResponseData<PageInfo> listByStatus(Long userId, int status, int pageNum, int pageSize);
 
     ResponseData payed(Long orderNo);
+
+    ResponseData<PageInfo> listBySeller(Long sellerId, int pageNum, int pageSize);
 }
