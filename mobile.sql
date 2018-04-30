@@ -107,6 +107,21 @@ CREATE TABLE `mobile_order_item` (
 
 
 -- ----------------------------
+--  记录订单对应的卖家
+-- ----------------------------
+DROP TABLE IF EXISTS `mobile_order_seller`;
+CREATE TABLE `mobile_order_seller` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '',
+  `user_id` bigint(20) DEFAULT NULL COMMENT '用户id',
+  `seller_id` bigint(20) DEFAULT NULL COMMENT '卖家id',
+  `order_no` bigint(20) DEFAULT NULL COMMENT '订单号',
+  `create_time` datetime DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- ----------------------------
 --  支付信息
 -- ----------------------------
 DROP TABLE IF EXISTS `mobile_pay_info`;

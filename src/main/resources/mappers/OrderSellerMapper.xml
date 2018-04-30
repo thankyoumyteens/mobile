@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="iloveyesterday.mobile.dao.OrderSellerMapper">
+    <resultMap id="BaseResultMap" type="iloveyesterday.mobile.pojo.OrderSeller">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="user_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="seller_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="order_no" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, user_id, seller_id, order_no, create_time, update_time
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from mobile_order_seller
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from mobile_order_seller
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="iloveyesterday.mobile.pojo.OrderSeller">
+    insert into mobile_order_seller (id, user_id, seller_id, 
+      order_no, create_time, update_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{sellerId,jdbcType=BIGINT}, 
+      #{orderNo,jdbcType=BIGINT}, now(), now()
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="iloveyesterday.mobile.pojo.OrderSeller">
+        insert into mobile_order_seller
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="sellerId != null">
+                seller_id,
+            </if>
+            <if test="orderNo != null">
+                order_no,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="sellerId != null">
+                #{sellerId,jdbcType=BIGINT},
+            </if>
+            <if test="orderNo != null">
+                #{orderNo,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="iloveyesterday.mobile.pojo.OrderSeller">
+        update mobile_order_seller
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="sellerId != null">
+                seller_id = #{sellerId,jdbcType=BIGINT},
+            </if>
+            <if test="orderNo != null">
+                order_no = #{orderNo,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="iloveyesterday.mobile.pojo.OrderSeller">
+    update mobile_order_seller
+    set user_id = #{userId,jdbcType=BIGINT},
+      seller_id = #{sellerId,jdbcType=BIGINT},
+      order_no = #{orderNo,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <insert id="batchInsert" parameterType="list">
+        insert into mobile_order_seller (id, user_id, seller_id,
+        order_no, create_time, update_time)
+        values
+        <foreach collection="orderSellerList" index="index" item="item" separator=",">
+            (
+            #{item.id}, #{item.userId},
+            #{item.sellerId},#{item.orderNo},
+            now(),now()
+            )
+        </foreach>
+    </insert>
+</mapper>

@@ -46,6 +46,9 @@ public class OrderServiceImplByGoods implements IOrderService {
     @Resource
     private ShippingMapper shippingMapper;
 
+    @Resource
+    private OrderSellerMapper orderSellerMapper;
+
     @Transactional
     @Override
     public ResponseData<OrderVo> create(Long userId, Long shippingId) {
@@ -78,9 +81,28 @@ public class OrderServiceImplByGoods implements IOrderService {
             return ResponseData.error("库存不足");
         }
 
+        List<Long> goodsIdList = Lists.newArrayList();
+        List<OrderSeller> orderSellerList = Lists.newArrayList();
+        for (OrderItem item : orderItemList) {
+            Long goodsId = item.getProductId();
+            if (!goodsIdList.contains(goodsId)) {
+                OrderSeller orderSeller = new OrderSeller();
+                orderSeller.setOrderNo(order.getOrderNo());
+                orderSeller.setUserId(userId);
+                Goods goods = goodsMapper.selectByPrimaryKey(goodsId);
+                if (goods == null) {
+                    return ResponseData.error();
+                }
+                orderSeller.setSellerId(goods.getSellerId());
+                orderSellerList.add(orderSeller);
+                goodsIdList.add(goodsId);
+            }
+        }
+
         // 添加数据
         orderMapper.insert(order);
         orderItemMapper.batchInsert(orderItemList);
+        orderSellerMapper.batchInsert(orderSellerList);
 
         // 减少库存
         reduceStock(orderItemList);

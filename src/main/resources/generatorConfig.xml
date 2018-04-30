@@ -84,6 +84,9 @@
         <table tableName="mobile_order_item" domainObjectName="OrderItem" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false"></table>
+        <table tableName="mobile_order_seller" domainObjectName="OrderSeller" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false"></table>
         <table tableName="mobile_pay_info" domainObjectName="PayInfo" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false"></table>
