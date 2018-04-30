@@ -123,4 +123,11 @@
         from mobile_order_seller
         where seller_id=#{sellerId}
     </select>
+    <select id="selectBySellerIdAndOrderNo" resultMap="BaseResultMap" parameterType="map">
+        select
+        <include refid="Base_Column_List"/>
+        from mobile_order_seller
+        where seller_id=#{sellerId}
+        and order_no=#{orderNo}
+    </select>
 </mapper>

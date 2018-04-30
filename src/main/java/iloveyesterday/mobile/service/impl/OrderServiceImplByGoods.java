@@ -468,6 +468,7 @@ public class OrderServiceImplByGoods implements IOrderService {
         orderForUpdate.setUpdateTime(new Date());
         orderForUpdate.setStatus(Const.OrderStatus.CANCELED);
         orderForUpdate.setCloseTime(new Date());
+        // todo 回复库存
         int resultCount = orderMapper.updateByPrimaryKeySelective(orderForUpdate);
         if (resultCount > 0) {
             return ResponseData.success();
@@ -531,6 +532,31 @@ public class OrderServiceImplByGoods implements IOrderService {
         PageInfo pageResult = new PageInfo(orderList);
         pageResult.setList(orderListVoList);
         return ResponseData.success(pageResult);
+    }
+
+    @Override
+    public ResponseData<OrderVo> send(Long sellerId, Long orderNo) {
+        OrderSeller orderSeller = orderSellerMapper.selectBySellerIdAndOrderNo(sellerId, orderNo);
+        if (orderSeller == null) {
+            return ResponseData.error("无权操作");
+        }
+        Order order = orderMapper.selectByOrderNo(orderNo);
+        if (order == null) {
+            return ResponseData.error("订单不存在");
+        }
+        if (order.getStatus() != Const.OrderStatus.PAYED) {
+            return ResponseData.error("无法发货");
+        }
+        Order orderForUpdate = new Order();
+        orderForUpdate.setId(order.getId());
+        orderForUpdate.setUpdateTime(new Date());
+        orderForUpdate.setStatus(Const.OrderStatus.SENT);
+        orderForUpdate.setCloseTime(new Date());
+        int resultCount = orderMapper.updateByPrimaryKeySelective(orderForUpdate);
+        if (resultCount > 0) {
+            return ResponseData.success();
+        }
+        return ResponseData.error();
     }
 
     /**

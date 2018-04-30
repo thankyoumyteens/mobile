@@ -229,8 +229,7 @@ public class OrderController {
     @RequestMapping("search.do")
     @ResponseBody
     public ResponseData<PageInfo> search(
-            HttpSession session,
-            String keyword,
+            HttpSession session, String keyword,
             @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);

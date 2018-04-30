@@ -6,6 +6,7 @@ import iloveyesterday.mobile.common.ResponseCode;
 import iloveyesterday.mobile.common.ResponseData;
 import iloveyesterday.mobile.pojo.User;
 import iloveyesterday.mobile.service.IOrderService;
+import iloveyesterday.mobile.vo.OrderVo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,4 +37,25 @@ public class OrderManageController {
         }
         return orderService.listBySeller(user.getId(), pageNum, pageSize);
     }
+
+    /**
+     * 发货
+     *
+     * @param session
+     * @param orderNo
+     * @return
+     */
+    @RequestMapping("send.do")
+    @ResponseBody
+    public ResponseData<OrderVo> send(HttpSession session, Long orderNo) {
+        User user = (User) session.getAttribute(Const.CURRENT_SELLER);
+        if (user == null) {
+            return ResponseData.error(
+                    ResponseCode.NEED_LOGIN.getCode(),
+                    ResponseCode.NEED_LOGIN.getMsg()
+            );
+        }
+        return orderService.send(user.getId(), orderNo);
+    }
+
 }
