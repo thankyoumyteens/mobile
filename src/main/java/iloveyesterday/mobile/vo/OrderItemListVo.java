@@ -15,6 +15,8 @@ public class OrderItemListVo {
 
     private Long orderItemId;
 
+    private Long goodsId;
+
     private String productName;
 
     private String detail;

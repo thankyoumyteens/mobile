@@ -1,6 +1,7 @@
 package iloveyesterday.mobile.dao;
 
 import iloveyesterday.mobile.pojo.GoodsComment;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -20,4 +21,9 @@ public interface GoodsCommentMapper {
     List<GoodsComment> selectByGoodsId(Long goodsId);
 
     List<GoodsComment> selectByUserId(Long userId);
+
+    List<GoodsComment> selectByGoodsIdAndStar(
+            @Param("goodsId") Long goodsId,
+            @Param("starLeft") int starLeft,
+            @Param("starRight") int starRight);
 }

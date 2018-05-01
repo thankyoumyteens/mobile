@@ -7,6 +7,8 @@ import iloveyesterday.mobile.common.ResponseData;
 import iloveyesterday.mobile.pojo.GoodsComment;
 import iloveyesterday.mobile.pojo.User;
 import iloveyesterday.mobile.service.ICommentService;
+import iloveyesterday.mobile.util.JsonUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 @RequestMapping("/comment/")
@@ -41,6 +44,33 @@ public class CommentController {
         }
         comment.setUserId(user.getId());
         return commentService.create(comment);
+    }
+
+    /**
+     * 填写评论
+     *
+     * @param session
+     * @param str
+     * @return
+     */
+    @RequestMapping("create_list.do")
+    @ResponseBody
+    public ResponseData createList(HttpSession session, String str) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ResponseData.error(
+                    ResponseCode.NEED_LOGIN.getCode(),
+                    ResponseCode.NEED_LOGIN.getMsg()
+            );
+        }
+        List<GoodsComment> commentList = JsonUtil.string2Obj(str, List.class, GoodsComment.class);
+        if (CollectionUtils.isEmpty(commentList)) {
+            return ResponseData.error("请正确填写");
+        }
+        for (GoodsComment comment : commentList) {
+            comment.setUserId(user.getId());
+        }
+        return commentService.createByList(commentList);
     }
 
     @RequestMapping("list.do")

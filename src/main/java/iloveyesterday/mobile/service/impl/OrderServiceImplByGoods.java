@@ -216,6 +216,7 @@ public class OrderServiceImplByGoods implements IOrderService {
         OrderItemListVo orderItemListVo = new OrderItemListVo();
         orderItemListVo.setOrderItemId(orderItem.getId());
         orderItemListVo.setMainImage(PropertiesUtil.getImageHost() + orderItem.getProductImage());
+        orderItemListVo.setGoodsId(orderItem.getProductId());
         orderItemListVo.setProductName(orderItem.getProductName());
         orderItemListVo.setQuantity(orderItem.getQuantity());
         orderItemListVo.setTotalPrice(orderItem.getTotalPrice());

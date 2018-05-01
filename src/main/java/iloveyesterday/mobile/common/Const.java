@@ -76,7 +76,7 @@ public interface Const {
         int SENT = 40;
         // 交易成功
         int SUCCESS = 50;
-        // 交易关闭
+        // 交易关闭(评论后)
         int CLOSED = 60;
     }
 

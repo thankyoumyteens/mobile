@@ -5,23 +5,19 @@ import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import iloveyesterday.mobile.common.Const;
 import iloveyesterday.mobile.common.ResponseData;
-import iloveyesterday.mobile.dao.GoodsCommentMapper;
-import iloveyesterday.mobile.dao.GoodsPropertiesMapper;
-import iloveyesterday.mobile.dao.OrderItemMapper;
-import iloveyesterday.mobile.dao.UserMapper;
-import iloveyesterday.mobile.pojo.GoodsComment;
-import iloveyesterday.mobile.pojo.GoodsProperties;
-import iloveyesterday.mobile.pojo.OrderItem;
-import iloveyesterday.mobile.pojo.User;
+import iloveyesterday.mobile.dao.*;
+import iloveyesterday.mobile.pojo.*;
 import iloveyesterday.mobile.service.ICommentService;
 import iloveyesterday.mobile.util.DateTimeUtil;
 import iloveyesterday.mobile.util.JsonUtil;
 import iloveyesterday.mobile.util.PropertiesUtil;
 import iloveyesterday.mobile.vo.CommentVo;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 @Service("commentService")
@@ -34,6 +30,9 @@ public class CommentServiceImpl implements ICommentService {
     private UserMapper userMapper;
 
     @Resource
+    private OrderMapper orderMapper;
+
+    @Resource
     private OrderItemMapper orderItemMapper;
 
     @Resource
@@ -42,11 +41,44 @@ public class CommentServiceImpl implements ICommentService {
 
     @Override
     public ResponseData create(GoodsComment comment) {
-        if (comment.getStatus() != Const.CommentStatus.PUBLIC &&
-                comment.getStatus() != Const.CommentStatus.PRIVATE) {
+        if (comment.getStatus() == null ||
+                comment.getStatus() != Const.CommentStatus.PUBLIC &&
+                        comment.getStatus() != Const.CommentStatus.PRIVATE) {
             comment.setStatus(Const.CommentStatus.PUBLIC);
         }
         int resultCount = commentMapper.insert(comment);
+        if (resultCount > 0) {
+            return ResponseData.success();
+        }
+        return ResponseData.error();
+    }
+
+    @Override
+    public ResponseData createByList(List<GoodsComment> commentList) {
+        if (CollectionUtils.isEmpty(commentList)) {
+            return ResponseData.success();
+        }
+        ResponseData responseData;
+        for (GoodsComment comment : commentList) {
+            responseData = create(comment);
+            if (!responseData.isSuccess()) {
+                return ResponseData.error("评论失败");
+            }
+        }
+        Order order = new Order();
+        OrderItem orderItem = orderItemMapper.selectByPrimaryKey(commentList.get(0).getOrderItemId());
+        if (orderItem == null) {
+            return ResponseData.error("订单不存在");
+        }
+        Order order1 = orderMapper.selectByOrderNo(orderItem.getOrderNo());
+        if (order1 == null) {
+            return ResponseData.error("订单不存在");
+        }
+        order.setId(order1.getId());
+        order.setStatus(Const.OrderStatus.CLOSED);
+        order.setCloseTime(new Date());
+        order.setUpdateTime(new Date());
+        int resultCount = orderMapper.updateByPrimaryKeySelective(order);
         if (resultCount > 0) {
             return ResponseData.success();
         }
@@ -113,13 +145,10 @@ public class CommentServiceImpl implements ICommentService {
                 return list(goodsId, pageNum, pageSize);
         }
 
-        List<GoodsComment> commentList = commentMapper.selectByGoodsId(goodsId);
+        List<GoodsComment> commentList = commentMapper.selectByGoodsIdAndStar(goodsId, starLeft, starRight);
 
         List<CommentVo> commentVoList = Lists.newArrayList();
         for (GoodsComment comment : commentList) {
-            if (comment.getStar() > starRight || comment.getStar() < starLeft) {
-                continue;
-            }
             CommentVo commentVo = assembleCommentVo(comment);
             if (commentVo == null) continue;
             commentVoList.add(commentVo);

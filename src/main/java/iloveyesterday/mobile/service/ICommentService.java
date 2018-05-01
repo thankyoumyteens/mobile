@@ -4,8 +4,12 @@ import com.github.pagehelper.PageInfo;
 import iloveyesterday.mobile.common.ResponseData;
 import iloveyesterday.mobile.pojo.GoodsComment;
 
+import java.util.List;
+
 public interface ICommentService {
     ResponseData create(GoodsComment comment);
+
+    ResponseData createByList(List<GoodsComment> commentList);
 
     ResponseData<PageInfo> list(Long goodsId, int pageNum, int pageSize);
 
