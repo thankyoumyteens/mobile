@@ -178,7 +178,7 @@ public class OrderServiceImplByGoods implements IOrderService {
             case Const.OrderStatus.SUCCESS:
                 return "已完成";
             case Const.OrderStatus.CLOSED:
-                return "已关闭";
+                return "已完成";
             default:
                 return "未知";
         }
