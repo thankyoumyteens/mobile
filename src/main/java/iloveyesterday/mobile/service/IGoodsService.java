@@ -31,4 +31,5 @@ public interface IGoodsService {
     ResponseData<GoodsDetail> getDetail(Long goodsId);
 
     ResponseData<GoodsDetail> updateDetail(GoodsDetail detail);
+
 }

@@ -3,6 +3,7 @@ package iloveyesterday.mobile.controller.portal;
 import com.github.pagehelper.PageInfo;
 import iloveyesterday.mobile.common.Const;
 import iloveyesterday.mobile.common.ResponseData;
+import iloveyesterday.mobile.pojo.GoodsDetail;
 import iloveyesterday.mobile.service.IGoodsService;
 import iloveyesterday.mobile.vo.GoodsDetailVo;
 import org.springframework.stereotype.Controller;
@@ -42,4 +43,16 @@ public class GoodsController {
     public ResponseData<GoodsDetailVo> detail(Long goodsId) {
         return goodsService.detail(goodsId, Const.Role.USER);
     }
+
+    /**
+     * 获取商品介绍
+     * @param goodsId
+     * @return
+     */
+    @RequestMapping("desc.do")
+    @ResponseBody
+    public ResponseData<GoodsDetail> goodsDesc(Long goodsId) {
+        return goodsService.getDetail(goodsId);
+    }
+
 }
