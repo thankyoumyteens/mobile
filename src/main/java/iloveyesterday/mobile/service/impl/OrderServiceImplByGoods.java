@@ -51,9 +51,9 @@ public class OrderServiceImplByGoods implements IOrderService {
 
     @Transactional
     @Override
-    public ResponseData<OrderVo> create(Long userId, Long shippingId) {
+    public ResponseData<OrderVo> create(Long userId, Long shippingId, int pageNum, int pageSize) {
         // 取出被选中的购物车商品
-        List<Cart> cartCheckedList = getCartCheckedList(userId);
+        List<Cart> cartCheckedList = getCartCheckedList(userId, pageNum, pageSize);
         if (CollectionUtils.isEmpty(cartCheckedList) || cartCheckedList.size() <= 0) {
             return ResponseData.error("请选择要购买的商品");
         }
@@ -314,10 +314,23 @@ public class OrderServiceImplByGoods implements IOrderService {
      * 获取购物车中已经选中的商品
      *
      * @param userId
+     * @param pageNum
+     * @param pageSize
      * @return
      */
-    private List<Cart> getCartCheckedList(Long userId) {
-        return cartMapper.selectByUserIdAndChecked(userId, Const.CartStatus.CHECKED);
+    private List<Cart> getCartCheckedList(Long userId, int pageNum, int pageSize) {
+        // 选出当前页选中的购物车商品
+        PageHelper.startPage(pageNum, pageSize);
+        List<Cart> cartList = cartMapper.selectByUserId(userId);
+        List<Cart> cartCheckedList = Lists.newArrayList();
+        for (Cart cart : cartList) {
+            if (cart.getChecked().equals(Const.CartStatus.CHECKED)) {
+                cartCheckedList.add(cart);
+            }
+        }
+        PageInfo pageResult = new PageInfo(cartList);
+        pageResult.setList(cartCheckedList);
+        return pageResult.getList();
     }
 
     @Override

@@ -31,7 +31,10 @@ public class OrderController {
      */
     @RequestMapping("create.do")
     @ResponseBody
-    public ResponseData<OrderVo> create(HttpSession session, Long shippingId) {
+    public ResponseData<OrderVo> create(
+            HttpSession session, Long shippingId,
+            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return ResponseData.error(
@@ -39,7 +42,7 @@ public class OrderController {
                     ResponseCode.NEED_LOGIN.getMsg()
             );
         }
-        return orderService.create(user.getId(), shippingId);
+        return orderService.create(user.getId(), shippingId, pageNum, pageSize);
     }
 
     @RequestMapping("list.do")

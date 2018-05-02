@@ -5,7 +5,7 @@ import iloveyesterday.mobile.common.ResponseData;
 import iloveyesterday.mobile.vo.OrderVo;
 
 public interface IOrderService {
-    ResponseData<OrderVo> create(Long userId, Long shippingId);
+    ResponseData<OrderVo> create(Long userId, Long shippingId, int pageNum, int pageSize);
 
     ResponseData<PageInfo> list(Long userId, int pageNum, int pageSize);
 
