@@ -11,34 +11,12 @@
     }</style>
     <script type=text/javascript
             src="http://webapi.amap.com/maps?v=1.4.6&key=3e96ffff6dfa652d245d64b6bdbc72a2"></script>
-    <link href=static/css/app.f69c2899352c537d5cf49ef8dd916d2b.css rel=stylesheet>
+    <link href=static/css/app.1a411a599dc5e86d2df0a0999596e120.css rel=stylesheet>
 </head>
 <body>
 <div id=app></div>
-<script type=text/javascript src=static/js/manifest.14a76fad9b304f57d579.js></script>
-<script type=text/javascript src=static/js/vendor.34fcbc5e9190ede93711.js></script>
-<script type=text/javascript src=static/js/app.7ba965c1609ebed35ef9.js></script>
+<script type=text/javascript src=static/js/manifest.7f910a6957d415131750.js></script>
+<script type=text/javascript src=static/js/vendor.b8e0c599cb943e3ae17a.js></script>
+<script type=text/javascript src=static/js/app.f4f47cd1d33f01d07651.js></script>
 </body>
 </html>
-
-<%--springmvc上传文件--%>
-<%--<form name="form1" id="f1" action="user/upload.do" method="post" enctype="multipart/form-data">--%>
-<%--<input type="file" name="upload_file" />--%>
-<%--<input type="submit" value="springmvc上传文件" />--%>
-<%--</form>--%>
-
-<%--<script>--%>
-<%--document.getElementById('f1').onsubmit = function (ev) {--%>
-<%--// return false;--%>
-<%--}--%>
-<%--</script>--%>
-
-<%----%>
-<%--富文本图片上传文件--%>
-<%--<form name="form2" action="/manage/product/richtext_img_upload.do" method="post" enctype="multipart/form-data">--%>
-<%--<input type="file" name="upload_file" />--%>
-<%--<input type="submit" value="富文本图片上传文件" />--%>
-<%--</form>--%>
-
-<%--</body>--%>
-<%--</html>--%>
