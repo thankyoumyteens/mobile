@@ -113,226 +113,6 @@ public class OrderServiceImplByGoods implements IOrderService {
         return ResponseData.success(orderVo);
     }
 
-    private OrderVo assembleOrderVo(Order order, List<OrderItem> orderItemList, Long shippingId) {
-        OrderVo orderVo = new OrderVo();
-
-        Shipping shipping = shippingMapper.selectByPrimaryKey(shippingId);
-        orderVo.setCloseTime(DateTimeUtil.dateToStr(order.getCloseTime()));
-        orderVo.setCreateTime(DateTimeUtil.dateToStr(order.getCreateTime()));
-        orderVo.setEndTime(DateTimeUtil.dateToStr(order.getEndTime()));
-        orderVo.setOrderNo(order.getOrderNo());
-        orderVo.setPayment(order.getPayment());
-        orderVo.setPaymentTime(DateTimeUtil.dateToStr(order.getPaymentTime()));
-        orderVo.setPaymentType(order.getPaymentType());
-        orderVo.setPostage(order.getPostage());
-        orderVo.setSendTime(DateTimeUtil.dateToStr(order.getSendTime()));
-        orderVo.setStatus(order.getStatus());
-        List<OrderItemListVo> itemList = Lists.newArrayList();
-        for (OrderItem orderItem : orderItemList) {
-            OrderItemListVo vo = assembleOrderItemListVo(orderItem);
-            itemList.add(vo);
-        }
-        orderVo.setItemList(itemList);
-        orderVo.setPaymentTypeMsg(getPaymentTypeMsg(order.getPaymentType()));
-        orderVo.setShipping(shipping);
-        orderVo.setStatusMsg(convertStatus(order.getStatus()));
-
-        return orderVo;
-    }
-
-    private String getPaymentTypeMsg(Integer paymentType) {
-        switch (paymentType) {
-            case Const.PaymentType.ONLINE:
-                return "在线支付";
-        }
-        return "";
-    }
-
-    private boolean checkStock(List<OrderItem> orderItemList) {
-        for (OrderItem orderItem : orderItemList) {
-            GoodsProperties properties = propertiesMapper.selectByPrimaryKey(orderItem.getPropertiesId());
-            Long stock = properties.getStock() - orderItem.getQuantity();
-            if (stock < 0) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * 返回订单状态对应的文本描述
-     *
-     * @param status
-     * @return
-     */
-    private String convertStatus(Integer status) {
-        switch (status) {
-            case Const.OrderStatus.CANCELED:
-                return "已取消";
-            case Const.OrderStatus.NOT_PAY:
-                return "未付款";
-            case Const.OrderStatus.PAYED:
-                return "已付款";
-            case Const.OrderStatus.SENT:
-                return "已发货";
-            case Const.OrderStatus.SUCCESS:
-                return "已完成";
-            case Const.OrderStatus.CLOSED:
-                return "已完成";
-            default:
-                return "未知";
-        }
-    }
-
-    /**
-     * 减少库存
-     *
-     * @param orderItemList
-     */
-    private void reduceStock(List<OrderItem> orderItemList) {
-        for (OrderItem orderItem : orderItemList) {
-            GoodsProperties properties = propertiesMapper.selectByPrimaryKey(orderItem.getPropertiesId());
-            GoodsProperties propertiesForUpdate = new GoodsProperties();
-            propertiesForUpdate.setId(properties.getId());
-            propertiesForUpdate.setStock(properties.getStock() - orderItem.getQuantity());
-            propertiesForUpdate.setUpdateTime(new Date());
-            // todo 修改 -> where id in (...)
-            propertiesMapper.updateByPrimaryKeySelective(propertiesForUpdate);
-        }
-    }
-
-    /**
-     * 删除购物车中已下单的商品
-     *
-     * @param cartList
-     */
-    private void cleanCart(List<Cart> cartList) {
-        for (Cart cart : cartList) {
-            cartMapper.deleteByPrimaryKey(cart.getId());
-        }
-    }
-
-    private OrderItemListVo assembleOrderItemListVo(OrderItem orderItem) {
-        OrderItemListVo orderItemListVo = new OrderItemListVo();
-        orderItemListVo.setOrderItemId(orderItem.getId());
-        orderItemListVo.setMainImage(PropertiesUtil.getImageHost() + orderItem.getProductImage());
-        orderItemListVo.setGoodsId(orderItem.getProductId());
-        orderItemListVo.setProductName(orderItem.getProductName());
-        orderItemListVo.setQuantity(orderItem.getQuantity());
-        orderItemListVo.setTotalPrice(orderItem.getTotalPrice());
-        orderItemListVo.setDetail(getProperties(orderItem.getPropertiesId()));
-        return orderItemListVo;
-    }
-
-    /**
-     * 格式化规格 -> 蓝色 裸机 4GB+64GB
-     *
-     * @param propertiesId
-     * @return
-     */
-    private String getProperties(Long propertiesId) {
-        GoodsProperties properties = propertiesMapper.selectByPrimaryKey(propertiesId);
-        return JsonUtil.getPropertiesString(properties.getText());
-    }
-
-    private Order assembleOrder(Long userId, Long shippingId) {
-        Order order = new Order();
-        order.setOrderNo(generateOrderNo());
-        order.setPaymentType(Const.PaymentType.ONLINE);
-        order.setPostage(0); // 运费
-        order.setShippingId(shippingId);
-        order.setStatus(Const.OrderStatus.NOT_PAY); // 待付款
-        order.setUserId(userId);
-        return order;
-    }
-
-    private List<OrderItem> assembleOrderItem(Long userId, List<Cart> cartCheckedList) {
-        List<OrderItem> orderItemList = Lists.newArrayList();
-        Long propertiesId;
-        Goods goods;
-        GoodsProperties properties;
-        for (Cart cart : cartCheckedList) {
-            // cart.detail存储properties_id
-            propertiesId = Long.valueOf(cart.getDetail());
-            goods = goodsMapper.selectByPrimaryKey(cart.getProductId());
-            properties = propertiesMapper.selectByPrimaryKey(propertiesId);
-            if (goods == null || properties == null) {
-                return null;
-            }
-            OrderItem item = new OrderItem();
-            item.setProductImage(goods.getMainImage());
-            item.setCurrentUnitPrice(properties.getPrice());
-            item.setProductId(goods.getId());
-            item.setProductName(goods.getName());
-            item.setPropertiesId(propertiesId);
-            item.setQuantity(Integer.parseInt(String.valueOf(cart.getQuantity())));
-            item.setUserId(userId);
-            item.setTotalPrice(BigDecimalUtil.mul(item.getCurrentUnitPrice().doubleValue(), item.getQuantity()));
-            orderItemList.add(item);
-        }
-        return orderItemList;
-    }
-
-    private OrderListVo assembleOrderListVo(Order order) {
-        OrderListVo orderListVo = new OrderListVo();
-
-        List<OrderItem> orderItemList = orderItemMapper.selectByOrderNo(order.getOrderNo());
-        if (CollectionUtils.isEmpty(orderItemList) || orderItemList.size() <= 0) {
-            return null;
-        }
-
-        orderListVo.setOrderId(order.getId());
-        orderListVo.setOrderNo(order.getOrderNo());
-        orderListVo.setTotalPrice(order.getPayment());
-        orderListVo.setCreateTime(DateTimeUtil.dateToStr(order.getCreateTime()));
-
-        List<OrderItemListVo> orderItemListVoList = Lists.newArrayList();
-        for (OrderItem orderItem : orderItemList) {
-            OrderItemListVo orderItemListVo = assembleOrderItemListVo(orderItem);
-            if (orderItemListVo == null) {
-                return null;
-            }
-            orderItemListVoList.add(orderItemListVo);
-        }
-        orderListVo.setOrderItemList(orderItemListVoList);
-        orderListVo.setCount(orderItemListVoList.size());
-        orderListVo.setStatus(order.getStatus());
-        orderListVo.setStatusMsg(convertStatus(order.getStatus()));
-
-        return orderListVo;
-    }
-
-    private OrderVo assembleOrderVo(Order order) {
-        List<OrderItem> orderItemList = orderItemMapper.selectByOrderNo(order.getOrderNo());
-        if (CollectionUtils.isEmpty(orderItemList) || orderItemList.size() <= 0) {
-            return null;
-        }
-        return assembleOrderVo(order, orderItemList, order.getShippingId());
-    }
-
-    /**
-     * 获取购物车中已经选中的商品
-     *
-     * @param userId
-     * @param pageNum
-     * @param pageSize
-     * @return
-     */
-    private List<Cart> getCartCheckedList(Long userId, int pageNum, int pageSize) {
-        // 选出当前页选中的购物车商品
-        PageHelper.startPage(pageNum, pageSize);
-        List<Cart> cartList = cartMapper.selectByUserId(userId);
-        List<Cart> cartCheckedList = Lists.newArrayList();
-        for (Cart cart : cartList) {
-            if (cart.getChecked().equals(Const.CartStatus.CHECKED)) {
-                cartCheckedList.add(cart);
-            }
-        }
-        PageInfo pageResult = new PageInfo(cartList);
-        pageResult.setList(cartCheckedList);
-        return pageResult.getList();
-    }
-
     @Override
     public ResponseData<PageInfo> list(Long userId, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
@@ -582,4 +362,231 @@ public class OrderServiceImplByGoods implements IOrderService {
         long currentTime = System.currentTimeMillis();
         return currentTime + new Random().nextInt(100);
     }
+
+    private OrderVo assembleOrderVo(Order order, List<OrderItem> orderItemList, Long shippingId) {
+        OrderVo orderVo = new OrderVo();
+
+        Shipping shipping = shippingMapper.selectByPrimaryKey(shippingId);
+        orderVo.setCloseTime(DateTimeUtil.dateToStr(order.getCloseTime()));
+        orderVo.setCreateTime(DateTimeUtil.dateToStr(order.getCreateTime()));
+        orderVo.setEndTime(DateTimeUtil.dateToStr(order.getEndTime()));
+        orderVo.setOrderNo(order.getOrderNo());
+        orderVo.setPayment(order.getPayment());
+        orderVo.setPaymentTime(DateTimeUtil.dateToStr(order.getPaymentTime()));
+        orderVo.setPaymentType(order.getPaymentType());
+        orderVo.setPostage(order.getPostage());
+        orderVo.setSendTime(DateTimeUtil.dateToStr(order.getSendTime()));
+        orderVo.setStatus(order.getStatus());
+        List<OrderItemListVo> itemList = Lists.newArrayList();
+        for (OrderItem orderItem : orderItemList) {
+            OrderItemListVo vo = assembleOrderItemListVo(orderItem);
+            itemList.add(vo);
+        }
+        orderVo.setItemList(itemList);
+        orderVo.setPaymentTypeMsg(getPaymentTypeMsg(order.getPaymentType()));
+        orderVo.setShipping(shipping);
+        orderVo.setStatusMsg(convertStatus(order.getStatus()));
+
+        return orderVo;
+    }
+
+    private String getPaymentTypeMsg(Integer paymentType) {
+        switch (paymentType) {
+            case Const.PaymentType.ONLINE:
+                return "在线支付";
+        }
+        return "";
+    }
+
+    /**
+     * 检查库存是否充足
+     *
+     * @param orderItemList
+     * @return
+     */
+    private boolean checkStock(List<OrderItem> orderItemList) {
+        for (OrderItem orderItem : orderItemList) {
+            GoodsProperties properties = propertiesMapper.selectByPrimaryKey(orderItem.getPropertiesId());
+            Long stock = properties.getStock() - orderItem.getQuantity();
+            if (stock < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 返回订单状态对应的文本描述
+     *
+     * @param status
+     * @return
+     */
+    private String convertStatus(Integer status) {
+        switch (status) {
+            case Const.OrderStatus.CANCELED:
+                return "已取消";
+            case Const.OrderStatus.NOT_PAY:
+                return "未付款";
+            case Const.OrderStatus.PAYED:
+                return "已付款";
+            case Const.OrderStatus.SENT:
+                return "已发货";
+            case Const.OrderStatus.SUCCESS:
+                return "已完成";
+            case Const.OrderStatus.CLOSED:
+                return "已完成";
+            default:
+                return "未知";
+        }
+    }
+
+    /**
+     * 减少库存
+     *
+     * @param orderItemList
+     */
+    private void reduceStock(List<OrderItem> orderItemList) {
+        for (OrderItem orderItem : orderItemList) {
+            GoodsProperties properties = propertiesMapper.selectByPrimaryKey(orderItem.getPropertiesId());
+            GoodsProperties propertiesForUpdate = new GoodsProperties();
+            propertiesForUpdate.setId(properties.getId());
+            propertiesForUpdate.setStock(properties.getStock() - orderItem.getQuantity());
+            propertiesForUpdate.setUpdateTime(new Date());
+            // todo 修改 -> where id in (...)
+            propertiesMapper.updateByPrimaryKeySelective(propertiesForUpdate);
+        }
+    }
+
+    /**
+     * 删除购物车中已下单的商品
+     *
+     * @param cartList
+     */
+    private void cleanCart(List<Cart> cartList) {
+        for (Cart cart : cartList) {
+            cartMapper.deleteByPrimaryKey(cart.getId());
+        }
+    }
+
+    private OrderItemListVo assembleOrderItemListVo(OrderItem orderItem) {
+        OrderItemListVo orderItemListVo = new OrderItemListVo();
+        orderItemListVo.setOrderItemId(orderItem.getId());
+        orderItemListVo.setMainImage(PropertiesUtil.getImageHost() + orderItem.getProductImage());
+        orderItemListVo.setGoodsId(orderItem.getProductId());
+        orderItemListVo.setProductName(orderItem.getProductName());
+        orderItemListVo.setQuantity(orderItem.getQuantity());
+        orderItemListVo.setTotalPrice(orderItem.getTotalPrice());
+        orderItemListVo.setDetail(getProperties(orderItem.getPropertiesId()));
+        return orderItemListVo;
+    }
+
+    /**
+     * 格式化规格 -> 蓝色 裸机 4GB+64GB
+     *
+     * @param propertiesId
+     * @return
+     */
+    private String getProperties(Long propertiesId) {
+        GoodsProperties properties = propertiesMapper.selectByPrimaryKey(propertiesId);
+        return JsonUtil.getPropertiesString(properties.getText());
+    }
+
+    private Order assembleOrder(Long userId, Long shippingId) {
+        Order order = new Order();
+        order.setOrderNo(generateOrderNo());
+        order.setPaymentType(Const.PaymentType.ONLINE);
+        order.setPostage(0); // 运费
+        order.setShippingId(shippingId);
+        order.setStatus(Const.OrderStatus.NOT_PAY); // 待付款
+        order.setUserId(userId);
+        return order;
+    }
+
+    private List<OrderItem> assembleOrderItem(Long userId, List<Cart> cartCheckedList) {
+        List<OrderItem> orderItemList = Lists.newArrayList();
+        Long propertiesId;
+        Goods goods;
+        GoodsProperties properties;
+        for (Cart cart : cartCheckedList) {
+            // cart.detail存储properties_id
+            propertiesId = Long.valueOf(cart.getDetail());
+            goods = goodsMapper.selectByPrimaryKey(cart.getProductId());
+            properties = propertiesMapper.selectByPrimaryKey(propertiesId);
+            if (goods == null || properties == null) {
+                return null;
+            }
+            OrderItem item = new OrderItem();
+            item.setProductImage(goods.getMainImage());
+            item.setCurrentUnitPrice(properties.getPrice());
+            item.setProductId(goods.getId());
+            item.setProductName(goods.getName());
+            item.setPropertiesId(propertiesId);
+            item.setQuantity(Integer.parseInt(String.valueOf(cart.getQuantity())));
+            item.setUserId(userId);
+            item.setTotalPrice(BigDecimalUtil.mul(item.getCurrentUnitPrice().doubleValue(), item.getQuantity()));
+            orderItemList.add(item);
+        }
+        return orderItemList;
+    }
+
+    private OrderListVo assembleOrderListVo(Order order) {
+        OrderListVo orderListVo = new OrderListVo();
+
+        List<OrderItem> orderItemList = orderItemMapper.selectByOrderNo(order.getOrderNo());
+        if (CollectionUtils.isEmpty(orderItemList) || orderItemList.size() <= 0) {
+            return null;
+        }
+
+        orderListVo.setOrderId(order.getId());
+        orderListVo.setOrderNo(order.getOrderNo());
+        orderListVo.setTotalPrice(order.getPayment());
+        orderListVo.setCreateTime(DateTimeUtil.dateToStr(order.getCreateTime()));
+
+        List<OrderItemListVo> orderItemListVoList = Lists.newArrayList();
+        for (OrderItem orderItem : orderItemList) {
+            OrderItemListVo orderItemListVo = assembleOrderItemListVo(orderItem);
+            if (orderItemListVo == null) {
+                return null;
+            }
+            orderItemListVoList.add(orderItemListVo);
+        }
+        orderListVo.setOrderItemList(orderItemListVoList);
+        orderListVo.setCount(orderItemListVoList.size());
+        orderListVo.setStatus(order.getStatus());
+        orderListVo.setStatusMsg(convertStatus(order.getStatus()));
+
+        return orderListVo;
+    }
+
+    private OrderVo assembleOrderVo(Order order) {
+        List<OrderItem> orderItemList = orderItemMapper.selectByOrderNo(order.getOrderNo());
+        if (CollectionUtils.isEmpty(orderItemList) || orderItemList.size() <= 0) {
+            return null;
+        }
+        return assembleOrderVo(order, orderItemList, order.getShippingId());
+    }
+
+    /**
+     * 获取购物车中已经选中的商品
+     *
+     * @param userId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    private List<Cart> getCartCheckedList(Long userId, int pageNum, int pageSize) {
+        // 选出当前页选中的购物车商品
+        PageHelper.startPage(pageNum, pageSize);
+        List<Cart> cartList = cartMapper.selectByUserId(userId);
+        List<Cart> cartCheckedList = Lists.newArrayList();
+        for (Cart cart : cartList) {
+            if (cart.getChecked().equals(Const.CartStatus.CHECKED)) {
+                cartCheckedList.add(cart);
+            }
+        }
+        PageInfo pageResult = new PageInfo(cartList);
+        pageResult.setList(cartCheckedList);
+        return pageResult.getList();
+    }
+
 }
