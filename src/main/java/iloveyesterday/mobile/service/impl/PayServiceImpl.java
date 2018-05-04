@@ -175,20 +175,21 @@ public class PayServiceImpl implements IPayService {
 //            System.out.println(alipay_response.getBody());
             String tradeStatus = alipay_response.getTradeStatus();
             if (StringUtils.isNotBlank(tradeStatus) && !StringUtils.equals(tradeStatus, "WAIT_BUYER_PAY")) {
+                log.info("alipay:" + tradeStatus);
                 if (order.getStatus() == Const.OrderStatus.NOT_PAY) {
                     // 更新订单状态
                     Order orderForUpdate = new Order();
                     orderForUpdate.setId(order.getId());
                     orderForUpdate.setUpdateTime(new Date());
-                    if (!StringUtils.equals(tradeStatus, "TRADE_SUCCESS")) {
+                    if (StringUtils.equals(tradeStatus, "TRADE_SUCCESS")) {
                         orderForUpdate.setStatus(Const.OrderStatus.PAYED);
                         orderForUpdate.setPaymentTime(new Date());
                     }
-                    if (!StringUtils.equals(tradeStatus, "TRADE_CLOSED")) {
-                        orderForUpdate.setStatus(Const.OrderStatus.CLOSED);
+                    if (StringUtils.equals(tradeStatus, "TRADE_CLOSED")) {
+                        orderForUpdate.setStatus(Const.OrderStatus.NOT_PAY);
                     }
-                    if (!StringUtils.equals(tradeStatus, "TRADE_FINISHED")) {
-//                    orderForUpdate.setStatus(Const.OrderStatus.PAYED);
+                    if (StringUtils.equals(tradeStatus, "TRADE_FINISHED")) {
+                        orderForUpdate.setStatus(Const.OrderStatus.PAYED);
                     }
                     orderMapper.updateByPrimaryKeySelective(orderForUpdate);
                     // 记录支付平台信息
