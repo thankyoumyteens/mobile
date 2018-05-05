@@ -1,22 +1,29 @@
 package iloveyesterday.mobile.controller.portal;
 
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Maps;
 import iloveyesterday.mobile.common.Const;
 import iloveyesterday.mobile.common.ResponseCode;
 import iloveyesterday.mobile.common.ResponseData;
 import iloveyesterday.mobile.pojo.GoodsComment;
 import iloveyesterday.mobile.pojo.User;
 import iloveyesterday.mobile.service.ICommentService;
+import iloveyesterday.mobile.service.IFileService;
 import iloveyesterday.mobile.util.JsonUtil;
+import iloveyesterday.mobile.util.PropertiesUtil;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/comment/")
@@ -24,6 +31,9 @@ public class CommentController {
 
     @Resource
     private ICommentService commentService;
+
+    @Resource
+    private IFileService fileService;
 
     /**
      * 填写评论
@@ -158,4 +168,38 @@ public class CommentController {
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         return commentService.listWithText(goodsId, pageNum, pageSize);
     }
+
+    /**
+     * 上传图片
+     *
+     * @param session
+     * @param file
+     * @param request
+     * @return
+     */
+    @RequestMapping("upload.do")
+    @ResponseBody
+    public ResponseData<Map> upload(
+            HttpSession session,
+            @RequestParam(value = "file", required = false) MultipartFile file,
+            HttpServletRequest request) {
+        String path = request.getSession().getServletContext().getRealPath("upload");
+        // 验证是否是图片
+        String fileName = file.getOriginalFilename();
+        String fileExtensionName = fileName.substring(fileName.lastIndexOf(".") + 1);
+        if (!StringUtils.equals(fileExtensionName, "jpg") &&
+                !StringUtils.equals(fileExtensionName, "png")) {
+            return ResponseData.error("请上传jpg格式图片");
+        }
+        // 上传
+        String targetFileName = fileService.upload(file, path);
+
+        String url = PropertiesUtil.getImageHost() + targetFileName;
+
+        Map fileMap = Maps.newHashMap();
+        fileMap.put("uri", targetFileName);
+        fileMap.put("url", url);
+        return ResponseData.success(fileMap);
+    }
+
 }
