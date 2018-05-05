@@ -17,6 +17,10 @@ public class ShippingServiceImpl implements IShippingService {
 
     @Override
     public ResponseData<Shipping> add(Long userId, Shipping shipping) {
+        int count = shippingMapper.selectCountByUserId(userId);
+        if (count > 5) {
+            return ResponseData.error("已达到上限, 请删除不必要的地址");
+        }
         shipping.setUserId(userId);
         int resultCount = shippingMapper.insert(shipping);
         if (resultCount > 0) {
@@ -44,7 +48,7 @@ public class ShippingServiceImpl implements IShippingService {
     public ResponseData update(Long userId, Shipping shipping) {
         shipping.setUserId(userId);
         if (!checkShipping(userId, shipping.getId())) {
-            return ResponseData.error();
+            return ResponseData.error("收货地址不存在");
         }
         int resultCount = shippingMapper.updateByPrimaryKeySelective(shipping);
         if (resultCount > 0) {

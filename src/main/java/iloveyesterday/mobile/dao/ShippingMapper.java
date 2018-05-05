@@ -27,4 +27,6 @@ public interface ShippingMapper {
     int selectByUserIdAndShippingId(
             @Param("userId") Long userId,
             @Param("shippingId") Long shippingId);
+
+    int selectCountByUserId(Long userId);
 }
