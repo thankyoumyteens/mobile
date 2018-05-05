@@ -248,6 +248,7 @@ public class OrderServiceImplByGoods implements IOrderService {
         return ResponseData.error();
     }
 
+    @Transactional
     @Override
     public ResponseData<OrderVo> cancel(Long userId, Long orderNo) {
         Order order = orderMapper.selectByOrderNoAndUserId(orderNo, userId);
@@ -262,9 +263,9 @@ public class OrderServiceImplByGoods implements IOrderService {
         orderForUpdate.setUpdateTime(new Date());
         orderForUpdate.setStatus(Const.OrderStatus.CANCELED);
         orderForUpdate.setCloseTime(new Date());
-        // todo 回复库存
         int resultCount = orderMapper.updateByPrimaryKeySelective(orderForUpdate);
         if (resultCount > 0) {
+            rollbackStock(orderNo);
             return ResponseData.success();
         }
         return ResponseData.error();
@@ -351,6 +352,28 @@ public class OrderServiceImplByGoods implements IOrderService {
             return ResponseData.success();
         }
         return ResponseData.error();
+    }
+
+    /**
+     * 恢复库存
+     *
+     * @param orderNo
+     */
+    private void rollbackStock(Long orderNo) {
+        int resultCount;
+        List<OrderItem> orderItemList = orderItemMapper.selectByOrderNo(orderNo);
+        for (OrderItem orderItem : orderItemList) {
+            GoodsProperties properties = propertiesMapper.selectByPrimaryKey(orderItem.getPropertiesId());
+            if (properties != null) {
+                Integer count = orderItem.getQuantity();
+                Long stock = properties.getStock();
+                GoodsProperties propertiesForUpdate = new GoodsProperties();
+                propertiesForUpdate.setId(properties.getId());
+                propertiesForUpdate.setStock(stock + count);
+                propertiesForUpdate.setUpdateTime(new Date());
+                resultCount = propertiesMapper.updateByPrimaryKeySelective(propertiesForUpdate);
+            }
+        }
     }
 
     /**

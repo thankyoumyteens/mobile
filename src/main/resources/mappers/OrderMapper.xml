@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="iloveyesterday.mobile.dao.OrderMapper">
-  <resultMap id="BaseResultMap" type="iloveyesterday.mobile.pojo.Order">
-    <constructor>
-      <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="order_no" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="user_id" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="shipping_id" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="payment" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
-      <arg column="payment_type" javaType="java.lang.Integer" jdbcType="INTEGER" />
-      <arg column="postage" javaType="java.lang.Integer" jdbcType="INTEGER" />
-      <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER" />
-      <arg column="payment_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
-      <arg column="send_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
-      <arg column="end_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
-      <arg column="close_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
-      <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
-      <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
-    </constructor>
-  </resultMap>
-  <sql id="Base_Column_List">
+    <resultMap id="BaseResultMap" type="iloveyesterday.mobile.pojo.Order">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="order_no" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="user_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="shipping_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="payment" javaType="java.math.BigDecimal" jdbcType="DECIMAL"/>
+            <arg column="payment_type" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="postage" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="payment_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="send_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="end_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="close_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
     id, order_no, user_id, shipping_id, payment, payment_type, postage, status, payment_time, 
     send_time, end_time, close_time, create_time, update_time
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from mobile_order
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from mobile_order
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from mobile_order
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="iloveyesterday.mobile.pojo.Order">
+    <insert id="insert" parameterType="iloveyesterday.mobile.pojo.Order">
     insert into mobile_order (id, order_no, user_id, 
       shipping_id, payment, payment_type, 
       postage, status, payment_time, 
@@ -45,140 +45,140 @@
       #{sendTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{closeTime,jdbcType=TIMESTAMP}, 
       now(), now())
   </insert>
-  <insert id="insertSelective" parameterType="iloveyesterday.mobile.pojo.Order">
-    insert into mobile_order
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      <if test="orderNo != null">
-        order_no,
-      </if>
-      <if test="userId != null">
-        user_id,
-      </if>
-      <if test="shippingId != null">
-        shipping_id,
-      </if>
-      <if test="payment != null">
-        payment,
-      </if>
-      <if test="paymentType != null">
-        payment_type,
-      </if>
-      <if test="postage != null">
-        postage,
-      </if>
-      <if test="status != null">
-        status,
-      </if>
-      <if test="paymentTime != null">
-        payment_time,
-      </if>
-      <if test="sendTime != null">
-        send_time,
-      </if>
-      <if test="endTime != null">
-        end_time,
-      </if>
-      <if test="closeTime != null">
-        close_time,
-      </if>
-      <if test="createTime != null">
-        create_time,
-      </if>
-      <if test="updateTime != null">
-        update_time,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=BIGINT},
-      </if>
-      <if test="orderNo != null">
-        #{orderNo,jdbcType=BIGINT},
-      </if>
-      <if test="userId != null">
-        #{userId,jdbcType=BIGINT},
-      </if>
-      <if test="shippingId != null">
-        #{shippingId,jdbcType=BIGINT},
-      </if>
-      <if test="payment != null">
-        #{payment,jdbcType=DECIMAL},
-      </if>
-      <if test="paymentType != null">
-        #{paymentType,jdbcType=INTEGER},
-      </if>
-      <if test="postage != null">
-        #{postage,jdbcType=INTEGER},
-      </if>
-      <if test="status != null">
-        #{status,jdbcType=INTEGER},
-      </if>
-      <if test="paymentTime != null">
-        #{paymentTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="sendTime != null">
-        #{sendTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="endTime != null">
-        #{endTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="closeTime != null">
-        #{closeTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createTime != null">
-        now(),
-      </if>
-      <if test="updateTime != null">
-        now(),
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="iloveyesterday.mobile.pojo.Order">
-    update mobile_order
-    <set>
-      <if test="orderNo != null">
-        order_no = #{orderNo,jdbcType=BIGINT},
-      </if>
-      <if test="userId != null">
-        user_id = #{userId,jdbcType=BIGINT},
-      </if>
-      <if test="shippingId != null">
-        shipping_id = #{shippingId,jdbcType=BIGINT},
-      </if>
-      <if test="payment != null">
-        payment = #{payment,jdbcType=DECIMAL},
-      </if>
-      <if test="paymentType != null">
-        payment_type = #{paymentType,jdbcType=INTEGER},
-      </if>
-      <if test="postage != null">
-        postage = #{postage,jdbcType=INTEGER},
-      </if>
-      <if test="status != null">
-        status = #{status,jdbcType=INTEGER},
-      </if>
-      <if test="paymentTime != null">
-        payment_time = now(),
-      </if>
-      <if test="sendTime != null">
-        send_time = now(),
-      </if>
-      <if test="endTime != null">
-        end_time = now(),
-      </if>
-      <if test="closeTime != null">
-        close_time = now(),
-      </if>
-      <if test="updateTime != null">
-        update_time = now(),
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="iloveyesterday.mobile.pojo.Order">
+    <insert id="insertSelective" parameterType="iloveyesterday.mobile.pojo.Order">
+        insert into mobile_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="orderNo != null">
+                order_no,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="shippingId != null">
+                shipping_id,
+            </if>
+            <if test="payment != null">
+                payment,
+            </if>
+            <if test="paymentType != null">
+                payment_type,
+            </if>
+            <if test="postage != null">
+                postage,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="paymentTime != null">
+                payment_time,
+            </if>
+            <if test="sendTime != null">
+                send_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="closeTime != null">
+                close_time,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="orderNo != null">
+                #{orderNo,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="shippingId != null">
+                #{shippingId,jdbcType=BIGINT},
+            </if>
+            <if test="payment != null">
+                #{payment,jdbcType=DECIMAL},
+            </if>
+            <if test="paymentType != null">
+                #{paymentType,jdbcType=INTEGER},
+            </if>
+            <if test="postage != null">
+                #{postage,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="paymentTime != null">
+                #{paymentTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="sendTime != null">
+                #{sendTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="closeTime != null">
+                #{closeTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                now(),
+            </if>
+            <if test="updateTime != null">
+                now(),
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="iloveyesterday.mobile.pojo.Order">
+        update mobile_order
+        <set>
+            <if test="orderNo != null">
+                order_no = #{orderNo,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="shippingId != null">
+                shipping_id = #{shippingId,jdbcType=BIGINT},
+            </if>
+            <if test="payment != null">
+                payment = #{payment,jdbcType=DECIMAL},
+            </if>
+            <if test="paymentType != null">
+                payment_type = #{paymentType,jdbcType=INTEGER},
+            </if>
+            <if test="postage != null">
+                postage = #{postage,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="paymentTime != null">
+                payment_time = now(),
+            </if>
+            <if test="sendTime != null">
+                send_time = now(),
+            </if>
+            <if test="endTime != null">
+                end_time = now(),
+            </if>
+            <if test="closeTime != null">
+                close_time = now(),
+            </if>
+            <if test="updateTime != null">
+                update_time = now(),
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="iloveyesterday.mobile.pojo.Order">
     update mobile_order
     set order_no = #{orderNo,jdbcType=BIGINT},
       user_id = #{userId,jdbcType=BIGINT},
@@ -194,52 +194,56 @@
       update_time = now()
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="long">
-    select
-    <include refid="Base_Column_List"/>
-    from mobile_order
-    where user_id=#{userId}
-  </select>
-  <select id="selectByOrderNo" resultMap="BaseResultMap" parameterType="long">
-    select
-    <include refid="Base_Column_List"/>
-    from mobile_order
-    where order_no=#{orderNo}
-  </select>
-  <select id="selectByOrderNoList" resultMap="BaseResultMap" parameterType="list">
-    select
-    <include refid="Base_Column_List"/>
-    from mobile_order
-    where order_no
-    in
-    <foreach collection="orderNoList" index="index" item="item" open="(" separator="," close=")">
-      #{item}
-    </foreach>
-  </select>
-  <select id="selectByPrimaryKeyAndUserId" resultMap="BaseResultMap" parameterType="map">
-    select
-    <include refid="Base_Column_List"/>
-    from mobile_order
-    where id=#{orderId}
-    and user_id=#{userId}
-  </select>
-  <select id="selectByOrderNoAndUserId" resultMap="BaseResultMap" parameterType="map">
-    select
-    <include refid="Base_Column_List"/>
-    from mobile_order
-    where order_no=#{orderNo}
-    and user_id=#{userId}
-  </select>
-  <select id="selectByUserIdAndStatus" resultMap="BaseResultMap" parameterType="map">
-    select
-    <include refid="Base_Column_List"/>
-    from mobile_order
-    where status=#{status}
-    and user_id=#{userId}
-  </select>
-  <select id="selectUserIdByOrderNo" resultType="long" parameterType="long">
+    <select id="selectByUserId" resultMap="BaseResultMap" parameterType="long">
+        select
+        <include refid="Base_Column_List"/>
+        from mobile_order
+        where user_id=#{userId}
+        order by create_time desc
+    </select>
+    <select id="selectByOrderNo" resultMap="BaseResultMap" parameterType="long">
+        select
+        <include refid="Base_Column_List"/>
+        from mobile_order
+        where order_no=#{orderNo}
+    </select>
+    <select id="selectByOrderNoList" resultMap="BaseResultMap" parameterType="list">
+        select
+        <include refid="Base_Column_List"/>
+        from mobile_order
+        where order_no
+        in
+        <foreach collection="orderNoList" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        order by create_time desc
+    </select>
+    <select id="selectByPrimaryKeyAndUserId" resultMap="BaseResultMap" parameterType="map">
+        select
+        <include refid="Base_Column_List"/>
+        from mobile_order
+        where id=#{orderId}
+        and user_id=#{userId}
+    </select>
+    <select id="selectByOrderNoAndUserId" resultMap="BaseResultMap" parameterType="map">
+        select
+        <include refid="Base_Column_List"/>
+        from mobile_order
+        where order_no=#{orderNo}
+        and user_id=#{userId}
+    </select>
+    <select id="selectByUserIdAndStatus" resultMap="BaseResultMap" parameterType="map">
+        select
+        <include refid="Base_Column_List"/>
+        from mobile_order
+        where status=#{status}
+        and user_id=#{userId}
+        order by create_time desc
+    </select>
+    <select id="selectUserIdByOrderNo" resultType="long" parameterType="long">
     select user_id
     from mobile_order
     where order_no=#{orderNo}
+    order by create_time desc
   </select>
 </mapper>
