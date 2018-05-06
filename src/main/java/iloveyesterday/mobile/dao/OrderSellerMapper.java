@@ -22,7 +22,7 @@ public interface OrderSellerMapper {
 
     List<OrderSeller> selectBySellerId(Long sellerId);
 
-    OrderSeller selectBySellerIdAndOrderNo(
+    List<OrderSeller> selectBySellerIdAndOrderNo(
             @Param("sellerId") Long sellerId,
             @Param("orderNo") Long orderNo);
 }

@@ -331,8 +331,8 @@ public class OrderServiceImplByGoods implements IOrderService {
 
     @Override
     public ResponseData<OrderVo> send(Long sellerId, Long orderNo) {
-        OrderSeller orderSeller = orderSellerMapper.selectBySellerIdAndOrderNo(sellerId, orderNo);
-        if (orderSeller == null) {
+        List<OrderSeller> orderSellerList = orderSellerMapper.selectBySellerIdAndOrderNo(sellerId, orderNo);
+        if (CollectionUtils.isEmpty(orderSellerList)) {
             return ResponseData.error("无权操作");
         }
         Order order = orderMapper.selectByOrderNo(orderNo);
