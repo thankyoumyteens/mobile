@@ -15,6 +15,7 @@ import iloveyesterday.mobile.util.PropertiesUtil;
 import iloveyesterday.mobile.vo.OrderItemListVo;
 import iloveyesterday.mobile.vo.OrderListVo;
 import iloveyesterday.mobile.vo.OrderVo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Random;
 
 @Service("orderService")
+@Slf4j
 public class OrderServiceImplByGoods implements IOrderService {
 
     @Resource
@@ -313,7 +315,9 @@ public class OrderServiceImplByGoods implements IOrderService {
         List<OrderSeller> orderSellerList = orderSellerMapper.selectBySellerId(sellerId);
         List<Long> orderNoList = Lists.newArrayList();
         for (OrderSeller orderSeller : orderSellerList) {
-            orderNoList.add(orderSeller.getOrderNo());
+            if (!orderNoList.contains(orderSeller.getOrderNo())) {
+                orderNoList.add(orderSeller.getOrderNo());
+            }
         }
         List<Order> orderList = orderMapper.selectByOrderNoList(orderNoList);
         List<OrderListVo> orderListVoList = Lists.newArrayList();
@@ -324,7 +328,7 @@ public class OrderServiceImplByGoods implements IOrderService {
             }
             orderListVoList.add(orderListVo);
         }
-        PageInfo pageResult = new PageInfo(orderList);
+        PageInfo pageResult = new PageInfo(orderSellerList);
         pageResult.setList(orderListVoList);
         return ResponseData.success(pageResult);
     }
@@ -511,6 +515,11 @@ public class OrderServiceImplByGoods implements IOrderService {
      */
     private String getProperties(Long propertiesId) {
         GoodsProperties properties = propertiesMapper.selectByPrimaryKey(propertiesId);
+        if (properties == null) {
+            log.info("getProperties() -> GoodsProperties==null, propertiesId=" + propertiesId);
+            log.error("getProperties() -> GoodsProperties==null, propertiesId=" + propertiesId);
+            return "";
+        }
         return JsonUtil.getPropertiesString(properties.getText());
     }
 

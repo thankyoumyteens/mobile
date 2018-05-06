@@ -20,7 +20,7 @@ public class FileServiceImpl implements IFileService {
         // 扩展名
         String fileExtensionName = fileName.substring(fileName.lastIndexOf(".") + 1);
         String uploadFileName = UUID.randomUUID().toString() + "." + fileExtensionName;
-        log.info("开始上传文件,上传文件的文件名:{},上传的路径:{},新文件名:{}", fileName, path, uploadFileName);
+        log.info("uploading file,file name: {},path: {},uploaded file name: {}", fileName, path, uploadFileName);
 
         File fileDir = new File(path);
         if (!fileDir.exists()) {
@@ -38,8 +38,9 @@ public class FileServiceImpl implements IFileService {
             OssUtil.uploadFile(targetFile);
             // 删除暂存的图片
             targetFile.delete();
+            log.info("file uploaded");
         } catch (Exception e) {
-            log.error("上传文件异常", e);
+            log.error("upload file error", e);
             return null;
         }
         return targetFile.getName();

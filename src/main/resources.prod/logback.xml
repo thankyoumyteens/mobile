@@ -8,17 +8,7 @@
     <contextName>${APP_NAME}</contextName>
 
 
-    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
-        <encoding>UTF-8</encoding>
-        <encoder>
-            <pattern>[%d{HH:mm:ss.SSS}][%p][%c{40}][%t] %m%n</pattern>
-        </encoder>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>DEBUG</level>
-        </filter>
-    </appender>
-
-    <appender name="mobile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="output" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${LOG_HOME}/output.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_HOME}/output.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
@@ -30,6 +20,44 @@
         </encoder>
     </appender>
 
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoding>UTF-8</encoding>
+        <encoder>
+            <pattern>[%d{HH:mm:ss.SSS}][%p][%c{40}][%t] %m%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+    </appender>
+
+    <appender name="info" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_HOME}/info.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/info.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
+            <append>true</append>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>[%d{HH:mm:ss.SSS}][%p][%c{40}][%t] %m%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <appender name="dao" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_HOME}/dao.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/dao.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
+            <append>true</append>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>[%d{HH:mm:ss.SSS}][%p][%c{40}][%t] %m%n</pattern>
+        </encoder>
+    </appender>
 
     <appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${LOG_HOME}/error.log</File>
@@ -48,14 +76,12 @@
         </filter>
     </appender>
 
-    <logger name="iloveyesterday.mobile" additivity="false" level="INFO">
-        <appender-ref ref="mobile"/>
-        <appender-ref ref="console"/>
-    </logger>
-
 
     <!-- mybatis log -->
-    <logger name="iloveyesterday.mobile.dao" level="DEBUG"/>
+    <logger name="iloveyesterday.mobile.dao" level="DEBUG">
+        <appender-ref ref="dao"/>
+        <appender-ref ref="console"/>
+    </logger>
 
     <!--<logger name="com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate" level="DEBUG" >-->
     <!--<appender-ref ref="console"/>-->
@@ -72,10 +98,10 @@
     <!--<appender-ref ref="console"/>-->
     <!--</logger>-->
 
-
-    <root level="DEBUG">
-        <appender-ref ref="console"/>
+    <root level="INFO">
+        <appender-ref ref="output"/>
         <appender-ref ref="error"/>
+        <appender-ref ref="info"/>
     </root>
 
 </configuration>
