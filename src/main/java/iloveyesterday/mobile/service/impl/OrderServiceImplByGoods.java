@@ -516,7 +516,6 @@ public class OrderServiceImplByGoods implements IOrderService {
     private String getProperties(Long propertiesId) {
         GoodsProperties properties = propertiesMapper.selectByPrimaryKey(propertiesId);
         if (properties == null) {
-            log.info("getProperties() -> GoodsProperties==null, propertiesId=" + propertiesId);
             log.error("getProperties() -> GoodsProperties==null, propertiesId=" + propertiesId);
             return "";
         }
