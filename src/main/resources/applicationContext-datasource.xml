@@ -11,8 +11,6 @@
 
     <!--数据库配置-->
 
-    <context:component-scan base-package="iloveyesterday.mobile" annotation-config="true"/>
-
     <bean id="propertyConfigurer"
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="order" value="2"/>

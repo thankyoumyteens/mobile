@@ -11,9 +11,11 @@
 
     <!--spring配置-->
 
-    <context:component-scan base-package="iloveyesterday.mobile" annotation-config="true"/>
+    <context:component-scan base-package="iloveyesterday.mobile" annotation-config="true">
+        <!--不扫描@Controller-->
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
 
-    <!--<context:annotation-config/>-->
     <aop:aspectj-autoproxy/>
 
 

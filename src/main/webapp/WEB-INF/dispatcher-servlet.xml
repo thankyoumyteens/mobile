@@ -8,7 +8,11 @@
 	http://www.springframework.org/schema/mvc
 	http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <context:component-scan base-package="iloveyesterday.mobile" annotation-config="true"/>
+    <context:component-scan base-package="iloveyesterday.mobile.controller" annotation-config="true"
+                            use-default-filters="false">
+        <!--只扫描@Controller-->
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
 
     <mvc:annotation-driven>
         <mvc:message-converters>
