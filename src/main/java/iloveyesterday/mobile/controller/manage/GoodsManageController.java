@@ -11,7 +11,7 @@ import iloveyesterday.mobile.pojo.GoodsProperties;
 import iloveyesterday.mobile.pojo.User;
 import iloveyesterday.mobile.service.IFileService;
 import iloveyesterday.mobile.service.IGoodsService;
-import iloveyesterday.mobile.util.PropertiesUtil;
+import iloveyesterday.mobile.util.*;
 import iloveyesterday.mobile.vo.GoodsDetailVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -22,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 @Controller
@@ -38,44 +37,51 @@ public class GoodsManageController {
     @RequestMapping("list.do")
     @ResponseBody
     ResponseData<PageInfo> getList(
-            HttpSession session,
+            HttpServletRequest request,
             @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-        ResponseData data = checkLogin(session);
-        if (!data.isSuccess()) {
-            return data;
+        User user = LoginUtil.getCurrentUser(request);
+        if (user == null) {
+            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
         }
-        Long userId = ((User) data.getData()).getId();
+        Long userId = user.getId();
         return goodsService.getListBySellerId(userId, pageNum, pageSize);
     }
 
     @RequestMapping("list_category.do")
     @ResponseBody
     ResponseData<PageInfo> getListByCategoryId(
-            HttpSession session,
-            Long categoryId,
+            HttpServletRequest request, Long categoryId,
             @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-        ResponseData data = checkLogin(session);
-        if (!data.isSuccess()) {
-            return data;
+        User user = LoginUtil.getCurrentUser(request);
+        if (user == null) {
+            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
         }
-        Long userId = ((User) data.getData()).getId();
+        Long userId = user.getId();
         return goodsService.getListByCategoryIdAndSellerId(userId, categoryId, pageNum, pageSize);
     }
 
+    /**
+     * 根据关键字搜索商品
+     *
+     * @param request
+     * @param keyword
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
     @RequestMapping("search.do")
     @ResponseBody
     public ResponseData<PageInfo> search(
-            HttpSession session,
-            String keyword,
+            HttpServletRequest request, String keyword,
             @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-        ResponseData data = checkLogin(session);
-        if (!data.isSuccess()) {
-            return data;
+        User user = LoginUtil.getCurrentUser(request);
+        if (user == null) {
+            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
         }
-        Long userId = ((User) data.getData()).getId();
+        Long userId = user.getId();
         return goodsService.getListByKeywordAndSellerId(userId, keyword, pageNum, pageSize);
     }
 
@@ -85,14 +91,21 @@ public class GoodsManageController {
         return goodsService.detail(goodsId, Const.Role.ADMIN);
     }
 
+    /**
+     * 添加商品(不含规格和详情)
+     *
+     * @param request
+     * @param goods
+     * @return
+     */
     @RequestMapping("add.do")
     @ResponseBody
-    public ResponseData add(HttpSession session, Goods goods) {
-        ResponseData data = checkLogin(session);
-        if (!data.isSuccess()) {
-            return data;
+    public ResponseData add(HttpServletRequest request, Goods goods) {
+        User user = LoginUtil.getCurrentUser(request);
+        if (user == null) {
+            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
         }
-        Long userId = ((User) data.getData()).getId();
+        Long userId = user.getId();
         goods.setSellerId(userId);
         return goodsService.add(goods);
     }
@@ -138,54 +151,51 @@ public class GoodsManageController {
     /**
      * 上架商品
      *
-     * @param session
      * @param goodsId
      * @return
      */
     @RequestMapping("on_shelves.do")
     @ResponseBody
-    public ResponseData onShelves(HttpSession session, Long goodsId) {
-        ResponseData data = checkLogin(session);
-        if (!data.isSuccess()) {
-            return data;
+    public ResponseData onShelves(HttpServletRequest request, Long goodsId) {
+        User user = LoginUtil.getCurrentUser(request);
+        if (user == null) {
+            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
         }
-        Long userId = ((User) data.getData()).getId();
+        Long userId = user.getId();
         return goodsService.changeStatus(userId, goodsId, Const.ProductStatus.ON_SALE);
     }
 
     /**
      * 下架商品
      *
-     * @param session
      * @param goodsId
      * @return
      */
     @RequestMapping("off_shelves.do")
     @ResponseBody
-    public ResponseData offShelves(HttpSession session, Long goodsId) {
-        ResponseData data = checkLogin(session);
-        if (!data.isSuccess()) {
-            return data;
+    public ResponseData offShelves(HttpServletRequest request, Long goodsId) {
+        User user = LoginUtil.getCurrentUser(request);
+        if (user == null) {
+            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
         }
-        Long userId = ((User) data.getData()).getId();
+        Long userId = user.getId();
         return goodsService.changeStatus(userId, goodsId, Const.ProductStatus.NOT_ON_SALE);
     }
 
     /**
      * 删除商品
      *
-     * @param session
      * @param goodsId
      * @return
      */
     @RequestMapping("delete.do")
     @ResponseBody
-    public ResponseData delete(HttpSession session, Long goodsId) {
-        ResponseData data = checkLogin(session);
-        if (!data.isSuccess()) {
-            return data;
+    public ResponseData delete(HttpServletRequest request, Long goodsId) {
+        User user = LoginUtil.getCurrentUser(request);
+        if (user == null) {
+            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
         }
-        Long userId = ((User) data.getData()).getId();
+        Long userId = user.getId();
         return goodsService.changeStatus(userId, goodsId, Const.ProductStatus.DELETE);
     }
 
@@ -199,26 +209,6 @@ public class GoodsManageController {
     @ResponseBody
     public ResponseData deleteProperty(Long propertiesId) {
         return goodsService.deleteProperty(propertiesId);
-    }
-
-    /**
-     * 检查登陆用户
-     *
-     * @param session
-     * @return
-     */
-    private ResponseData checkLogin(HttpSession session) {
-        User user = (User) session.getAttribute(Const.CURRENT_SELLER);
-        if (user == null) {
-            return ResponseData.error(
-                    ResponseCode.NEED_LOGIN.getCode(),
-                    ResponseCode.NEED_LOGIN.getMsg()
-            );
-        }
-        if (user.getRole() != Const.Role.SELLER) {
-            return ResponseData.error("请商家登陆");
-        }
-        return ResponseData.success(user);
     }
 
     /**

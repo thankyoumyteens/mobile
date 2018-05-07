@@ -4,7 +4,9 @@ import iloveyesterday.mobile.common.Const;
 import iloveyesterday.mobile.common.ResponseCode;
 import iloveyesterday.mobile.common.ResponseData;
 import iloveyesterday.mobile.pojo.User;
+import iloveyesterday.mobile.util.CookieUtil;
 import iloveyesterday.mobile.util.JsonUtil;
+import iloveyesterday.mobile.util.RedisPoolUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.method.HandlerMethod;
@@ -57,7 +59,13 @@ public class AuthorityInterceptor implements HandlerInterceptor {
 
         log.info("interceptor,className:{},methodName:{},param:{}", className, methodName, requestParamBuffer.toString());
 
-        User user = (User) request.getSession().getAttribute(Const.CURRENT_SELLER);
+        User user = null;
+        String token = CookieUtil.readLoginToken(request);
+        if (!StringUtils.isBlank(token)) {
+            String userStr = RedisPoolUtil.get(token);
+            user = JsonUtil.string2Obj(userStr, User.class);
+        }
+//        User user = (User) request.getSession().getAttribute(Const.CURRENT_SELLER);
 
         if (user == null || (user.getRole() != Const.Role.SELLER)) {
 //            response.reset(); // 会使filter返回的跨域信息失效

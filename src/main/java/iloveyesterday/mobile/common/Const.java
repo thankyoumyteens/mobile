@@ -10,6 +10,10 @@ public interface Const {
     String EMAIL = "email";
     String USERNAME = "username";
 
+    interface RedisCacheExTime {
+        int REDIS_SESSION = 60 * 30; // 30min
+    }
+
     interface Directory {
         String USER = "user";
         String CATEGORY = "category";
