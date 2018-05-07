@@ -6,6 +6,7 @@
 
     <display-name>Archetype Created Web Application</display-name>
 
+    <!--编码-->
     <filter>
         <filter-name>characterEncodingFilter</filter-name>
         <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -23,6 +24,7 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <!--跨域-->
     <filter>
         <filter-name>cors</filter-name>
         <filter-class>iloveyesterday.mobile.filter.CORSFilter</filter-class>
@@ -31,6 +33,16 @@
         <filter-name>cors</filter-name>
         <servlet-name>*</servlet-name>
         <url-pattern>*</url-pattern>
+    </filter-mapping>
+
+    <!--重置session有效时间-->
+    <filter>
+        <filter-name>sessionEx</filter-name>
+        <filter-class>iloveyesterday.mobile.filter.SessionExpireFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>sessionEx</filter-name>
+        <url-pattern>*.do</url-pattern>
     </filter-mapping>
 
     <listener>
