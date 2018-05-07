@@ -10,6 +10,8 @@ public interface Const {
     String EMAIL = "email";
     String USERNAME = "username";
 
+    String TOKEN_PREFIX = "token_";
+
     interface RedisCacheExTime {
         int REDIS_SESSION = 60 * 30; // 30min
     }

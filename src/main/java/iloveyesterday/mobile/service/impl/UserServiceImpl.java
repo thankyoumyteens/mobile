@@ -2,12 +2,12 @@ package iloveyesterday.mobile.service.impl;
 
 import iloveyesterday.mobile.common.Const;
 import iloveyesterday.mobile.common.ResponseData;
-import iloveyesterday.mobile.common.TokenCache;
 import iloveyesterday.mobile.dao.UserMapper;
 import iloveyesterday.mobile.pojo.User;
 import iloveyesterday.mobile.service.IUserService;
 import iloveyesterday.mobile.util.MD5Util;
 import iloveyesterday.mobile.util.PropertiesUtil;
+import iloveyesterday.mobile.util.RedisPoolUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -107,8 +107,8 @@ public class UserServiceImpl implements IUserService {
             return ResponseData.error("答案错误");
         }
         String token = UUID.randomUUID().toString();
-        // 将token放入本地缓存
-        TokenCache.setKey(username, token);
+        // 将token放入Redis缓存
+        RedisPoolUtil.setEx(Const.TOKEN_PREFIX + username, token, 60 * 60 * 12);
         return ResponseData.success(token);
     }
 
@@ -120,7 +120,7 @@ public class UserServiceImpl implements IUserService {
         if (responseData.isSuccess()) {
             return ResponseData.error("用户不存在");
         }
-        String tokenLocal = TokenCache.getKey(username);
+        String tokenLocal = RedisPoolUtil.get(Const.TOKEN_PREFIX + username);
         if (StringUtils.isBlank(tokenLocal)) {
             return ResponseData.error("token失效");
         }
