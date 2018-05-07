@@ -236,7 +236,7 @@ public class OrderServiceImplByGoods implements IOrderService {
         }
         if (order.getStatus() >= Const.OrderStatus.SUCCESS) {
             // 订单已完成
-            return ResponseData.error();
+            return ResponseData.success();
         }
         Order orderForUpdate = new Order();
         orderForUpdate.setId(order.getId());
