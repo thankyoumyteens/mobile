@@ -230,8 +230,8 @@ public class GoodsServiceImpl implements IGoodsService {
     public ResponseData<GoodsDetail> updateDetail(GoodsDetail detail) {
         int resultCount;
         ResponseData responseData = getDetail(detail.getGoodsId());
-        if (responseData.isSuccess()) {
-            GoodsDetail goodsDetail = (GoodsDetail) responseData.getData();
+        GoodsDetail goodsDetail = (GoodsDetail) responseData.getData();
+        if (goodsDetail != null) {
             detail.setId(goodsDetail.getId());
             detail.setUpdateTime(new Date());
             resultCount = detailMapper.updateByPrimaryKeySelective(detail);

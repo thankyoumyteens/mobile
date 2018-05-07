@@ -100,17 +100,12 @@ public class GoodsManageController {
     /**
      * 添加或修改商品规格
      *
-     * @param session
      * @param properties
      * @return
      */
     @RequestMapping("update_properties.do")
     @ResponseBody
-    public ResponseData addOrUpdateProperties(HttpSession session, GoodsProperties properties) {
-        ResponseData data = checkLogin(session);
-        if (!data.isSuccess()) {
-            return data;
-        }
+    public ResponseData addOrUpdateProperties(GoodsProperties properties) {
         return goodsService.addOrUpdateProperties(properties);
     }
 
@@ -119,34 +114,24 @@ public class GoodsManageController {
     /**
      * 获取商品详细介绍
      *
-     * @param session
      * @param goodsId
      * @return
      */
     @RequestMapping("goods_detail.do")
     @ResponseBody
-    public ResponseData<GoodsDetail> getDetail(HttpSession session, Long goodsId) {
-        ResponseData data = checkLogin(session);
-        if (!data.isSuccess()) {
-            return data;
-        }
+    public ResponseData<GoodsDetail> getDetail(Long goodsId) {
         return goodsService.getDetail(goodsId);
     }
 
     /**
      * 编写商品详细介绍
      *
-     * @param session
      * @param detail
      * @return
      */
     @RequestMapping("update_detail.do")
     @ResponseBody
-    public ResponseData<GoodsDetail> updateDetail(HttpSession session, GoodsDetail detail) {
-        ResponseData data = checkLogin(session);
-        if (!data.isSuccess()) {
-            return data;
-        }
+    public ResponseData<GoodsDetail> updateDetail(GoodsDetail detail) {
         return goodsService.updateDetail(detail);
     }
 
@@ -207,17 +192,12 @@ public class GoodsManageController {
     /**
      * 删除商品规格
      *
-     * @param session
      * @param propertiesId
      * @return
      */
     @RequestMapping("delete_property.do")
     @ResponseBody
-    public ResponseData deleteProperty(HttpSession session, Long propertiesId) {
-        ResponseData data = checkLogin(session);
-        if (!data.isSuccess()) {
-            return data;
-        }
+    public ResponseData deleteProperty(Long propertiesId) {
         return goodsService.deleteProperty(propertiesId);
     }
 
@@ -244,7 +224,6 @@ public class GoodsManageController {
     /**
      * 上传图片
      *
-     * @param session
      * @param file
      * @param request
      * @return
@@ -252,13 +231,8 @@ public class GoodsManageController {
     @RequestMapping("upload.do")
     @ResponseBody
     public ResponseData<Map> upload(
-            HttpSession session,
             @RequestParam(value = "file", required = false) MultipartFile file,
             HttpServletRequest request) {
-//        User user = (User) session.getAttribute(Const.CURRENT_SELLER);
-//        if (user == null) {
-//            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
-//        }
         String path = request.getSession().getServletContext().getRealPath("upload");
         // 验证是否是图片
         String fileName = file.getOriginalFilename();

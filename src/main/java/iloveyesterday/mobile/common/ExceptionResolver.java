@@ -19,7 +19,7 @@ public class ExceptionResolver implements HandlerExceptionResolver {
         // 返回json数据
         ModelAndView modelAndView = new ModelAndView(new MappingJackson2JsonView());
         modelAndView.addObject("status", ResponseCode.ERROR.getCode());
-        modelAndView.addObject("msg", "请查看日志");
+        modelAndView.addObject("msg", "出现异常, 请查看日志");
         modelAndView.addObject("data", e.toString());
         return modelAndView;
     }

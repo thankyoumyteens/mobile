@@ -48,5 +48,13 @@
         <property name="defaultEncoding" value="UTF-8"/>
     </bean>
 
+    <!--拦截器-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/manage/**"/>
+            <bean class="iloveyesterday.mobile.common.interceptor.AuthorityInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
 
 </beans>
