@@ -1,17 +1,17 @@
 package iloveyesterday.mobile.controller.portal;
 
-import iloveyesterday.mobile.common.Const;
 import iloveyesterday.mobile.common.ResponseCode;
 import iloveyesterday.mobile.common.ResponseData;
 import iloveyesterday.mobile.pojo.Shipping;
 import iloveyesterday.mobile.pojo.User;
 import iloveyesterday.mobile.service.IShippingService;
+import iloveyesterday.mobile.util.LoginUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
@@ -23,55 +23,47 @@ public class ShippingController {
 
     @RequestMapping("add.do")
     @ResponseBody
-    public ResponseData<Shipping> add(HttpSession session, Shipping shipping) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ResponseData<Shipping> add(HttpServletRequest request, Shipping shipping) {
+        User user = LoginUtil.getCurrentUser(request);
         if (user == null) {
-            return ResponseData.error(
-                    ResponseCode.NEED_LOGIN.getCode(),
-                    ResponseCode.NEED_LOGIN.getMsg()
-            );
+            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
         }
-        return shippingService.add(user.getId(), shipping);
+        Long userId = user.getId();
+        return shippingService.add(userId, shipping);
     }
 
     @RequestMapping("list.do")
     @ResponseBody
-    public ResponseData<List<Shipping>> list(HttpSession session) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ResponseData<List<Shipping>> list(HttpServletRequest request) {
+        User user = LoginUtil.getCurrentUser(request);
         if (user == null) {
-            return ResponseData.error(
-                    ResponseCode.NEED_LOGIN.getCode(),
-                    ResponseCode.NEED_LOGIN.getMsg()
-            );
+            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
         }
-        return shippingService.list(user.getId());
+        Long userId = user.getId();
+        return shippingService.list(userId);
     }
 
     @RequestMapping("delete.do")
     @ResponseBody
-    public ResponseData delete(HttpSession session, Long shippingId) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ResponseData delete(HttpServletRequest request, Long shippingId) {
+        User user = LoginUtil.getCurrentUser(request);
         if (user == null) {
-            return ResponseData.error(
-                    ResponseCode.NEED_LOGIN.getCode(),
-                    ResponseCode.NEED_LOGIN.getMsg()
-            );
+            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
         }
-        return shippingService.delete(user.getId(), shippingId);
+        Long userId = user.getId();
+        return shippingService.delete(userId, shippingId);
     }
 
 
     @RequestMapping("update.do")
     @ResponseBody
-    public ResponseData update(HttpSession session, Shipping shipping) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ResponseData update(HttpServletRequest request, Shipping shipping) {
+        User user = LoginUtil.getCurrentUser(request);
         if (user == null) {
-            return ResponseData.error(
-                    ResponseCode.NEED_LOGIN.getCode(),
-                    ResponseCode.NEED_LOGIN.getMsg()
-            );
+            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
         }
-        return shippingService.update(user.getId(), shipping);
+        Long userId = user.getId();
+        return shippingService.update(userId, shipping);
     }
 
 }

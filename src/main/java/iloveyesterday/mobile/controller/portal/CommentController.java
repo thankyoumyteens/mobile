@@ -2,7 +2,6 @@ package iloveyesterday.mobile.controller.portal;
 
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
-import iloveyesterday.mobile.common.Const;
 import iloveyesterday.mobile.common.ResponseCode;
 import iloveyesterday.mobile.common.ResponseData;
 import iloveyesterday.mobile.pojo.GoodsComment;
@@ -10,6 +9,7 @@ import iloveyesterday.mobile.pojo.User;
 import iloveyesterday.mobile.service.ICommentService;
 import iloveyesterday.mobile.service.IFileService;
 import iloveyesterday.mobile.util.JsonUtil;
+import iloveyesterday.mobile.util.LoginUtil;
 import iloveyesterday.mobile.util.PropertiesUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 
@@ -38,47 +37,41 @@ public class CommentController {
     /**
      * 填写评论
      *
-     * @param session
      * @param comment
      * @return
      */
     @RequestMapping("create.do")
     @ResponseBody
-    public ResponseData create(HttpSession session, GoodsComment comment) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ResponseData create(HttpServletRequest request, GoodsComment comment) {
+        User user = LoginUtil.getCurrentUser(request);
         if (user == null) {
-            return ResponseData.error(
-                    ResponseCode.NEED_LOGIN.getCode(),
-                    ResponseCode.NEED_LOGIN.getMsg()
-            );
+            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
         }
-        comment.setUserId(user.getId());
+        Long userId = user.getId();
+        comment.setUserId(userId);
         return commentService.create(comment);
     }
 
     /**
      * 填写评论
      *
-     * @param session
      * @param str
      * @return
      */
     @RequestMapping("create_list.do")
     @ResponseBody
-    public ResponseData createList(HttpSession session, String str) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ResponseData createList(HttpServletRequest request, String str) {
+        User user = LoginUtil.getCurrentUser(request);
         if (user == null) {
-            return ResponseData.error(
-                    ResponseCode.NEED_LOGIN.getCode(),
-                    ResponseCode.NEED_LOGIN.getMsg()
-            );
+            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
         }
+        Long userId = user.getId();
         List<GoodsComment> commentList = JsonUtil.string2Obj(str, List.class, GoodsComment.class);
         if (CollectionUtils.isEmpty(commentList)) {
             return ResponseData.error("请正确填写");
         }
         for (GoodsComment comment : commentList) {
-            comment.setUserId(user.getId());
+            comment.setUserId(userId);
         }
         return commentService.createByList(commentList);
     }
@@ -95,7 +88,6 @@ public class CommentController {
     /**
      * 获取当前登陆用户的评论
      *
-     * @param session
      * @param pageNum
      * @param pageSize
      * @return
@@ -103,17 +95,15 @@ public class CommentController {
     @RequestMapping("user_comments.do")
     @ResponseBody
     public ResponseData<PageInfo> userComments(
-            HttpSession session,
+            HttpServletRequest request,
             @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        User user = LoginUtil.getCurrentUser(request);
         if (user == null) {
-            return ResponseData.error(
-                    ResponseCode.NEED_LOGIN.getCode(),
-                    ResponseCode.NEED_LOGIN.getMsg()
-            );
+            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
         }
-        return commentService.getUserComments(user.getId(), pageNum, pageSize);
+        Long userId = user.getId();
+        return commentService.getUserComments(userId, pageNum, pageSize);
     }
 
     /**
@@ -172,7 +162,6 @@ public class CommentController {
     /**
      * 上传图片
      *
-     * @param session
      * @param file
      * @param request
      * @return
@@ -180,15 +169,13 @@ public class CommentController {
     @RequestMapping("upload.do")
     @ResponseBody
     public ResponseData<Map> upload(
-            HttpSession session,
             @RequestParam(value = "file", required = false) MultipartFile file,
             HttpServletRequest request) {
         String path = request.getSession().getServletContext().getRealPath("upload");
         // 验证是否是图片
         String fileName = file.getOriginalFilename();
         String fileExtensionName = fileName.substring(fileName.lastIndexOf(".") + 1);
-        if (!StringUtils.equals(fileExtensionName, "jpg") &&
-                !StringUtils.equals(fileExtensionName, "png")) {
+        if (!StringUtils.equals(fileExtensionName, "jpg")) {
             return ResponseData.error("请上传jpg格式图片");
         }
         // 上传

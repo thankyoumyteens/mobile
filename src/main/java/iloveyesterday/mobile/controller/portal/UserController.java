@@ -2,12 +2,14 @@ package iloveyesterday.mobile.controller.portal;
 
 import com.google.common.collect.Maps;
 import iloveyesterday.mobile.common.Const;
-import iloveyesterday.mobile.common.ResponseCode;
 import iloveyesterday.mobile.common.ResponseData;
 import iloveyesterday.mobile.pojo.User;
 import iloveyesterday.mobile.service.IFileService;
 import iloveyesterday.mobile.service.IUserService;
+import iloveyesterday.mobile.util.CookieUtil;
+import iloveyesterday.mobile.util.JsonUtil;
 import iloveyesterday.mobile.util.PropertiesUtil;
+import iloveyesterday.mobile.util.RedisPoolUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
@@ -43,10 +46,16 @@ public class UserController {
      */
     @RequestMapping(value = "login.do", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseData<User> login(String username, String password, HttpSession session) {
+    public ResponseData<User> login(String username, String password, HttpSession session, HttpServletResponse httpServletResponse) {
         ResponseData<User> responseData = userService.login(username, password);
         if (responseData.isSuccess()) {
-            session.setAttribute(Const.CURRENT_USER, responseData.getData());
+            User user = responseData.getData();
+            if (user.getRole() == Const.Role.USER) {
+                CookieUtil.writeLoginToken(httpServletResponse, session.getId());
+                RedisPoolUtil.setEx(session.getId(), JsonUtil.obj2String(user), Const.RedisCacheExTime.REDIS_SESSION);
+            } else {
+                return ResponseData.error("用户不存在");
+            }
         }
         return responseData;
     }
@@ -54,13 +63,14 @@ public class UserController {
     /**
      * 登出
      *
-     * @param session
      * @return
      */
     @RequestMapping(value = "logout.do", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseData logout(HttpSession session) {
-        session.removeAttribute(Const.CURRENT_USER);
+    public ResponseData logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        String token = CookieUtil.readLoginToken(httpServletRequest);
+        CookieUtil.delLoginToken(httpServletRequest, httpServletResponse);
+        RedisPoolUtil.del(token);
         return ResponseData.success();
     }
 
@@ -92,15 +102,22 @@ public class UserController {
     /**
      * 获取用户信息
      *
-     * @param session
      * @return
      */
     @RequestMapping(value = "get_user_info.do", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseData<User> getUserInfo(HttpSession session) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ResponseData<User> getUserInfo(HttpServletRequest httpServletRequest) {
+        String token = CookieUtil.readLoginToken(httpServletRequest);
+        if (StringUtils.isBlank(token)) {
+            return ResponseData.error("未登录");
+        }
+        String userStr = RedisPoolUtil.get(token);
+        User user = JsonUtil.string2Obj(userStr, User.class);
         if (user == null) {
-            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
+            return ResponseData.error("未登录");
+        }
+        if (user.getRole() != Const.Role.USER) {
+            return ResponseData.error("未登录");
         }
         return ResponseData.success(user);
     }
@@ -148,35 +165,35 @@ public class UserController {
     /**
      * 登陆状态下修改密码
      *
-     * @param session
      * @param passwordOld
      * @param passwordNew
      * @return
      */
     @RequestMapping(value = "reset_password.do", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseData resetPassword(HttpSession session, String passwordOld, String passwordNew) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
-            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
+    public ResponseData resetPassword(HttpServletRequest httpServletRequest, String passwordOld, String passwordNew) {
+        ResponseData<User> data = getUserInfo(httpServletRequest);
+        if (!data.isSuccess()) {
+            return data;
         }
+        User user = data.getData();
         return userService.resetPassword(user, passwordOld, passwordNew);
     }
 
     /**
      * 更新用户信息
      *
-     * @param session
      * @param user
      * @return
      */
     @RequestMapping(value = "update_user_info.do", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseData<User> updateUserInfo(HttpSession session, User user) {
-        User currentUser = (User) session.getAttribute(Const.CURRENT_USER);
-        if (currentUser == null) {
-            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
+    public ResponseData<User> updateUserInfo(HttpServletRequest httpServletRequest, User user) {
+        ResponseData<User> data = getUserInfo(httpServletRequest);
+        if (!data.isSuccess()) {
+            return data;
         }
+        User currentUser = data.getData();
         // 防止userId被修改
         user.setId(currentUser.getId());
         user.setUsername(currentUser.getUsername());
@@ -188,7 +205,11 @@ public class UserController {
 
         ResponseData<User> responseData = userService.updateUserInfo(user);
         if (responseData.isSuccess()) {
-            session.setAttribute(Const.CURRENT_USER, responseData.getData());
+            String token = CookieUtil.readLoginToken(httpServletRequest);
+            if (StringUtils.isBlank(token)) {
+                return ResponseData.error("请重新登陆");
+            }
+            RedisPoolUtil.setEx(token, JsonUtil.obj2String(responseData.getData()), Const.RedisCacheExTime.REDIS_SESSION);
         }
         return responseData;
     }
@@ -196,56 +217,43 @@ public class UserController {
     /**
      * 更新用户头像
      *
-     * @param session
      * @param avatar
      * @return
      */
     @RequestMapping(value = "update_avatar.do", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseData<User> updateUserAvatar(HttpSession session, String avatar) {
-        User currentUser = (User) session.getAttribute(Const.CURRENT_USER);
-        if (currentUser == null) {
-            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
+    public ResponseData<User> updateUserAvatar(HttpServletRequest httpServletRequest, String avatar) {
+        ResponseData<User> data = getUserInfo(httpServletRequest);
+        if (!data.isSuccess()) {
+            return data;
         }
+        User currentUser = data.getData();
 
         ResponseData responseData = userService.updateUserAvatar(currentUser, avatar);
         if (responseData.isSuccess()) {
             currentUser.setAvatar(PropertiesUtil.getImageHost() + avatar);
-            session.setAttribute(Const.CURRENT_USER, currentUser);
+            String token = CookieUtil.readLoginToken(httpServletRequest);
+            if (StringUtils.isBlank(token)) {
+                return ResponseData.error("请重新登陆");
+            }
+            RedisPoolUtil.setEx(token, JsonUtil.obj2String(currentUser), Const.RedisCacheExTime.REDIS_SESSION);
         }
         return responseData;
     }
 
-//    /**
-//     * 获取用户信息
-//     *
-//     * @param session
-//     * @return
-//     */
-//    @RequestMapping(value = "get_user_info.do", method = RequestMethod.POST)
-//    @ResponseBody
-//    public ResponseData<User> getUserInfo(HttpSession session) {
-//        User currentUser = (User) session.getAttribute(Const.CURRENT_USER);
-//        if (currentUser == null) {
-//            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
-//        }
-//        return userService.getUserInfo(currentUser.getId());
-//    }
-
     /**
      * 上传图片
      *
-     * @param session
      * @param file
      * @param request
      * @return
      */
     @RequestMapping("upload.do")
     @ResponseBody
-    public ResponseData<Map> upload(HttpSession session, @RequestParam(value = "upload_file", required = false) MultipartFile file, HttpServletRequest request) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
-            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
+    public ResponseData<Map> upload(HttpServletRequest httpServletRequest, @RequestParam(value = "upload_file", required = false) MultipartFile file, HttpServletRequest request) {
+        ResponseData<User> data = getUserInfo(httpServletRequest);
+        if (!data.isSuccess()) {
+            return ResponseData.error("请登陆");
         }
         String path = request.getSession().getServletContext().getRealPath("upload");
         // 验证是否是图片

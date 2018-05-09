@@ -94,6 +94,9 @@ public class UserManageController {
         if (user == null) {
             return ResponseData.error("未登录");
         }
+        if (user.getRole() != Const.Role.SELLER) {
+            return ResponseData.error("未登录");
+        }
         return ResponseData.success(user);
     }
 
