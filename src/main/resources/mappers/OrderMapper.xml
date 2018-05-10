@@ -246,4 +246,14 @@
     where order_no=#{orderNo}
     order by create_time desc
   </select>
+    <select id="selectOrderStatusByCreateTime" resultMap="BaseResultMap" parameterType="map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from mobile_order
+        where status = #{status}
+        <![CDATA[
+        and create_time <= #{date}
+        ]]>
+        order by create_time desc
+    </select>
 </mapper>

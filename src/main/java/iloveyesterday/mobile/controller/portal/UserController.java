@@ -34,7 +34,6 @@ public class UserController {
     @Resource
     private IFileService fileService;
 
-    // todo redis
 
     /**
      * 登陆

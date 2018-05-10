@@ -28,4 +28,6 @@ public interface IOrderService {
     ResponseData<PageInfo> listBySeller(Long sellerId, int pageNum, int pageSize);
 
     ResponseData<OrderVo> send(Long sellerId, Long orderNo);
+
+    void closeOrder(int hour);
 }
