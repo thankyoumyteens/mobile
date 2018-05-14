@@ -368,10 +368,13 @@ public class OrderServiceImplByGoods implements IOrderService {
             List<OrderItem> orderItemList = orderItemMapper.selectByOrderNo(order.getOrderNo());
             for (OrderItem orderItem : orderItemList) {
                 // 恢复库存
-                GoodsProperties properties = new GoodsProperties();
-                properties.setId(orderItem.getPropertiesId());
-                properties.setStock(properties.getStock() + orderItem.getQuantity());
-                propertiesMapper.updateByPrimaryKeySelective(properties);
+                GoodsProperties goodsProperties = propertiesMapper.selectByPrimaryKey(orderItem.getPropertiesId());
+                if (goodsProperties != null) {
+                    GoodsProperties properties = new GoodsProperties();
+                    properties.setId(orderItem.getPropertiesId());
+                    properties.setStock(goodsProperties.getStock() + orderItem.getQuantity());
+                    propertiesMapper.updateByPrimaryKeySelective(properties);
+                }
             }
             // 取消订单
             Order orderForUpdate = new Order();
@@ -380,7 +383,7 @@ public class OrderServiceImplByGoods implements IOrderService {
             orderForUpdate.setUpdateTime(new Date());
             orderForUpdate.setCloseTime(new Date());
             orderMapper.updateByPrimaryKeySelective(orderForUpdate);
-            log.info("order timeout OrderNo：{}", order.getOrderNo());
+            log.info("order timeout OrderNo: {}", order.getOrderNo());
         }
     }
 
