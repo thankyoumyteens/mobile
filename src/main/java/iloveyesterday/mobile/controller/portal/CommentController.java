@@ -171,6 +171,7 @@ public class CommentController {
     public ResponseData<Map> upload(
             @RequestParam(value = "file", required = false) MultipartFile file,
             HttpServletRequest request) {
+        String index = request.getParameter("index");
         String path = request.getSession().getServletContext().getRealPath("upload");
         // 验证是否是图片
         String fileName = file.getOriginalFilename();
@@ -186,6 +187,7 @@ public class CommentController {
         Map fileMap = Maps.newHashMap();
         fileMap.put("uri", targetFileName);
         fileMap.put("url", url);
+        fileMap.put("index", index);
         return ResponseData.success(fileMap);
     }
 
