@@ -7,6 +7,25 @@ SET NAMES utf8;
 SET FOREIGN_KEY_CHECKS = 0;
 
 
+
+-- ----------------------------
+--  收藏
+-- ----------------------------
+DROP TABLE IF EXISTS `mobile_favorite`;
+CREATE TABLE `mobile_favorite` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL COMMENT '用户Id',
+  `goods_id` bigint(20) DEFAULT NULL COMMENT '商品Id',
+  `seller_id` bigint(20) DEFAULT NULL COMMENT '卖家Id',
+  `shop_id` bigint(20) DEFAULT NULL COMMENT '店铺Id',
+  `type` int(5) NOT NULL COMMENT '收藏类型, 0-商品, 1-店铺',
+  `status` int(5) DEFAULT NULL COMMENT '处理状态',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 -- ----------------------------
 --  消息
 -- ----------------------------
@@ -245,6 +264,7 @@ CREATE TABLE `mobile_user` (
   UNIQUE KEY `user_name_unique` (`username`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- 管理员账号
 INSERT INTO `mobile`.`mobile_user`(`id`, `username`, `password`, `email`, `phone`, `nickname`, `avatar`, `question`, `answer`, `role`, `create_time`, `update_time`) VALUES (1, 'admin', '427338237BD929443EC5D48E24FD2B1A', 'admin@admin.com', '12345677901', '管理员', '1.jpg', '问题', '答案', 0, '2018-03-12 20:06:41', '2018-03-12 20:06:41');
 
 

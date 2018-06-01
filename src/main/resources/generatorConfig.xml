@@ -66,6 +66,9 @@
         </javaClientGenerator>
 
 
+        <table tableName="mobile_favorite" domainObjectName="Favorite" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false"></table>
         <table tableName="mobile_shipping" domainObjectName="Shipping" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false"></table>

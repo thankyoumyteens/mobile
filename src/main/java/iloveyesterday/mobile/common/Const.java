@@ -27,6 +27,16 @@ public interface Const {
     }
 
     /**
+     * 收藏类型
+     */
+    interface FavoriteType {
+        // 商品
+        int GOODS = 0;
+        // 店铺
+        int SHOP = 1;
+    }
+
+    /**
      * 商品状态
      */
     interface ProductStatus {
