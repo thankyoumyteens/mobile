@@ -107,6 +107,27 @@ public class OrderController {
     }
 
     /**
+     * 已付款订单
+     *
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping("list_sent.do")
+    @ResponseBody
+    public ResponseData<PageInfo> listBySent(
+            HttpServletRequest request,
+            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        User user = LoginUtil.getCurrentUser(request);
+        if (user == null) {
+            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
+        }
+        Long userId = user.getId();
+        return orderService.listByStatus(userId, Const.OrderStatus.SENT, pageNum, pageSize);
+    }
+
+    /**
      * 根据订单Id查询订单详情
      *
      * @param orderId
@@ -192,10 +213,6 @@ public class OrderController {
         Long userId = user.getId();
         return orderService.cancel(userId, orderNo);
     }
-
-    // todo 已发货(需要快递单号, 商家账号)
-
-    // todo 物流
 
     // todo 退款
 
