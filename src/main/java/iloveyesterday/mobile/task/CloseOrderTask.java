@@ -6,7 +6,6 @@ import iloveyesterday.mobile.service.IOrderService;
 import iloveyesterday.mobile.util.PropertiesUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -23,7 +22,7 @@ public class CloseOrderTask {
     private RedissonManager redissonManager;
 
     // 每1分钟(每个1分钟的整数倍)
-    @Scheduled(cron = "0 */1 * * * ?")
+//    @Scheduled(cron = "0 */1 * * * ?")
     public void closeOrderTask() {
         RLock lock = redissonManager.getRedisson().getLock(Const.RedisLock.CLOSE_ORDER_TASK_LOCK);
         boolean getLock = false;
