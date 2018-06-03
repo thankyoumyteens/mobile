@@ -149,4 +149,11 @@
     where user_id=#{userId}
     and seller_id=#{sellerId}
   </select>
+    <select id="selectByUserIdAndType" resultMap="BaseResultMap" parameterType="map">
+        select
+        <include refid="Base_Column_List"/>
+        from mobile_favorite
+        where user_id=#{userId}
+        and `type`=#{type}
+    </select>
 </mapper>

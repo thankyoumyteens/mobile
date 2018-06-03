@@ -1,5 +1,6 @@
 package iloveyesterday.mobile.controller.portal;
 
+import com.github.pagehelper.PageInfo;
 import iloveyesterday.mobile.common.ResponseCode;
 import iloveyesterday.mobile.common.ResponseData;
 import iloveyesterday.mobile.pojo.Favorite;
@@ -8,6 +9,7 @@ import iloveyesterday.mobile.service.IFavoriteService;
 import iloveyesterday.mobile.util.LoginUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
@@ -37,6 +39,19 @@ public class FavoriteController {
         Long userId = user.getId();
         favorite.setUserId(userId);
         return favoriteService.add(favorite);
+    }
+
+    @RequestMapping("list.do")
+    @ResponseBody
+    public ResponseData<PageInfo> list(
+            HttpServletRequest request, int type,
+            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        User user = LoginUtil.getCurrentUser(request);
+        if (user == null) {
+            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
+        }
+        return favoriteService.list(user.getId(), type, pageNum, pageSize);
     }
 
 }

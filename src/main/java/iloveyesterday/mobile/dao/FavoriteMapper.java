@@ -3,6 +3,8 @@ package iloveyesterday.mobile.dao;
 import iloveyesterday.mobile.pojo.Favorite;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 public interface FavoriteMapper {
     int deleteByPrimaryKey(Long id);
 
@@ -21,4 +23,7 @@ public interface FavoriteMapper {
 
     int selectCountBySellerId(
             @Param("userId") Long userId, @Param("sellerId") Long sellerId);
+
+    List<Favorite> selectByUserIdAndType(
+            @Param("userId") Long userId, @Param("type") int type);
 }
