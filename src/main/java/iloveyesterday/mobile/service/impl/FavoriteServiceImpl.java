@@ -18,7 +18,11 @@ public class FavoriteServiceImpl implements IFavoriteService {
     @Override
     public ResponseData add(Favorite favorite) {
         int resultCount;
-        switch (favorite.getType()) {
+        Integer type = favorite.getType();
+        if (type == null) {
+            return ResponseData.error("参数错误");
+        }
+        switch (type) {
             case Const.FavoriteType.GOODS:
                 resultCount = favoriteMapper.selectCountByGoodsId(
                         favorite.getUserId(), favorite.getGoodsId());
