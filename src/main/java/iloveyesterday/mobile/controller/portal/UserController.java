@@ -6,10 +6,7 @@ import iloveyesterday.mobile.common.ResponseData;
 import iloveyesterday.mobile.pojo.User;
 import iloveyesterday.mobile.service.IFileService;
 import iloveyesterday.mobile.service.IUserService;
-import iloveyesterday.mobile.util.CookieUtil;
-import iloveyesterday.mobile.util.JsonUtil;
-import iloveyesterday.mobile.util.PropertiesUtil;
-import iloveyesterday.mobile.util.RedisPoolUtil;
+import iloveyesterday.mobile.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,8 +47,7 @@ public class UserController {
         if (responseData.isSuccess()) {
             User user = responseData.getData();
             if (user.getRole() == Const.Role.USER) {
-                CookieUtil.writeLoginToken(httpServletResponse, session.getId());
-                RedisPoolUtil.setEx(session.getId(), JsonUtil.obj2String(user), Const.RedisCacheExTime.REDIS_SESSION);
+                LoginUtil.saveCurrentUser(session, httpServletResponse, user);
             } else {
                 return ResponseData.error("用户不存在");
             }
@@ -67,9 +63,7 @@ public class UserController {
     @RequestMapping(value = "logout.do", method = RequestMethod.POST)
     @ResponseBody
     public ResponseData logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        String token = CookieUtil.readLoginToken(httpServletRequest);
-        CookieUtil.delLoginToken(httpServletRequest, httpServletResponse);
-        RedisPoolUtil.del(token);
+        LoginUtil.deleteCurrentUser(httpServletRequest, httpServletResponse);
         return ResponseData.success();
     }
 
@@ -106,16 +100,8 @@ public class UserController {
     @RequestMapping(value = "get_user_info.do", method = RequestMethod.POST)
     @ResponseBody
     public ResponseData<User> getUserInfo(HttpServletRequest httpServletRequest) {
-        String token = CookieUtil.readLoginToken(httpServletRequest);
-        if (StringUtils.isBlank(token)) {
-            return ResponseData.error("未登录");
-        }
-        String userStr = RedisPoolUtil.get(token);
-        User user = JsonUtil.string2Obj(userStr, User.class);
-        if (user == null) {
-            return ResponseData.error("未登录");
-        }
-        if (user.getRole() != Const.Role.USER) {
+        User user = LoginUtil.getCurrentUser(httpServletRequest);
+        if (user == null || user.getRole() != Const.Role.USER) {
             return ResponseData.error("未登录");
         }
         return ResponseData.success(user);
@@ -204,11 +190,9 @@ public class UserController {
 
         ResponseData<User> responseData = userService.updateUserInfo(user);
         if (responseData.isSuccess()) {
-            String token = CookieUtil.readLoginToken(httpServletRequest);
-            if (StringUtils.isBlank(token)) {
+            if (!LoginUtil.updateCurrentUser(httpServletRequest, responseData.getData())) {
                 return ResponseData.error("请重新登陆");
             }
-            RedisPoolUtil.setEx(token, JsonUtil.obj2String(responseData.getData()), Const.RedisCacheExTime.REDIS_SESSION);
         }
         return responseData;
     }
@@ -231,11 +215,9 @@ public class UserController {
         ResponseData responseData = userService.updateUserAvatar(currentUser, avatar);
         if (responseData.isSuccess()) {
             currentUser.setAvatar(PropertiesUtil.getImageHost() + avatar);
-            String token = CookieUtil.readLoginToken(httpServletRequest);
-            if (StringUtils.isBlank(token)) {
+            if (!LoginUtil.updateCurrentUser(httpServletRequest, currentUser)) {
                 return ResponseData.error("请重新登陆");
             }
-            RedisPoolUtil.setEx(token, JsonUtil.obj2String(currentUser), Const.RedisCacheExTime.REDIS_SESSION);
         }
         return responseData;
     }
