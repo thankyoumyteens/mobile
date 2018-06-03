@@ -11,15 +11,51 @@ import javax.servlet.http.HttpSession;
 public final class LoginUtil {
 
     /**
+     * 保存当前登陆的用户
+     *
+     * @param session
+     * @param response
+     * @param user
+     */
+    public static void saveCurrentUser(HttpSession session, HttpServletResponse response, User user) {
+        saveCurrentUserSession(session, user);
+//        saveCurrentUserRedis(session, response, user);
+    }
+
+    /**
      * 获取当前登陆的用户
      *
      * @param request
      * @return
      */
     public static User getCurrentUser(HttpServletRequest request) {
-//        return getCurrentUserSession(request);
-        return getCurrentUserRedis(request);
+        return getCurrentUserSession(request);
+//        return getCurrentUserRedis(request);
     }
+
+    /**
+     * 删除当前登陆的用户
+     *
+     * @param request
+     * @param response
+     */
+    public static void deleteCurrentUser(HttpServletRequest request, HttpServletResponse response) {
+        deleteCurrentUserSession(request);
+//        deleteCurrentUserRedis(request, response);
+    }
+
+    /**
+     * 更新当前登陆的用户信息
+     *
+     * @param request
+     * @param user
+     * @return
+     */
+    public static boolean updateCurrentUser(HttpServletRequest request, User user) {
+        return updateCurrentUserSession(request, user);
+//        return updateCurrentUserRedis(request, user);
+    }
+
 
     private static User getCurrentUserSession(HttpServletRequest request) {
         HttpSession session = request.getSession();
@@ -35,18 +71,6 @@ public final class LoginUtil {
         return JsonUtil.string2Obj(userStr, User.class);
     }
 
-    /**
-     * 保存当前登陆的用户
-     *
-     * @param session
-     * @param response
-     * @param user
-     */
-    public static void saveCurrentUser(HttpSession session, HttpServletResponse response, User user) {
-//        saveCurrentUserSession(session, user);
-        saveCurrentUserRedis(session, response, user);
-    }
-
     private static void saveCurrentUserSession(HttpSession session, User user) {
         session.setAttribute(Const.CURRENT_USER, user);
     }
@@ -54,17 +78,6 @@ public final class LoginUtil {
     private static void saveCurrentUserRedis(HttpSession session, HttpServletResponse response, User user) {
         CookieUtil.writeLoginToken(response, session.getId());
         RedisPoolUtil.setEx(session.getId(), JsonUtil.obj2String(user), Const.RedisCacheExTime.REDIS_SESSION);
-    }
-
-    /**
-     * 删除当前登陆的用户
-     *
-     * @param request
-     * @param response
-     */
-    public static void deleteCurrentUser(HttpServletRequest request, HttpServletResponse response) {
-//        deleteCurrentUserSession(request);
-        deleteCurrentUserRedis(request, response);
     }
 
     private static void deleteCurrentUserSession(HttpServletRequest request) {
@@ -76,11 +89,6 @@ public final class LoginUtil {
         String token = CookieUtil.readLoginToken(request);
         CookieUtil.delLoginToken(request, response);
         RedisPoolUtil.del(token);
-    }
-
-    public static boolean updateCurrentUser(HttpServletRequest request, User user) {
-//        return updateCurrentUserSession(request, user);
-        return updateCurrentUserRedis(request, user);
     }
 
     private static boolean updateCurrentUserSession(HttpServletRequest request, User user) {
