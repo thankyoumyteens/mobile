@@ -41,6 +41,16 @@ public class FavoriteController {
         return favoriteService.add(favorite);
     }
 
+    @RequestMapping("count.do")
+    @ResponseBody
+    public ResponseData count(HttpServletRequest request, int type) {
+        User user = LoginUtil.getCurrentUser(request);
+        if (user == null) {
+            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
+        }
+        return favoriteService.count(user.getId(), type);
+    }
+
     @RequestMapping("list.do")
     @ResponseBody
     public ResponseData<PageInfo> list(

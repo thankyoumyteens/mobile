@@ -8,4 +8,6 @@ public interface IFavoriteService {
     ResponseData add(Favorite favorite);
 
     ResponseData<PageInfo> list(Long userId, int type, int pageNum, int pageSize);
+
+    ResponseData count(Long userId, int type);
 }

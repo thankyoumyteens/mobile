@@ -78,6 +78,12 @@ public class FavoriteServiceImpl implements IFavoriteService {
         return ResponseData.success(pageInfo);
     }
 
+    @Override
+    public ResponseData count(Long userId, int type) {
+        int count = favoriteMapper.selectCountByUserIdAndType(userId, type);
+        return ResponseData.success(count);
+    }
+
     private FavoriteVo createFavoriteVo(Favorite item) {
         FavoriteVo vo = new FavoriteVo();
 

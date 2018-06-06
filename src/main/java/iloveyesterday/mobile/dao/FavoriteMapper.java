@@ -26,4 +26,7 @@ public interface FavoriteMapper {
 
     List<Favorite> selectByUserIdAndType(
             @Param("userId") Long userId, @Param("type") int type);
+
+    int selectCountByUserIdAndType(
+            @Param("userId") Long userId, @Param("type") int type);
 }

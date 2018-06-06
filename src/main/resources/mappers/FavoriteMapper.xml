@@ -156,4 +156,10 @@
         where user_id=#{userId}
         and `type`=#{type}
     </select>
+    <select id="selectCountByUserIdAndType" resultType="int" parameterType="map">
+        select count(1)
+        from mobile_favorite
+        where user_id=#{userId}
+        and `type`=#{type}
+    </select>
 </mapper>
