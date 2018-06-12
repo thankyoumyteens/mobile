@@ -5,6 +5,7 @@ import iloveyesterday.mobile.common.RedissonManager;
 import iloveyesterday.mobile.service.IOrderService;
 import iloveyesterday.mobile.util.PropertiesUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.Redisson;
 import org.redisson.api.RLock;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +25,12 @@ public class CloseOrderTask {
     // 每1分钟(每个1分钟的整数倍)
 //    @Scheduled(cron = "0 */1 * * * ?")
     public void closeOrderTask() {
-        RLock lock = redissonManager.getRedisson().getLock(Const.RedisLock.CLOSE_ORDER_TASK_LOCK);
+        Redisson redisson = redissonManager.getRedisson();
+        if (redisson == null) {
+            log.error("closeOrderTask error: redisson is null");
+            return;
+        }
+        RLock lock = redisson.getLock(Const.RedisLock.CLOSE_ORDER_TASK_LOCK);
         boolean getLock = false;
         try {
             if (getLock = lock.tryLock(0, 50, TimeUnit.SECONDS)) {
@@ -37,11 +43,10 @@ public class CloseOrderTask {
         } catch (InterruptedException e) {
             log.error("Redisson get lock exception", e);
         } finally {
-            if (!getLock) {
-                return;
+            if (getLock) {
+                lock.unlock();
+                log.info("Redisson lock close");
             }
-            lock.unlock();
-            log.info("Redisson lock close");
         }
     }
 
