@@ -44,4 +44,5 @@ static/
 gen/
 /gen/
 resources.prod/
+/resources.prod/
 
