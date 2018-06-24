@@ -2,7 +2,7 @@
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
 
     <!-- 应用名称 -->
-    <property name="APP_NAME" value="mobile"/>
+    <property name="APP_NAME" value="mobile "/>
     <!--日志文件的保存路径 -->
     <property name="LOG_HOME" value="/home/log/${APP_NAME}"/>
     <contextName>${APP_NAME}</contextName>
