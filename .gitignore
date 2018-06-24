@@ -42,7 +42,5 @@ static/
 
 #user
 gen/
-/gen/
 resources.prod/
-/resources.prod/
 
