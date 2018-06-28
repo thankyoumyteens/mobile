@@ -2,6 +2,8 @@ package iloveyesterday.mobile.filter; /**
  * Created by Ricky on 2017/3/14.
  */
 
+import iloveyesterday.mobile.util.PropertiesUtil;
+
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,11 +19,11 @@ public class CORSFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
         String originHeader = request.getHeader("Origin");
-        String[] IPs = {"http://localhost:8080", "http://localhost:8081"};
-        if (Arrays.asList(IPs).contains(originHeader)) {
+        String ips = PropertiesUtil.getProperty("cors.ip", "http://localhost:8080");
+        String[] ipArray = ips.split(",");
+        if (Arrays.asList(ipArray).contains(originHeader)) {
             // 允许的域名
             response.setHeader("Access-Control-Allow-Origin", originHeader);
-//            response.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
             // 允许的请求类型，多个用逗号隔开
             response.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
             // 预请求缓存时间，单位秒
