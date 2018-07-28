@@ -4,6 +4,7 @@ import com.aliyun.oss.ClientException;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.OSSException;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.List;
@@ -24,7 +25,12 @@ public final class OssUtil {
         return ossClient;
     }
 
-    public static void uploadFile(List<File> fileList) throws Exception {
+    public static boolean uploadFile(List<File> fileList) throws Exception {
+        if (StringUtils.isBlank(endpoint) ||
+                StringUtils.isBlank(accessKeyId) ||
+                StringUtils.isBlank(accessKeySecret)) {
+            return false;
+        }
         try {
             if (!getOssClient().doesBucketExist(bucketName)) {
                 // 若Bucket不存在, 创建Bucket
@@ -38,13 +44,14 @@ public final class OssUtil {
                 String fileKey = file.getName();
                 getOssClient().putObject(bucketName, dir + fileKey, file);
             }
+            return true;
         } catch (OSSException | ClientException e) {
             e.printStackTrace();
-            throw new Exception("上传失败");
+            throw new Exception("upload failed");
         }
     }
 
-    public static void uploadFile(File targetFile) throws Exception {
-        uploadFile(Lists.newArrayList(targetFile));
+    public static boolean uploadFile(File targetFile) throws Exception {
+        return uploadFile(Lists.newArrayList(targetFile));
     }
 }
