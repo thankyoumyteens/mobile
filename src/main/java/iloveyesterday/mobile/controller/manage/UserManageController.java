@@ -4,10 +4,7 @@ import iloveyesterday.mobile.common.Const;
 import iloveyesterday.mobile.common.ResponseData;
 import iloveyesterday.mobile.pojo.User;
 import iloveyesterday.mobile.service.IUserService;
-import iloveyesterday.mobile.util.CookieUtil;
-import iloveyesterday.mobile.util.JsonUtil;
-import iloveyesterday.mobile.util.RedisPoolUtil;
-import org.apache.commons.lang3.StringUtils;
+import iloveyesterday.mobile.util.LoginUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -54,8 +51,7 @@ public class UserManageController {
         if (responseData.isSuccess()) {
             User user = responseData.getData();
             if (user.getRole() == Const.Role.SELLER) {
-                CookieUtil.writeLoginToken(httpServletResponse, session.getId());
-                RedisPoolUtil.setEx(session.getId(), JsonUtil.obj2String(user), Const.RedisCacheExTime.REDIS_SESSION);
+                LoginUtil.saveCurrentUser(session, httpServletResponse, user);
             } else {
                 return ResponseData.error("请商家登陆");
             }
@@ -71,9 +67,7 @@ public class UserManageController {
     @RequestMapping(value = "logout.do", method = RequestMethod.POST)
     @ResponseBody
     public ResponseData logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        String token = CookieUtil.readLoginToken(httpServletRequest);
-        CookieUtil.delLoginToken(httpServletRequest, httpServletResponse);
-        RedisPoolUtil.del(token);
+        LoginUtil.deleteCurrentUser(httpServletRequest, httpServletResponse);
         return ResponseData.success();
     }
 
@@ -85,13 +79,8 @@ public class UserManageController {
     @RequestMapping(value = "get_user_info.do", method = RequestMethod.POST)
     @ResponseBody
     public ResponseData<User> getUserInfo(HttpServletRequest httpServletRequest) {
-        String token = CookieUtil.readLoginToken(httpServletRequest);
-        if (StringUtils.isBlank(token)) {
-            return ResponseData.error("未登录");
-        }
-        String userStr = RedisPoolUtil.get(token);
-        User user = JsonUtil.string2Obj(userStr, User.class);
-        if (user == null) {
+        User user = LoginUtil.getCurrentUser(httpServletRequest);
+        if (user == null || user.getRole() != Const.Role.SELLER) {
             return ResponseData.error("未登录");
         }
         return ResponseData.success(user);

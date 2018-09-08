@@ -3,12 +3,12 @@ package iloveyesterday.mobile.controller.portal;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
 import iloveyesterday.mobile.common.AlipayConfig;
-import iloveyesterday.mobile.common.Const;
 import iloveyesterday.mobile.common.ResponseCode;
 import iloveyesterday.mobile.common.ResponseData;
 import iloveyesterday.mobile.pojo.User;
 import iloveyesterday.mobile.service.IOrderService;
 import iloveyesterday.mobile.service.IPayService;
+import iloveyesterday.mobile.util.LoginUtil;
 import iloveyesterday.mobile.util.PropertiesUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,15 +37,14 @@ public class PayController {
      * 生成支付宝付款页面
      *
      * @param response
-     * @param session
      * @param orderNo
      * @throws IOException
      */
     @RequestMapping("alipay.do")
     public void doAlipay(
-            HttpServletResponse response, HttpSession session, Long orderNo) throws IOException {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+            HttpServletResponse response, HttpServletRequest request, Long orderNo) throws IOException {
         response.setContentType("text/html;charset=" + AlipayConfig.CHARSET);
+        User user = LoginUtil.getCurrentUser(request);
         if (user == null) {
             response.getWriter().write("请登陆");
         } else {
@@ -82,12 +81,11 @@ public class PayController {
     /**
      * 支付宝前台回跳
      *
-     * @param session
      * @param request
      * @param response
      */
     @RequestMapping("alipay_return.do")
-    public void alipayReturn(HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+    public void alipayReturn(HttpServletRequest request, HttpServletResponse response) {
         try {
             // 获取支付宝GET过来反馈信息
             Map<String, String> params = new HashMap<>();
@@ -118,7 +116,7 @@ public class PayController {
                     "server.root", "/");
             if (verify_result) {
                 // 验证成功
-                User user = (User) session.getAttribute(Const.CURRENT_USER);
+                User user = LoginUtil.getCurrentUser(request);
                 if (user == null) {
                     user = new User();
                 }
@@ -161,10 +159,9 @@ public class PayController {
      *
      * @param request
      * @param response
-     * @param session
      */
     @RequestMapping("alipay_notify.do")
-    public void alipayNotify(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+    public void alipayNotify(HttpServletRequest request, HttpServletResponse response) {
         try {
             //获取支付宝POST过来反馈信息
             Map<String, String> params = new HashMap<>();
@@ -240,21 +237,18 @@ public class PayController {
     /**
      * 查询交易状态
      *
-     * @param session
      * @param orderNo
      * @return
      */
     @RequestMapping("query.do")
     @ResponseBody
-    public ResponseData alipayQuery(HttpSession session, Long orderNo) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ResponseData alipayQuery(HttpServletRequest request, Long orderNo) {
+        User user = LoginUtil.getCurrentUser(request);
         if (user == null) {
-            return ResponseData.error(
-                    ResponseCode.NEED_LOGIN.getCode(),
-                    ResponseCode.NEED_LOGIN.getMsg()
-            );
+            return ResponseData.error(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getMsg());
         }
-        return payService.query(user.getId(), orderNo);
+        Long userId = user.getId();
+        return payService.query(userId, orderNo);
     }
 
 }

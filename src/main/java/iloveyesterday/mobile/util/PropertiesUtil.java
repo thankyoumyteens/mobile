@@ -41,18 +41,11 @@ public class PropertiesUtil {
         return value.trim();
     }
 
-    public static String getImageHost(String dir) {
-        if (!StringUtils.isBlank(dir)) {
-            return PropertiesUtil.getProperty("ftp.server.http.prefix") + dir;
-        } else {
-            return PropertiesUtil.getProperty("ftp.server.http.prefix");
-        }
-    }
-
     public static String getImageHost() {
-        String server = PropertiesUtil.getProperty("aliyun.oss.server");
-        if (server == null) {
-            return "";
+        String server = PropertiesUtil.getProperty("aliyun.oss.server", "");
+        if (StringUtils.isBlank(server)) {
+            // 开发环境使用本地图片
+            server = PropertiesUtil.getProperty("local.server", "http://localhost:8088/mobile/");
         }
         if (!server.endsWith("/")) {
             server = server + "/";

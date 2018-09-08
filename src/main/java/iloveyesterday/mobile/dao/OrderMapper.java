@@ -37,4 +37,6 @@ public interface OrderMapper {
             @Param("status") int status);
 
     Long selectUserIdByOrderNo(Long orderNo);
+
+    List<Order> selectOrderStatusByCreateTime(@Param("status") Integer status, @Param("date") String date);
 }

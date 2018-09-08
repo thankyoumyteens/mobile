@@ -17,6 +17,7 @@ import iloveyesterday.mobile.vo.OrderListVo;
 import iloveyesterday.mobile.vo.OrderVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -358,6 +359,34 @@ public class OrderServiceImplByGoods implements IOrderService {
         return ResponseData.error();
     }
 
+    @Override
+    public void closeOrder(int hour) {
+        Date closeDateTime = DateUtils.addHours(new Date(), -hour);
+        List<Order> orderList = orderMapper.selectOrderStatusByCreateTime(Const.OrderStatus.NOT_PAY, DateTimeUtil.dateToStr(closeDateTime));
+
+        for (Order order : orderList) {
+            List<OrderItem> orderItemList = orderItemMapper.selectByOrderNo(order.getOrderNo());
+            for (OrderItem orderItem : orderItemList) {
+                // 恢复库存
+                GoodsProperties goodsProperties = propertiesMapper.selectByPrimaryKey(orderItem.getPropertiesId());
+                if (goodsProperties != null) {
+                    GoodsProperties properties = new GoodsProperties();
+                    properties.setId(orderItem.getPropertiesId());
+                    properties.setStock(goodsProperties.getStock() + orderItem.getQuantity());
+                    propertiesMapper.updateByPrimaryKeySelective(properties);
+                }
+            }
+            // 取消订单
+            Order orderForUpdate = new Order();
+            orderForUpdate.setId(order.getId());
+            orderForUpdate.setStatus(Const.OrderStatus.CANCELED);
+            orderForUpdate.setUpdateTime(new Date());
+            orderForUpdate.setCloseTime(new Date());
+            orderMapper.updateByPrimaryKeySelective(orderForUpdate);
+            log.info("order timeout OrderNo: {}", order.getOrderNo());
+        }
+    }
+
     /**
      * 恢复库存
      *
@@ -390,33 +419,12 @@ public class OrderServiceImplByGoods implements IOrderService {
         return currentTime + new Random().nextInt(100);
     }
 
-    private OrderVo assembleOrderVo(Order order, List<OrderItem> orderItemList, Long shippingId) {
-        OrderVo orderVo = new OrderVo();
-
-        Shipping shipping = shippingMapper.selectByPrimaryKey(shippingId);
-        orderVo.setCloseTime(DateTimeUtil.dateToStr(order.getCloseTime()));
-        orderVo.setCreateTime(DateTimeUtil.dateToStr(order.getCreateTime()));
-        orderVo.setEndTime(DateTimeUtil.dateToStr(order.getEndTime()));
-        orderVo.setOrderNo(order.getOrderNo());
-        orderVo.setPayment(order.getPayment());
-        orderVo.setPaymentTime(DateTimeUtil.dateToStr(order.getPaymentTime()));
-        orderVo.setPaymentType(order.getPaymentType());
-        orderVo.setPostage(order.getPostage());
-        orderVo.setSendTime(DateTimeUtil.dateToStr(order.getSendTime()));
-        orderVo.setStatus(order.getStatus());
-        List<OrderItemListVo> itemList = Lists.newArrayList();
-        for (OrderItem orderItem : orderItemList) {
-            OrderItemListVo vo = assembleOrderItemListVo(orderItem);
-            itemList.add(vo);
-        }
-        orderVo.setItemList(itemList);
-        orderVo.setPaymentTypeMsg(getPaymentTypeMsg(order.getPaymentType()));
-        orderVo.setShipping(shipping);
-        orderVo.setStatusMsg(convertStatus(order.getStatus()));
-
-        return orderVo;
-    }
-
+    /**
+     * 付款类型文字描述
+     *
+     * @param paymentType
+     * @return
+     */
     private String getPaymentTypeMsg(Integer paymentType) {
         switch (paymentType) {
             case Const.PaymentType.ONLINE:
@@ -495,18 +503,6 @@ public class OrderServiceImplByGoods implements IOrderService {
         }
     }
 
-    private OrderItemListVo assembleOrderItemListVo(OrderItem orderItem) {
-        OrderItemListVo orderItemListVo = new OrderItemListVo();
-        orderItemListVo.setOrderItemId(orderItem.getId());
-        orderItemListVo.setMainImage(PropertiesUtil.getImageHost() + orderItem.getProductImage());
-        orderItemListVo.setGoodsId(orderItem.getProductId());
-        orderItemListVo.setProductName(orderItem.getProductName());
-        orderItemListVo.setQuantity(orderItem.getQuantity());
-        orderItemListVo.setTotalPrice(orderItem.getTotalPrice());
-        orderItemListVo.setDetail(getProperties(orderItem.getPropertiesId()));
-        return orderItemListVo;
-    }
-
     /**
      * 格式化规格 -> 蓝色 裸机 4GB+64GB
      *
@@ -520,6 +516,41 @@ public class OrderServiceImplByGoods implements IOrderService {
             return "";
         }
         return JsonUtil.getPropertiesString(properties.getText());
+    }
+
+    /**
+     * 获取购物车中已经选中的商品
+     *
+     * @param userId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    private List<Cart> getCartCheckedList(Long userId, int pageNum, int pageSize) {
+        // 选出当前页选中的购物车商品
+        PageHelper.startPage(pageNum, pageSize);
+        List<Cart> cartList = cartMapper.selectByUserId(userId);
+        List<Cart> cartCheckedList = Lists.newArrayList();
+        for (Cart cart : cartList) {
+            if (cart.getChecked().equals(Const.CartStatus.CHECKED)) {
+                cartCheckedList.add(cart);
+            }
+        }
+        PageInfo pageResult = new PageInfo(cartList);
+        pageResult.setList(cartCheckedList);
+        return pageResult.getList();
+    }
+
+    private OrderItemListVo assembleOrderItemListVo(OrderItem orderItem) {
+        OrderItemListVo orderItemListVo = new OrderItemListVo();
+        orderItemListVo.setOrderItemId(orderItem.getId());
+        orderItemListVo.setMainImage(PropertiesUtil.getImageHost() + orderItem.getProductImage());
+        orderItemListVo.setGoodsId(orderItem.getProductId());
+        orderItemListVo.setProductName(orderItem.getProductName());
+        orderItemListVo.setQuantity(orderItem.getQuantity());
+        orderItemListVo.setTotalPrice(orderItem.getTotalPrice());
+        orderItemListVo.setDetail(getProperties(orderItem.getPropertiesId()));
+        return orderItemListVo;
     }
 
     private Order assembleOrder(Long userId, Long shippingId) {
@@ -597,27 +628,32 @@ public class OrderServiceImplByGoods implements IOrderService {
         return assembleOrderVo(order, orderItemList, order.getShippingId());
     }
 
-    /**
-     * 获取购物车中已经选中的商品
-     *
-     * @param userId
-     * @param pageNum
-     * @param pageSize
-     * @return
-     */
-    private List<Cart> getCartCheckedList(Long userId, int pageNum, int pageSize) {
-        // 选出当前页选中的购物车商品
-        PageHelper.startPage(pageNum, pageSize);
-        List<Cart> cartList = cartMapper.selectByUserId(userId);
-        List<Cart> cartCheckedList = Lists.newArrayList();
-        for (Cart cart : cartList) {
-            if (cart.getChecked().equals(Const.CartStatus.CHECKED)) {
-                cartCheckedList.add(cart);
-            }
+    private OrderVo assembleOrderVo(Order order, List<OrderItem> orderItemList, Long shippingId) {
+        OrderVo orderVo = new OrderVo();
+
+        Shipping shipping = shippingMapper.selectByPrimaryKey(shippingId);
+        orderVo.setCloseTime(DateTimeUtil.dateToStr(order.getCloseTime()));
+        orderVo.setCreateTime(DateTimeUtil.dateToStr(order.getCreateTime()));
+        orderVo.setEndTime(DateTimeUtil.dateToStr(order.getEndTime()));
+        orderVo.setOrderNo(order.getOrderNo());
+        orderVo.setPayment(order.getPayment());
+        orderVo.setPaymentTime(DateTimeUtil.dateToStr(order.getPaymentTime()));
+        orderVo.setPaymentType(order.getPaymentType());
+        orderVo.setPostage(order.getPostage());
+        orderVo.setSendTime(DateTimeUtil.dateToStr(order.getSendTime()));
+        orderVo.setStatus(order.getStatus());
+        List<OrderItemListVo> itemList = Lists.newArrayList();
+        for (OrderItem orderItem : orderItemList) {
+            OrderItemListVo vo = assembleOrderItemListVo(orderItem);
+            itemList.add(vo);
         }
-        PageInfo pageResult = new PageInfo(cartList);
-        pageResult.setList(cartCheckedList);
-        return pageResult.getList();
+        orderVo.setItemList(itemList);
+        orderVo.setPaymentTypeMsg(getPaymentTypeMsg(order.getPaymentType()));
+        orderVo.setShipping(shipping);
+        orderVo.setStatusMsg(convertStatus(order.getStatus()));
+
+        return orderVo;
     }
+
 
 }

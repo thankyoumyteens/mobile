@@ -13,8 +13,6 @@ import java.util.UUID;
 @Slf4j
 public class FileServiceImpl implements IFileService {
 
-//    private Logger logger = LoggerFactory.getLogger(FileServiceImpl.class);
-
     public String upload(MultipartFile file, String path) {
         String fileName = file.getOriginalFilename();
         // 扩展名
@@ -32,13 +30,12 @@ public class FileServiceImpl implements IFileService {
         try {
             // 上传文件
             file.transferTo(targetFile);
-//             上传到ftp服务器
-//            FTPUtil.uploadFile(Lists.newArrayList(targetFile));
             // 上传到阿里云OSS
-            OssUtil.uploadFile(targetFile);
-            // 删除暂存的图片
-            targetFile.delete();
-            log.info("file uploaded");
+            if (OssUtil.uploadFile(targetFile)) {
+                // 删除暂存的图片
+                targetFile.delete();
+                log.info("file uploaded");
+            }
         } catch (Exception e) {
             log.error("upload file error", e);
             return null;

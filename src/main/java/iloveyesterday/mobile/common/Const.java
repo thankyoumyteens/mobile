@@ -4,13 +4,16 @@ public interface Const {
 
     // session key
     String CURRENT_USER = "currentUser";
-    String CURRENT_SELLER = "currentSeller";
     String CURRENT_ADMIN = "currentAdmin";
 
     String EMAIL = "email";
     String USERNAME = "username";
 
     String TOKEN_PREFIX = "token_";
+
+    interface RedisLock {
+        String CLOSE_ORDER_TASK_LOCK = "CLOSE_ORDER_TASK_LOCK";//关闭订单的分布式锁
+    }
 
     interface RedisCacheExTime {
         int REDIS_SESSION = 60 * 30; // 30min
@@ -20,6 +23,16 @@ public interface Const {
         String USER = "user";
         String CATEGORY = "category";
         String PRODUCT = "product";
+    }
+
+    /**
+     * 收藏类型
+     */
+    interface FavoriteType {
+        // 商品
+        int GOODS = 0;
+        // 店铺
+        int SHOP = 1;
     }
 
     /**
